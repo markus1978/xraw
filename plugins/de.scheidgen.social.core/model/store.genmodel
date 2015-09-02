@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.scheidgen.social.core/src-gen" modelPluginID="de.scheidgen.social.core"
+    modelName="Store" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>store.ecore</foreignModel>
+  <genPackages prefix="SocialStore" basePackage="de.scheidgen.social.core" disposableProviderFactory="true"
+      ecorePackage="store.ecore#/">
+    <genClasses ecoreClass="store.ecore#//Profile">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute store.ecore#//Profile/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference store.ecore#//Profile/services"/>
+    </genClasses>
+    <genClasses ecoreClass="store.ecore#//ServiceCredentials">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute store.ecore#//ServiceCredentials/accessToken"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute store.ecore#//ServiceCredentials/scribeServiceClass"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
