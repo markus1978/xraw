@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>de.scheidgen.social.core</name>
+	<name>de.scheidgen.social.twitter</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -29,7 +29,6 @@
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.apache.ivyde.eclipse.ivynature</nature>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 	</natures>
 </projectDescription>

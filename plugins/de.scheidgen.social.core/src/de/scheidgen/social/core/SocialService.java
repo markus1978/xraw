@@ -84,11 +84,12 @@ public class SocialService {
 		this.accessToken = accessToken;
 	}
 	
-	public String get(String url) {		
-		OAuthRequest request = new OAuthRequest(Verb.GET, url);
+	public Response execute(OAuthRequest request) {
 		oAuthService.signRequest(accessToken, request);
-		Response response = request.send();
-		
-		return response.getBody();
+		return request.send();
+	}
+	
+	public String get(String url) {
+		return execute(new OAuthRequest(Verb.GET, url)).getBody();
 	}
 }
