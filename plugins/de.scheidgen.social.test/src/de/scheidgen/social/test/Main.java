@@ -1,7 +1,8 @@
-package de.scheidgen.social.core;
+package de.scheidgen.social.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 import org.eclipse.emf.common.util.URI;
@@ -15,9 +16,13 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TumblrApi;
 import org.scribe.builder.api.TwitterApi;
 
+import de.scheidgen.social.core.SocialService;
 import de.scheidgen.social.core.socialstore.Profile;
 import de.scheidgen.social.core.socialstore.SocialStoreFactory;
 import de.scheidgen.social.core.socialstore.SocialStorePackage;
+import de.scheidgen.social.twitter.TwitterStatusesShow;
+import de.scheidgen.social.twitter.TwitterStatusesUserTimeline;
+import de.scheidgen.social.twitter.TwitterTweet;
 
 public class Main {
 
@@ -54,9 +59,10 @@ public class Main {
 			resource.getContents().add(profile);
 		}
 		
-		tryService(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null, "https://api.twitter.com/1.1/account/verify_credentials.json");
-		tryService(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html", "http://api.tumblr.com/v2/user/info");
+		tryService(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null, "https://api.twitter.com/1.1/statuses/user_timeline.json");
+		//tryService(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html", "http://api.tumblr.com/v2/user/info");
 		
+		tryTwitterWrapper(profile, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w");
 		try {
 			resource.save(null);
 		} catch (IOException e) {		
@@ -69,6 +75,16 @@ public class Main {
 		String response = twitter.get(testURL);
 		System.out.println("Example response from " + apiClass.getSimpleName() + ":");
 		System.out.println(response);
+		System.out.println("");
+	}
+	
+	private static void tryTwitterWrapper(Profile profile, String key, String secret) {
+		SocialService twitterService = SocialService.authenticate(profile, TwitterApi.class, key, secret, null);
+		
+		//TwitterTweet response = TwitterStatusesShow.create().id("568411632906473472").execute(twitterService);
+		List<TwitterTweet> response = TwitterStatusesUserTimeline.create().execute(twitterService);
+		System.out.print("## ");
+		System.out.println(response.size());
 		System.out.println("");
 	}
 

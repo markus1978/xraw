@@ -1,20 +1,18 @@
 package de.scheidgen.social.core.annotations
 
 import de.scheidgen.social.core.SocialService
+import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
 import org.eclipse.xtend.lib.macro.declaration.EnumerationValueDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
-import org.eclipse.xtend.lib.macro.declaration.TypeReference
-import org.scribe.model.OAuthRequest
-import org.scribe.model.Response
-import org.scribe.model.Verb
-import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
-import java.util.ArrayList
-import com.google.common.collect.Iterables
+import org.eclipse.xtend.lib.macro.declaration.TypeReference
+import org.eclipse.xtend.lib.macro.declaration.Visibility
+import org.scribe.model.OAuthRequest
+import org.scribe.model.Verb
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -23,8 +21,8 @@ annotation Request {
 	Class<?> returnType
 }
 
-annotation Name {
-	String value
+annotation ReturnsList {
+	
 }
 
 annotation Required {
@@ -82,26 +80,37 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				val requestReturnType = request.getValue('returnType')
 				val method = request.getValue('method') as EnumerationValueDeclaration
 				val url = request.getValue('url') as String
-				returnType = requestReturnType as TypeReference
+				val responseType = requestReturnType as TypeReference
+				
+				if (clazz.findAnnotation(ReturnsList.findTypeGlobally) != null) {
+					returnType = newTypeReference(List, {responseType})
+				} else {
+					returnType = responseType
+				}
+				
 				body = ['''					
 					«toJavaCode(OAuthRequest.newTypeReference)» request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», "«url»");
 					«FOR f: declaredFields»
 						«val fieldName = f.simpleName»
 						if («fieldName + "WasSet"») {
-							request.addBodyParameter("«context.parameterName(f)»", ""+«fieldName»);
+							request.addBodyParameter("«NameUtil::name(context,f)»", ""+«fieldName»);
 						}«IF f.findAnnotation(typeof(Required).findTypeGlobally) != null» else {
 							throw new IllegalArgumentException("Value for «fieldName» is required.");	
 						}«ENDIF»
 					«ENDFOR»
-					«toJavaCode(Response.newTypeReference)» response = service.execute(request);
-					return response.getBody();
+					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = service.execute(request);
+					String body = response.getBody();
+					System.out.println("%% " + body);
+					System.out.println("%%");
+					
+					«IF clazz.findAnnotation(ReturnsList.findTypeGlobally) != null»
+						return «toJavaCode(responseType)».createList(body);
+					«ELSE»
+						return «toJavaCode(responseType)».create(body);
+					«ENDIF»					
 				'''	]
 			]
 		}
 	}
-	
-	private def parameterName(extension TransformationContext context, MutableFieldDeclaration field) {
-		val nameAnnotation = field.findAnnotation(typeof(Name).findTypeGlobally)
-		return if (nameAnnotation == null) field.simpleName else nameAnnotation.getStringValue('value') 
-	}
+
 }
