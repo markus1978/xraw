@@ -13,6 +13,8 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.scribe.model.OAuthRequest
 import org.scribe.model.Verb
+import java.util.Collection
+import java.util.HashSet
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -42,21 +44,15 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				final = true
 			]
 			
-			for (f : declaredFields) {
-				val fieldName = f.simpleName
-				
-				clazz.addField(fieldName + "WasSet") [
-					type = primitiveBoolean
-					initializer = '''false'''
-				]
-			}
-
-			clazz.addConstructor [
-				visibility = Visibility.PRIVATE
-				addParameter("service", newTypeReference(SocialService))
-				body = ['''
-					this._service = service;
-				''']
+			clazz.addField("_request") [
+				type = newTypeReference(OAuthRequest)
+				final = true
+			]
+			
+			clazz.addField("_parameters") [
+				type = Collection.newTypeReference(string)
+				initializer = ['''new «toJavaCode(HashSet.newTypeReference(string))»()''']
+				final = true
 			]
 			
 			clazz.addMethod("create") [
@@ -64,31 +60,45 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				addParameter("service", newTypeReference(SocialService))
 				returnType = clazz.newTypeReference
 				body = ['''
-					return new «clazz.simpleName»(service);
+					return new «toJavaCode(clazz.newTypeReference)»(service);
 				''']
 			]
-
-			for (f : declaredFields) {
-				val fieldName = f.simpleName
-				val fieldType = f.type
-
-				clazz.addMethod(fieldName) [
-					it.addParameter(fieldName, fieldType) 
+			
+			
+			clazz.addConstructor [
+				visibility = Visibility.PRIVATE
+				addParameter("service", newTypeReference(SocialService))
+				body = [
+					val request = clazz.findAnnotation(typeof(Request).findTypeGlobally)					
+					val method = request.getValue('method') as EnumerationValueDeclaration
+					val url = request.getValue('url') as String
+				
+					return '''
+						this._service = service;
+						this._request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», "«url»");
+					'''
+				]
+			] 
+			
+			for (field : declaredFields) {
+				val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)
+				clazz.addMethod(localName) [
+					visibility = Visibility.PUBLIC
+					addParameter(localName, field.type)
+					docComment = field.docComment
 					returnType = clazz.newTypeReference
-					docComment = f.docComment
+					val remoteName = NameUtil::name(context, field)
 					body = ['''
-						this.«fieldName» = «fieldName»;
-						this.«fieldName + "WasSet"» = true;
+						_request.addQuerystringParameter("«remoteName»", «toJavaCode(string)».valueOf(«localName»));
+						_parameters.add("«remoteName»");
 						return this;
-					''']
-				]	
+					'''] 
+				]								
 			}
 			
 			clazz.addMethod("send") [
 				val request = clazz.findAnnotation(typeof(Request).findTypeGlobally)
 				val requestReturnType = request.getValue('returnType')
-				val method = request.getValue('method') as EnumerationValueDeclaration
-				val url = request.getValue('url') as String
 				val responseType = requestReturnType as TypeReference
 				
 				if (clazz.findAnnotation(ReturnsList.findTypeGlobally) != null) {
@@ -98,20 +108,18 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				}
 				
 				body = ['''					
-					«toJavaCode(OAuthRequest.newTypeReference)» request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», "«url»");
-					«FOR f: declaredFields»
-						«val fieldName = f.simpleName»
-						if («fieldName + "WasSet"») {
-							request.addQuerystringParameter("«NameUtil::name(context,f)»", ""+«fieldName»);
-						}«IF f.findAnnotation(typeof(Required).findTypeGlobally) != null» else {
-							throw new IllegalArgumentException("Value for «fieldName» is required.");	
-						}«ENDIF»
+					// check required parameters were set
+					«FOR field: declaredFields»
+						«IF field.findAnnotation(Required.findTypeGlobally) != null»
+							if (!_parameters.contains("«NameUtil::name(context, field)»")) {
+								throw new IllegalArgumentException("Value for «NameUtil::snakeCaseToCamelCase(field.simpleName)» is required.");
+							}
+						«ENDIF»
 					«ENDFOR»
-					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.execute(request);
-					String body = response.getBody();
-					System.out.println("%% " + body);
-					System.out.println("%%");
 					
+					// send request and process response
+					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.execute(_request);
+					String body = response.getBody();					
 					«IF clazz.findAnnotation(ReturnsList.findTypeGlobally) != null»
 						return «toJavaCode(responseType)».createList(body);
 					«ELSE»
@@ -120,8 +128,8 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				'''	]
 			]
 			
-			for (f: declaredFields) {
-				f.docComment = null
+			for (field: declaredFields) {
+				field.remove
 			}
 		}
 	}

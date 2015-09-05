@@ -5,14 +5,12 @@ import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
-import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
-import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
-import java.lang.instrument.ClassDefinition
 
 @Active(typeof(ResponseCompilationParticipant))
 annotation Response {
@@ -34,18 +32,7 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 		return if (converterAnnotation == null) null else converterAnnotation.getClassValue("value") 
 	}
 	
-	def snakeCaseToCamelCase(String source) {
-		val parts = source.split("_")
-		val target = parts.join("") [
-			it.toFirstUpper
-		]
-		return if (source.equals(source.toFirstLower)) target.toFirstLower else target
-	}
-	
-	def getValueJavaCode(extension CompilationContext compilationCtx, MutableFieldDeclaration field, extension TransformationContext transformationCtx) {
-		
-	}
-		
+
 
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
 			extension TransformationContext context) {
@@ -112,7 +99,7 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 			]
 
 			for (field : declaredFields) {
-				clazz.addMethod("get" + field.simpleName.snakeCaseToCamelCase.toFirstUpper) [
+				clazz.addMethod("get" + NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper) [
 					docComment = field.docComment
 					returnType = field.type
 					body = [
