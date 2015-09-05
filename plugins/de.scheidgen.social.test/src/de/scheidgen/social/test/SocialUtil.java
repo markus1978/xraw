@@ -12,7 +12,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TumblrApi;
 import org.scribe.builder.api.TwitterApi;
 
@@ -20,15 +19,14 @@ import de.scheidgen.social.core.SocialService;
 import de.scheidgen.social.core.socialstore.Profile;
 import de.scheidgen.social.core.socialstore.SocialStoreFactory;
 import de.scheidgen.social.core.socialstore.SocialStorePackage;
-import de.scheidgen.social.twitter.TwitterStatusesShow;
-import de.scheidgen.social.twitter.TwitterStatusesUserTimeline;
-import de.scheidgen.social.twitter.TwitterTweet;
+import de.scheidgen.social.twitter.Twitter;
+import de.scheidgen.social.twitter.resources.TwitterTweet;
 
-public class Main {
+public class SocialUtil {
 
 	private static final String DATA_STORE_PATH = "data/store.xmi";
 	
-	public static void main(String[] args) {
+	public static Profile openProfile() {
 		EPackage.Registry.INSTANCE.put(SocialStorePackage.eINSTANCE.getNsURI(), SocialStorePackage.eINSTANCE);		
 		EPackage.Registry.INSTANCE.put(EcorePackage.eINSTANCE.getNsURI(), EcorePackage.eINSTANCE);
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
@@ -59,35 +57,33 @@ public class Main {
 			resource.getContents().add(profile);
 		}
 		
-		// tryService(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null, "https://api.twitter.com/1.1/statuses/user_timeline.json");
-		// tryService(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html", "http://api.tumblr.com/v2/user/info");
-		
-		tryTwitterWrapper(profile, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w");
+		return profile;
+	}
+	
+	public static SocialService getTwitterService(Profile profile) {
+		return SocialService.authenticate(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null);
+	}
+	
+	public static SocialService getTumblrService(Profile profile) {
+		return SocialService.authenticate(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html");		
+	}
+	
+	public static void closeProfile(Profile profile) {
 		try {
-			resource.save(null);
+			profile.eResource().save(null);
 		} catch (IOException e) {		
 			e.printStackTrace();
 		}
 	}
 	
-//	private static void tryService(Profile profile, Class<? extends Api> apiClass, String key, String secret, String callbackURL, String testURL) {
-//		SocialService twitter = SocialService.authenticate(profile, apiClass, key, secret, callbackURL);
-//		String response = twitter.get(testURL);
-//		System.out.println("Example response from " + apiClass.getSimpleName() + ":");
-//		System.out.println(response);
-//		System.out.println("");
-//	}
-	
-	private static void tryTwitterWrapper(Profile profile, String key, String secret) {
-		SocialService twitterService = SocialService.authenticate(profile, TwitterApi.class, key, secret, null);
-		
-		List<TwitterTweet> response = TwitterStatusesUserTimeline.create().execute(twitterService);
-		for (TwitterTweet tweet: response) {
+	public static void main(String[] args) {
+		Profile profile = openProfile();
+		Twitter twitter = Twitter.get(getTwitterService(profile));
+		List<TwitterTweet> userTimeline = twitter.getStatuses().getUserTimeline().send();
+		for (TwitterTweet tweet: userTimeline) {
 			System.out.println(tweet.getText());
 			System.out.println("");
 		}
-		
-		System.out.println("");
+		closeProfile(profile);
 	}
-
 }

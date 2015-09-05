@@ -36,7 +36,12 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 		for (clazz : annotatedTargetElements) {
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
-
+			
+			clazz.addField("_service") [
+				type = newTypeReference(SocialService)
+				final = true
+			]
+			
 			for (f : declaredFields) {
 				val fieldName = f.simpleName
 				
@@ -48,14 +53,18 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 
 			clazz.addConstructor [
 				visibility = Visibility.PRIVATE
-				body = ['''''']
+				addParameter("service", newTypeReference(SocialService))
+				body = ['''
+					this._service = service;
+				''']
 			]
 			
 			clazz.addMethod("create") [
 				static = true
+				addParameter("service", newTypeReference(SocialService))
 				returnType = clazz.newTypeReference
 				body = ['''
-					return new «clazz.simpleName»();
+					return new «clazz.simpleName»(service);
 				''']
 			]
 
@@ -74,8 +83,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				]	
 			}
 			
-			clazz.addMethod("execute") [
-				addParameter("service", newTypeReference(typeof(SocialService)))
+			clazz.addMethod("send") [
 				val request = clazz.findAnnotation(typeof(Request).findTypeGlobally)
 				val requestReturnType = request.getValue('returnType')
 				val method = request.getValue('method') as EnumerationValueDeclaration
@@ -98,7 +106,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 							throw new IllegalArgumentException("Value for «fieldName» is required.");	
 						}«ENDIF»
 					«ENDFOR»
-					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = service.execute(request);
+					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.execute(request);
 					String body = response.getBody();
 					System.out.println("%% " + body);
 					System.out.println("%%");
