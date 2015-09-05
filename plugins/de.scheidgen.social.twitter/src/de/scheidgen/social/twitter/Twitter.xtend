@@ -2,6 +2,7 @@ package de.scheidgen.social.twitter
 
 import de.scheidgen.social.core.SocialService
 import de.scheidgen.social.twitter.statuses.UserTimeline
+import de.scheidgen.social.twitter.statuses.Show
 
 class AbstractApi {
 	protected val SocialService service;
@@ -21,6 +22,10 @@ class Twitter extends AbstractApi {
 		def getUserTimeline() {
 			return UserTimeline.create(service)
 		}		
+		
+		def getShow() {
+			return Show.create(service)
+		}
 	}
 
 	val Statuses statuses
