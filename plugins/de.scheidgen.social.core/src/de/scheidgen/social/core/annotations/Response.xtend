@@ -11,6 +11,8 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
+import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import java.lang.instrument.ClassDefinition
 
 @Active(typeof(ResponseCompilationParticipant))
 annotation Response {
@@ -41,38 +43,7 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 	}
 	
 	def getValueJavaCode(extension CompilationContext compilationCtx, MutableFieldDeclaration field, extension TransformationContext transformationCtx) {
-		val attributeName = NameUtil::name(transformationCtx, field)
 		
-		if (newTypeReference(List).isAssignableFrom(field.type)) {
-			// array value
-		} else {
-			// single value
-			return '''
-				if (json.isNull("«attributeName»")) {
-					«IF field.type.primitive»
-						«IF field.initializer == null»
-							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed for primitive type.");
-						«ELSE»
-							return «field.initializer»;
-						«ENDIF»
-					«ELSE»
-						return null;
-					«ENDIF»
-				} else {
-					«val converterClass = transformationCtx.withConverter(field)»
-					«IF converterClass != null»
-						Object objectValue = new «toJavaCode(converterClass)»().convert(json.getString("«attributeName»"));
-					«ELSE»
-						Object objectValue = json.get("«attributeName»");
-					«ENDIF»
-					if (objectValue instanceof «toJavaCode(field.type.wrapperIfPrimitive)») {
-						return («toJavaCode(field.type.wrapperIfPrimitive)»)objectValue;
-					} else {
-						throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
-					}
-				}
-			'''
-		}
 	}
 		
 
@@ -93,7 +64,17 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 				addParameter("jsonStr", string)
 				returnType = newTypeReference(clazz)
 				body = ['''
-					return new «clazz.simpleName»(new «toJavaCode(JSONObject.newTypeReference)»(jsonStr));
+					return create(new «toJavaCode(JSONObject.newTypeReference)»(jsonStr));
+				''']
+			]
+			
+			clazz.addMethod("create") [
+				static = true
+				visibility = Visibility.PUBLIC
+				addParameter("json", JSONObject.newTypeReference)
+				returnType = newTypeReference(clazz)
+				body = ['''
+					return new «clazz.simpleName»(json);
 				''']
 			]
 			
@@ -104,6 +85,16 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 				returnType = newTypeReference(List, { newTypeReference(clazz) })
 				body = ['''
 					«toJavaCode(JSONArray.newTypeReference)» jsonArray = new «toJavaCode(JSONArray.newTypeReference)»(jsonStr);
+					return createList(jsonArray);					
+				''']
+			]
+			
+			clazz.addMethod("createList") [
+				static = true
+				visibility = Visibility.PUBLIC
+				addParameter("jsonArray", JSONArray.newTypeReference)
+				returnType = newTypeReference(List, { newTypeReference(clazz) })
+				body = ['''					
 					«toJavaCode(List.newTypeReference({newTypeReference(clazz)}))» result = new «toJavaCode(ArrayList.newTypeReference({newTypeReference(clazz)}))»();
 					for (int i = 0; i < jsonArray.length(); i++) {
 						result.add(new «clazz.simpleName»(jsonArray.getJSONObject(i)));
@@ -120,16 +111,63 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 				''']
 			]
 
-			for (f : declaredFields) {
-				f.visibility = Visibility.PRIVATE
-				clazz.addMethod("get" + f.simpleName.snakeCaseToCamelCase.toFirstUpper) [
-					docComment = f.docComment
-					returnType = f.type
-					body = [getValueJavaCode(f, context)]
+			for (field : declaredFields) {
+				clazz.addMethod("get" + field.simpleName.snakeCaseToCamelCase.toFirstUpper) [
+					docComment = field.docComment
+					returnType = field.type
+					body = [
+						val attributeName = NameUtil::name(context, field)
+		
+						if (newTypeReference(List).isAssignableFrom(field.type)) {
+							// array value
+							return '''
+								«toJavaCode(JSONArray.newTypeReference)» jsonArray = json.getJSONArray("«attributeName»");
+								return «toJavaCode(field.type.actualTypeArguments.get(0))».createList(jsonArray);
+							'''
+						} else {
+							// single value
+							return '''
+								if (json.isNull("«attributeName»")) {
+									«IF field.type.primitive»
+										«IF field.initializer == null»
+											throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed for primitive type.");
+										«ELSE»
+											return «field.initializer»;
+										«ENDIF»
+									«ELSE»
+										return null;
+									«ENDIF»
+								} else {
+									«val converterClass = context.withConverter(field)»
+									«IF converterClass != null»
+										Object objectValue = new «toJavaCode(converterClass)»().convert(json.getString("«attributeName»"));
+									«ELSE»
+										Object objectValue = json.get("«attributeName»");
+										«IF field.type.type instanceof ClassDeclaration && (field.type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
+											objectValue = «toJavaCode(field.type)».create((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
+										«ENDIF»
+									«ENDIF»
+									if (objectValue instanceof «toJavaCode(field.type.wrapperIfPrimitive)») {
+										return («toJavaCode(field.type.wrapperIfPrimitive)»)objectValue;
+									} else {
+										throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
+									}
+								}
+							'''
+						}
+					]
 				]
-				f.docComment = null
-				f.remove			
-			}				
+				field.docComment = null
+				field.remove			
+			}
+			
+			clazz.addMethod("toString") [
+				addAnnotation(Override.newAnnotationReference)
+				returnType = string
+				body = ['''
+					return json.toString();
+				''']
+			]				
 		}
 	}
 }

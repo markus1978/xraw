@@ -24,7 +24,7 @@ class TwitterTweet {
     boolean retweeted = false
     @Name("possibly_sensitive") boolean possiblySensitive = false
 	Object place
-    Object user
+    TwitterUser user
     @Name ("in_reply_to_screen_name") String inReplyToScreenName
     String source
 }

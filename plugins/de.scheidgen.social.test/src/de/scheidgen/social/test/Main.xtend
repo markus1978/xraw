@@ -12,6 +12,6 @@ class Main {
 		val firstTweetId = userTimeline.get(0).id
 		val firstTweet = twitter.statuses.show.id(firstTweetId).send
 		
-		println(firstTweet.text)
+		println(firstTweet.user.location)
 	}
 }
