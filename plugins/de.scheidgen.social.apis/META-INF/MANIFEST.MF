@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Twitter
-Bundle-SymbolicName: de.scheidgen.social.twitter
+Bundle-Name: Social APIs
+Bundle-SymbolicName: de.scheidgen.social.apis
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.scheidgen.social.core;bundle-version="1.0.0",
