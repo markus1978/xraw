@@ -18,7 +18,8 @@ public class Main {
     final Twitter twitter = Twitter.get(_twitterService);
     Twitter.Statuses _statuses = twitter.getStatuses();
     UserTimeline _userTimeline = _statuses.getUserTimeline();
-    List<TwitterTweet> _send = _userTimeline.send();
+    UserTimeline _count = _userTimeline.count(100);
+    List<TwitterTweet> _send = _count.send();
     final Consumer<TwitterTweet> _function = (TwitterTweet it) -> {
       String _text = it.getText();
       InputOutput.<String>println(_text);

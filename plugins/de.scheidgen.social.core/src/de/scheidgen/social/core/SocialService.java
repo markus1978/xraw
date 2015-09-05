@@ -86,6 +86,7 @@ public class SocialService {
 	
 	public Response execute(OAuthRequest request) {
 		oAuthService.signRequest(accessToken, request);
+		System.out.println("*** " + request.getCompleteUrl());
 		return request.send();
 	}
 	

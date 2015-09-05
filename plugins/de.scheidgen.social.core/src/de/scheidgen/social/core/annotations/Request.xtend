@@ -101,7 +101,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					«FOR f: declaredFields»
 						«val fieldName = f.simpleName»
 						if («fieldName + "WasSet"») {
-							request.addBodyParameter("«NameUtil::name(context,f)»", ""+«fieldName»);
+							request.addQuerystringParameter("«NameUtil::name(context,f)»", ""+«fieldName»);
 						}«IF f.findAnnotation(typeof(Required).findTypeGlobally) != null» else {
 							throw new IllegalArgumentException("Value for «fieldName» is required.");	
 						}«ENDIF»

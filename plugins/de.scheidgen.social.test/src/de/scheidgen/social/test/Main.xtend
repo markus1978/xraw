@@ -8,7 +8,7 @@ class Main {
 		val profile = SocialUtil::openProfile
 		val twitter = Twitter.get(SocialUtil::getTwitterService(profile))
 		
-		twitter.statuses.userTimeline.send.forEach[
+		twitter.statuses.userTimeline.count(100).send.forEach[
 			println(text)
 			println()
 		]		
