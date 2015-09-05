@@ -10,20 +10,19 @@ import java.util.Date
 @Response
 class TwitterTweet {
 	Object coordinates	
-	boolean favorited	
-	boolean truncated
+	boolean favorited = false
+	boolean truncated = false
     @Name("created_at") @WithConverter(TwitterDateConverter) Date createdAt
     @Name("id_str") String id
     Object entities
-    @Name("in_reply_to_user_id_str") String inReplyToUserIdStr
+    @Name("in_reply_to_user_id_str") String inReplyToUserId
     Object contributors
     String text
     @Name("retweet_count") int retweetCount
     @Name("in_reply_to_status_id_str") String inReplyToStatusId
     Object geo
-    boolean retweeted
-    @Name("possibly_sensitive") boolean possiblySensitive
-    @Name("in_reply_to_user_id") Long inReplyToUserId
+    boolean retweeted = false
+    @Name("possibly_sensitive") boolean possiblySensitive = false
 	Object place
     Object user
     @Name ("in_reply_to_screen_name") String inReplyToScreenName

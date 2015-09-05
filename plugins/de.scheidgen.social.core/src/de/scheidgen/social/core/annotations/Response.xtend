@@ -10,6 +10,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONObject
 import org.json.JSONArray
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 
 @Active(typeof(ResponseCompilationParticipant))
 annotation Response {
@@ -26,10 +27,45 @@ interface Converter<T> {
 
 class ResponseCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 	
-	static def withConverter(extension TransformationContext context, MutableFieldDeclaration field) {
+	def withConverter(extension TransformationContext context, MutableFieldDeclaration field) {
 		val converterAnnotation = field.findAnnotation(typeof(WithConverter).findTypeGlobally)
 		return if (converterAnnotation == null) null else converterAnnotation.getClassValue("value") 
 	}
+	
+	def getValueJavaCode(extension CompilationContext compilationCtx, MutableFieldDeclaration field, extension TransformationContext transformationCtx) {
+		val attributeName = NameUtil::name(transformationCtx, field)
+		if (newTypeReference(List).isAssignableFrom(field.type)) {
+			// array value
+		} else {
+			// single value
+			return '''
+				if (json.isNull("«attributeName»")) {
+					«IF field.type.primitive»
+						«IF field.initializer == null»
+							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed for primitive type.");
+						«ELSE»
+							// empty
+						«ENDIF»
+					«ELSE»
+						«field.simpleName» = null;
+					«ENDIF»
+				} else {
+					«val converterClass = transformationCtx.withConverter(field)»
+					«IF converterClass != null»
+						Object objectValue = new «toJavaCode(converterClass)»().convert(json.getString("«attributeName»"));
+					«ELSE»
+						Object objectValue = json.get("«attributeName»");
+					«ENDIF»
+					if (objectValue instanceof «toJavaCode(field.type.wrapperIfPrimitive)») {
+						«field.simpleName» = («toJavaCode(field.type.wrapperIfPrimitive)»)objectValue;
+					} else {
+						throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
+					}
+				}
+			'''
+		}
+	}
+		
 
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
 			extension TransformationContext context) {
@@ -72,43 +108,8 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 				addParameter("json", newTypeReference(JSONObject))
 				body = ['''
 					«FOR f: declaredFields»
-						«val attributeName = NameUtil::name(context,f)»
-						«val converterTypeRef = context.withConverter(f)»
-						«IF converterTypeRef != null»
-							«f.simpleName» = new «toJavaCode(converterTypeRef)»().convert(json.getString("«attributeName»"));
-						«ELSEIF f.type == string»
-							if (!json.isNull("«attributeName»")) {
-								«f.simpleName» = json.getString("«attributeName»");
-							}
-						«ELSEIF f.type == primitiveBoolean || f.type == newTypeReference(Boolean)»
-							if (json.isNull("«attributeName»")) {
-								«IF f.type == primitiveBoolean»
-									throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed.");
-								«ENDIF»
-							} else {
-								«f.simpleName» = json.getBoolean("«attributeName»");
-							}
-						«ELSEIF f.type == primitiveLong || f.type == newTypeReference(Long)»
-							if (json.isNull("«attributeName»")) {
-								«IF f.type == primitiveLong»
-									throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed.");
-								«ENDIF»
-							} else {
-								«f.simpleName» = json.getLong("«attributeName»");
-							}
-						«ELSEIF f.type == primitiveInt || f.type == newTypeReference(Integer)»
-							if (json.isNull("«attributeName»")) {
-								«IF f.type == primitiveInt»
-									throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("null value not allowed.");
-								«ENDIF»
-							} else {
-								«f.simpleName» = json.getInt("«attributeName»");
-							}
-						«ELSE»
-							if (!json.isNull("«attributeName»")) {
-								«f.simpleName» = («f.type.name»)json.get("«attributeName»");
-							}
-						«ENDIF»
+						«getValueJavaCode(f, context)»
+						
 					«ENDFOR»
 				''']
 			]

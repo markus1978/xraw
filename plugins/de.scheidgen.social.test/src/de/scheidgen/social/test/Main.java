@@ -59,8 +59,8 @@ public class Main {
 			resource.getContents().add(profile);
 		}
 		
-		tryService(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null, "https://api.twitter.com/1.1/statuses/user_timeline.json");
-		//tryService(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html", "http://api.tumblr.com/v2/user/info");
+		// tryService(profile, TwitterApi.class, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w", null, "https://api.twitter.com/1.1/statuses/user_timeline.json");
+		// tryService(profile, TumblrApi.class, "9L2yRmNiq025MEfqJrbRpozRF2YQXwaOtW3e9exyL9eVrubc4b", "pogU7YRqOPyX5FkMaNwrLQea2MgGxnzqDIbcN5QDoLvHZ3lD8N", "http://www.tumblr.com/connect/login_success.html", "http://api.tumblr.com/v2/user/info");
 		
 		tryTwitterWrapper(profile, "uObLVPxuBJqfrEOEB3ms1g", "IAYcfFI5Xhq6g0McCdPVM5EEFOqq8PUkPH7KQu58w");
 		try {
@@ -70,21 +70,23 @@ public class Main {
 		}
 	}
 	
-	private static void tryService(Profile profile, Class<? extends Api> apiClass, String key, String secret, String callbackURL, String testURL) {
-		SocialService twitter = SocialService.authenticate(profile, apiClass, key, secret, callbackURL);
-		String response = twitter.get(testURL);
-		System.out.println("Example response from " + apiClass.getSimpleName() + ":");
-		System.out.println(response);
-		System.out.println("");
-	}
+//	private static void tryService(Profile profile, Class<? extends Api> apiClass, String key, String secret, String callbackURL, String testURL) {
+//		SocialService twitter = SocialService.authenticate(profile, apiClass, key, secret, callbackURL);
+//		String response = twitter.get(testURL);
+//		System.out.println("Example response from " + apiClass.getSimpleName() + ":");
+//		System.out.println(response);
+//		System.out.println("");
+//	}
 	
 	private static void tryTwitterWrapper(Profile profile, String key, String secret) {
 		SocialService twitterService = SocialService.authenticate(profile, TwitterApi.class, key, secret, null);
 		
-		//TwitterTweet response = TwitterStatusesShow.create().id("568411632906473472").execute(twitterService);
 		List<TwitterTweet> response = TwitterStatusesUserTimeline.create().execute(twitterService);
-		System.out.print("## ");
-		System.out.println(response.size());
+		for (TwitterTweet tweet: response) {
+			System.out.println(tweet.getText());
+			System.out.println("");
+		}
+		
 		System.out.println("");
 	}
 
