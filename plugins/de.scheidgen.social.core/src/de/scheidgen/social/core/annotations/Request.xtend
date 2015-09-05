@@ -75,6 +75,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				clazz.addMethod(fieldName) [
 					it.addParameter(fieldName, fieldType) 
 					returnType = clazz.newTypeReference
+					docComment = f.docComment
 					body = ['''
 						this.«fieldName» = «fieldName»;
 						this.«fieldName + "WasSet"» = true;
@@ -118,6 +119,10 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					«ENDIF»					
 				'''	]
 			]
+			
+			for (f: declaredFields) {
+				f.docComment = null
+			}
 		}
 	}
 

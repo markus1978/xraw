@@ -126,13 +126,14 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 			for (f : declaredFields) {
 				f.visibility = Visibility.PRIVATE
 				clazz.addMethod("get" + f.simpleName.toFirstUpper) [
+					docComment = f.docComment
 					returnType = f.type
 					body = ['''
 						return «f.simpleName»;
 					''']
-				]				
-			}
-
+				]
+				f.docComment = null				
+			}			
 		}
 	}
 }
