@@ -1,6 +1,7 @@
 package de.scheidgen.social.test
 
 import de.scheidgen.social.twitter.Twitter
+import de.scheidgen.social.twitter.search.SearchResultType
 
 class Main {
 	
@@ -13,5 +14,9 @@ class Main {
 		val firstTweet = twitter.statuses.show.id(firstTweetId).send
 		
 		println(firstTweet.user.location)
+		
+		for (status: twitter.search.tweets.q("Barack Obama").resultType(SearchResultType.popular).send.statuses) {
+			println("# " + status.retweetCount + ":" + status.text)
+		}
 	}
 }

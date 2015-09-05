@@ -3,6 +3,7 @@ package de.scheidgen.social.twitter
 import de.scheidgen.social.core.SocialService
 import de.scheidgen.social.twitter.statuses.UserTimeline
 import de.scheidgen.social.twitter.statuses.Show
+import de.scheidgen.social.twitter.search.Tweets
 
 class AbstractApi {
 	protected val SocialService service;
@@ -27,8 +28,21 @@ class Twitter extends AbstractApi {
 			return Show.create(service)
 		}
 	}
+	
+	static class Search extends AbstractApi {
+		
+		protected new(SocialService service) {
+			super(service)
+		}
+		
+		def getTweets() {
+			return Tweets.create(service)
+		}
+		
+	}
 
 	val Statuses statuses
+	val Search search
 
 	static def get(SocialService service) {
 		return new Twitter(service)
@@ -37,10 +51,15 @@ class Twitter extends AbstractApi {
 	protected new(SocialService service) {
 		super(service)
 		this.statuses = new Statuses(service)
+		this.search = new Search(service)
 	}
 	
 	def getStatuses() {
 		return this.statuses
+	}
+	
+	def getSearch() {
+		return this.search
 	}
 
 }
