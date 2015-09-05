@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
-public class Main {
+public class TwitterTest {
   public static void main(final String[] args) {
     final Profile profile = SocialUtil.openProfile();
     SocialService _twitterService = SocialUtil.getTwitterService(profile);

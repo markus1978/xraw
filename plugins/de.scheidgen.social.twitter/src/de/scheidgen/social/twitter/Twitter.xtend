@@ -1,16 +1,10 @@
 package de.scheidgen.social.twitter
 
 import de.scheidgen.social.core.SocialService
-import de.scheidgen.social.twitter.statuses.UserTimeline
-import de.scheidgen.social.twitter.statuses.Show
+import de.scheidgen.social.core.annotations.AbstractApi
 import de.scheidgen.social.twitter.search.Tweets
-
-class AbstractApi {
-	protected val SocialService service;
-	protected new(SocialService service) {
-		this.service = service;
-	}
-}
+import de.scheidgen.social.twitter.statuses.Show
+import de.scheidgen.social.twitter.statuses.UserTimeline
 
 class Twitter extends AbstractApi {
 	

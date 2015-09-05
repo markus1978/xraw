@@ -24,8 +24,6 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 		return if (converterAnnotation == null) null else converterAnnotation.getClassValue("value") 
 	}
 	
-
-
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
 			extension TransformationContext context) {
 		for (clazz : annotatedTargetElements) {

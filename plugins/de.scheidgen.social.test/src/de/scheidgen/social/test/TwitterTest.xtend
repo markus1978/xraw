@@ -3,7 +3,7 @@ package de.scheidgen.social.test
 import de.scheidgen.social.twitter.Twitter
 import de.scheidgen.social.twitter.search.SearchResultType
 
-class Main {
+class TwitterTest {
 	
 	static def void main(String[] args) {
 		val profile = SocialUtil::openProfile

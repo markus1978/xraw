@@ -15,6 +15,7 @@ import org.scribe.model.OAuthRequest
 import org.scribe.model.Verb
 import java.util.Collection
 import java.util.HashSet
+import org.json.JSONObject
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -29,6 +30,14 @@ annotation ReturnsList {
 
 annotation Required {
 	
+}
+
+annotation UrlReplace {
+	String value
+}
+
+annotation ResponseContainer {
+	String value
 }
 
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -46,7 +55,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			
 			clazz.addField("_request") [
 				type = newTypeReference(OAuthRequest)
-				final = true
+				final = false
 			]
 			
 			clazz.addField("_parameters") [
@@ -88,11 +97,23 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					docComment = field.docComment
 					returnType = clazz.newTypeReference
 					val remoteName = NameUtil::name(context, field)
-					body = ['''
-						_request.addQuerystringParameter("«remoteName»", «toJavaCode(string)».valueOf(«localName»));
-						_parameters.add("«remoteName»");
-						return this;
-					'''] 
+					body = [
+						val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)
+						if (urlReplaceAnnotation != null) {
+							val request = clazz.findAnnotation(typeof(Request).findTypeGlobally)					
+							val method = request.getValue('method') as EnumerationValueDeclaration
+							
+							'''								
+								String url = _request.getUrl().replace("«urlReplaceAnnotation.getStringValue("value")»", «toJavaCode(string)».valueOf(«localName»));
+								_request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», url);
+								return this; 
+							'''
+						} else '''
+							_request.addQuerystringParameter("«remoteName»", «toJavaCode(string)».valueOf(«localName»));
+							_parameters.add("«remoteName»");
+							return this;
+						'''
+					] 
 				]								
 			}
 			
@@ -119,13 +140,22 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					
 					// send request and process response
 					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.execute(_request);
-					String body = response.getBody();					
-					«IF clazz.findAnnotation(ReturnsList.findTypeGlobally) != null»
-						return «toJavaCode(responseType)».createList(body);
+					String body = response.getBody();
+					«val responseContainerAnnotation = clazz.findAnnotation(ResponseContainer.findTypeGlobally)»
+					«IF responseContainerAnnotation != null»
+						«toJavaCode(JSONObject.newTypeReference)» jsonObject = new «toJavaCode(JSONObject.newTypeReference)»(body);
+						«FOR attrName: responseContainerAnnotation.getStringValue("value").split("/")»
+							jsonObject = jsonObject.getJSONObject("«attrName»");
+						«ENDFOR»
+						return «toJavaCode(responseType)».create(jsonObject);
 					«ELSE»
-						return «toJavaCode(responseType)».create(body);
-					«ENDIF»					
-				'''	]
+						«IF clazz.findAnnotation(ReturnsList.findTypeGlobally) != null»
+							return «toJavaCode(responseType)».createList(body);
+						«ELSE»
+							return «toJavaCode(responseType)».create(body);
+						«ENDIF»
+					«ENDIF»
+				''']
 			]
 			
 			for (field: declaredFields) {
