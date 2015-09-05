@@ -17,14 +17,6 @@ annotation Response {
 
 }
 
-annotation WithConverter {
-	Class<? extends Converter<?>> value
-}
-
-interface Converter<T> {
-	def T convert(String value)
-}
-
 class ResponseCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 	
 	def withConverter(extension TransformationContext context, MutableFieldDeclaration field) {

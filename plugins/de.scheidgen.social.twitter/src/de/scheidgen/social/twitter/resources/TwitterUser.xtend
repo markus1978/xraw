@@ -1,49 +1,46 @@
 package de.scheidgen.social.twitter.resources
 
-import de.scheidgen.social.core.annotations.Response
 import de.scheidgen.social.core.annotations.Name
+import de.scheidgen.social.core.annotations.Response
+import de.scheidgen.social.core.annotations.UrlConverter
 import de.scheidgen.social.core.annotations.WithConverter
+import de.scheidgen.social.twitter.converter.TwitterDateConverter
 import java.net.URL
-import de.scheidgen.social.core.annotations.Converter
 import java.util.Date
-
-class UrlConverter implements Converter<URL> {
-	override convert(String value) {
-		return new URL(value)
-	}
-}
+import de.scheidgen.social.twitter.converter.TwitterColorConverter
+import de.scheidgen.social.twitter.converter.TwitterColor
 
 @Response
 class TwitterUser {
-    @Name("profile_sidebar_fill_color") String profileSidebarFillColor
-    @Name("profile_sidebar_border_color") String profileSidebarBorderColor
-    @Name("profile_background_tile") boolean profileBackgroundTile = false
+    @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_fill_color
+    @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_border_color
+    boolean profile_background_tile = false
     String name
-    @Name("profile_image_url") @WithConverter(UrlConverter) URL profileImageUrl
-    @Name("created_at") @WithConverter(TwitterDateConverter) Date createdAt
+    @WithConverter(UrlConverter) URL profile_image_url
+    @WithConverter(TwitterDateConverter) Date created_at
     String location
-    @Name("follow_request_sent") boolean followRequestSent = false
-    @Name("profile_link_color") String profileLinkColor
-    @Name("is_translator") boolean isTranslator = false
+    boolean follow_request_sent = false
+    @WithConverter(TwitterColorConverter) TwitterColor profile_link_color
+    boolean is_translator = false
     @Name("id_str") String id
     Object entities
-    @Name("default_profile") boolean defaultProfile = true
-    @Name("contributors_enabled") boolean contributorsEnabled = true
-    @Name("favourites_count") int favouritesCount
+    boolean default_profile = true
+    boolean contributors_enabled = true
+    int favourites_count
     @WithConverter(UrlConverter) URL url
-    @Name("profile_image_url_https") @WithConverter(UrlConverter) URL profileImageUrlHttps
+    @WithConverter(UrlConverter) URL profile_image_url_https
     @Name("utc_offset") int utcOffset
-    @Name("profile_use_background_image") boolean profileUseBackgroundImage = false
-    @Name("listed_count") int listedCount
-    @Name("profile_text_color") String profileTextColor
+    boolean profile_use_background_image = false
+    int listed_count
+    @WithConverter(TwitterColorConverter) TwitterColor profile_text_color
     String lang
-    @Name("followers_count") int followersCount
+    int followers_count
     @Name("protected") boolean isProtected = false
     Object notifications
-    @Name("profile_background_image_url_https") @WithConverter(UrlConverter) URL profileBackgroundImageUrlHttps
-    @Name("profile_background_color") String profileBackgroundColor
+    @WithConverter(UrlConverter) URL profile_background_image_url_https
+    @WithConverter(TwitterColorConverter) TwitterColor profile_background_color
     boolean verified
-    @Name("geo_enabled") boolean geoEnabled = false
+    boolean geo_enabled = false
     String time_zone
     String description
     boolean default_profile_image = false
