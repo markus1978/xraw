@@ -1,4 +1,4 @@
-package de.scheidgen.social.twitter.resources
+package de.scheidgen.social.twitter.response
 
 import de.scheidgen.social.core.annotations.Name
 import de.scheidgen.social.core.annotations.Response
@@ -7,7 +7,7 @@ import de.scheidgen.social.twitter.converter.TwitterDateConverter
 import java.util.Date
 
 @Response
-class TwitterTweet {
+class TwitterStatus {
 	Object coordinates	
 	boolean favorited = false
 	boolean truncated = false

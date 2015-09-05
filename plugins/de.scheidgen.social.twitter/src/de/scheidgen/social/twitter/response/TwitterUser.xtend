@@ -1,4 +1,4 @@
-package de.scheidgen.social.twitter.resources
+package de.scheidgen.social.twitter.response
 
 import de.scheidgen.social.core.annotations.Name
 import de.scheidgen.social.core.annotations.Response

@@ -20,7 +20,7 @@ import de.scheidgen.social.core.socialstore.Profile;
 import de.scheidgen.social.core.socialstore.SocialStoreFactory;
 import de.scheidgen.social.core.socialstore.SocialStorePackage;
 import de.scheidgen.social.twitter.Twitter;
-import de.scheidgen.social.twitter.resources.TwitterTweet;
+import de.scheidgen.social.twitter.response.TwitterStatus;
 
 public class SocialUtil {
 
@@ -79,8 +79,8 @@ public class SocialUtil {
 	public static void main(String[] args) {
 		Profile profile = openProfile();
 		Twitter twitter = Twitter.get(getTwitterService(profile));
-		List<TwitterTweet> userTimeline = twitter.getStatuses().getUserTimeline().send();
-		for (TwitterTweet tweet: userTimeline) {
+		List<TwitterStatus> userTimeline = twitter.getStatuses().getUserTimeline().send();
+		for (TwitterStatus tweet: userTimeline) {
 			System.out.println(tweet.getText());
 			System.out.println("");
 		}

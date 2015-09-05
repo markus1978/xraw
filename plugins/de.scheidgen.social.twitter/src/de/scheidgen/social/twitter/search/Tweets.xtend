@@ -1,9 +1,9 @@
 package de.scheidgen.social.twitter.search
 
 import de.scheidgen.social.core.annotations.Request
-import de.scheidgen.social.twitter.resources.TwitterSearchResult
-import org.scribe.model.Verb
 import de.scheidgen.social.core.annotations.Required
+import de.scheidgen.social.twitter.response.TwitterSearchResult
+import org.scribe.model.Verb
 
 enum SearchResultType {
 	mixed, recent, popular

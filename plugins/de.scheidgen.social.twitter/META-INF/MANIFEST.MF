@@ -11,7 +11,7 @@ Require-Bundle: de.scheidgen.social.core;bundle-version="1.0.0",
  org.eclipse.xtend.lib.macro
 Export-Package: de.scheidgen.social.twitter,
  de.scheidgen.social.twitter.converter,
- de.scheidgen.social.twitter.resources,
+ de.scheidgen.social.twitter.response,
  de.scheidgen.social.twitter.search,
  de.scheidgen.social.twitter.statuses
 

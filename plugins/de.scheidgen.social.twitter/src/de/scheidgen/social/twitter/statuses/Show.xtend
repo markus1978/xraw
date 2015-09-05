@@ -2,10 +2,10 @@ package de.scheidgen.social.twitter.statuses
 
 import de.scheidgen.social.core.annotations.Request
 import de.scheidgen.social.core.annotations.Required
-import de.scheidgen.social.twitter.resources.TwitterTweet
 import org.scribe.model.Verb
+import de.scheidgen.social.twitter.response.TwitterStatus
 
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/show.json", returnType=TwitterTweet)
+@Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/show.json", returnType=TwitterStatus)
 class Show {
 	/**
 	 * The numerical ID of the desired Tweet.

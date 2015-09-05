@@ -1,4 +1,4 @@
-package de.scheidgen.social.twitter.resources
+package de.scheidgen.social.twitter.response
 
 import de.scheidgen.social.core.annotations.Response
 import java.util.List
@@ -6,12 +6,12 @@ import de.scheidgen.social.core.annotations.Name
 
 @Response
 class TwitterSearchResult {
-	List<TwitterTweet> statuses
-	SearchMetaData search_metadata
+	List<TwitterStatus> statuses
+	TwitterSearchMetaData search_metadata
 }
 
 @Response
-class SearchMetaData {	
+class TwitterSearchMetaData {	
     @Name("since_id_str") String max_id
     @Name("max_id_str") String since_id
     @Name("refresh_url") String refresh_url_parameters

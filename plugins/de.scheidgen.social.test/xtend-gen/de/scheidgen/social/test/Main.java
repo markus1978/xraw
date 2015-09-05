@@ -4,9 +4,9 @@ import de.scheidgen.social.core.SocialService;
 import de.scheidgen.social.core.socialstore.Profile;
 import de.scheidgen.social.test.SocialUtil;
 import de.scheidgen.social.twitter.Twitter;
-import de.scheidgen.social.twitter.resources.TwitterSearchResult;
-import de.scheidgen.social.twitter.resources.TwitterTweet;
-import de.scheidgen.social.twitter.resources.TwitterUser;
+import de.scheidgen.social.twitter.response.TwitterSearchResult;
+import de.scheidgen.social.twitter.response.TwitterStatus;
+import de.scheidgen.social.twitter.response.TwitterUser;
 import de.scheidgen.social.twitter.search.SearchResultType;
 import de.scheidgen.social.twitter.search.Tweets;
 import de.scheidgen.social.twitter.statuses.Show;
@@ -23,13 +23,13 @@ public class Main {
     Twitter.Statuses _statuses = twitter.getStatuses();
     UserTimeline _userTimeline = _statuses.getUserTimeline();
     UserTimeline _count = _userTimeline.count(100);
-    final List<TwitterTweet> userTimeline = _count.send();
-    TwitterTweet _get = userTimeline.get(0);
+    final List<TwitterStatus> userTimeline = _count.send();
+    TwitterStatus _get = userTimeline.get(0);
     final String firstTweetId = _get.getId();
     Twitter.Statuses _statuses_1 = twitter.getStatuses();
     Show _show = _statuses_1.getShow();
     Show _id = _show.id(firstTweetId);
-    final TwitterTweet firstTweet = _id.send();
+    final TwitterStatus firstTweet = _id.send();
     TwitterUser _user = firstTweet.getUser();
     String _location = _user.getLocation();
     InputOutput.<String>println(_location);
@@ -38,8 +38,8 @@ public class Main {
     Tweets _q = _tweets.q("Barack Obama");
     Tweets _resultType = _q.resultType(SearchResultType.popular);
     TwitterSearchResult _send = _resultType.send();
-    List<TwitterTweet> _statuses_2 = _send.getStatuses();
-    for (final TwitterTweet status : _statuses_2) {
+    List<TwitterStatus> _statuses_2 = _send.getStatuses();
+    for (final TwitterStatus status : _statuses_2) {
       int _retweetCount = status.getRetweetCount();
       String _plus = ("# " + Integer.valueOf(_retweetCount));
       String _plus_1 = (_plus + ":");
