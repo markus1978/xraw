@@ -7,7 +7,7 @@ class TwitterTest {
 	
 	static def void main(String[] args) {
 		val profile = SocialUtil::openProfile
-		val twitter = Twitter.get(SocialUtil::getTwitterService(profile))
+		val twitter = Twitter.create(SocialUtil::getTwitterService(profile))
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).send
 		val firstTweetId = userTimeline.get(0).id

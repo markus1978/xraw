@@ -6,7 +6,7 @@ class TumblrTest {
 	
 	static def void main(String[] args) {
 		val profile = SocialUtil::openProfile
-		val tumblr = Tumblr.get(SocialUtil::getTumblrService(profile))
+		val tumblr = Tumblr.create(SocialUtil::getTumblrService(profile))
 		
 		val response = tumblr.blog.info.baseHostname("cubemonstergames.tumblr.com").send
 		println(response.description)		

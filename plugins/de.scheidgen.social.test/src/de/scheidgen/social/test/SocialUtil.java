@@ -78,7 +78,7 @@ public class SocialUtil {
 	
 	public static void main(String[] args) {
 		Profile profile = openProfile();
-		Twitter twitter = Twitter.get(getTwitterService(profile));
+		Twitter twitter = Twitter.create(getTwitterService(profile));
 		List<TwitterStatus> userTimeline = twitter.getStatuses().getUserTimeline().send();
 		for (TwitterStatus tweet: userTimeline) {
 			System.out.println(tweet.getText());
