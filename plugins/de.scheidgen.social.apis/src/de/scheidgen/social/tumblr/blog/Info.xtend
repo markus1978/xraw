@@ -1,8 +1,8 @@
 package de.scheidgen.social.tumblr.blog
 
-import de.scheidgen.social.core.annotations.Request
-import de.scheidgen.social.core.annotations.ResponseContainer
-import de.scheidgen.social.core.annotations.UrlReplace
+import de.scheidgen.social.annotations.Request
+import de.scheidgen.social.annotations.ResponseContainer
+import de.scheidgen.social.annotations.UrlReplace
 import de.scheidgen.social.tumblr.response.TumblrBlog
 import org.scribe.model.Verb
 

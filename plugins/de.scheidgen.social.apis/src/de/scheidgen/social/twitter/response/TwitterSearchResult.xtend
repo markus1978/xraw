@@ -1,8 +1,8 @@
 package de.scheidgen.social.twitter.response
 
-import de.scheidgen.social.core.annotations.Response
+import de.scheidgen.social.annotations.Name
+import de.scheidgen.social.annotations.Response
 import java.util.List
-import de.scheidgen.social.core.annotations.Name
 
 @Response
 class TwitterSearchResult {

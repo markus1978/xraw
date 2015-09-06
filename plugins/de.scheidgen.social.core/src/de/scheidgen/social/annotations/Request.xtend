@@ -1,4 +1,4 @@
-package de.scheidgen.social.core.annotations
+package de.scheidgen.social.annotations
 
 import de.scheidgen.social.core.SocialService
 import java.util.ArrayList
@@ -139,7 +139,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					«ENDFOR»
 					
 					// send request and process response
-					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.execute(_request);
+					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.send(_request);
 					String body = response.getBody();
 					«val responseContainerAnnotation = clazz.findAnnotation(ResponseContainer.findTypeGlobally)»
 					«IF responseContainerAnnotation != null»

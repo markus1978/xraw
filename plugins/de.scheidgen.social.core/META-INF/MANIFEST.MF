@@ -9,22 +9,14 @@ Require-Bundle: org.eclipse.core.runtime,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.11.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: de.scheidgen.social.core,
- de.scheidgen.social.core.annotations,
- de.scheidgen.social.core.socialstore,
- de.scheidgen.social.core.socialstore.impl,
- de.scheidgen.social.core.socialstore.util,
+Export-Package: de.scheidgen.social.annotations,
+ de.scheidgen.social.core,
+ de.scheidgen.social.script,
  org.json,
- org.scribe.builder,
- org.scribe.builder.api,
- org.scribe.exceptions,
- org.scribe.extractors,
- org.scribe.model,
- org.scribe.oauth,
- org.scribe.services,
- org.scribe.utils
+ org.scribe.model
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/jars/commons-codec-1.4.jar,

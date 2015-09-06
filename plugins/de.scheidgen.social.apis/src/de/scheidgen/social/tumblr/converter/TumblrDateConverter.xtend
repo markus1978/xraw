@@ -1,6 +1,6 @@
 package de.scheidgen.social.tumblr.converter
 
-import de.scheidgen.social.core.annotations.Converter
+import de.scheidgen.social.annotations.Converter
 import java.util.Date
 
 class TumblrDateConverter implements Converter<Date> {

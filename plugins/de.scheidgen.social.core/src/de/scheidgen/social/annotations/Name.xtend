@@ -1,4 +1,4 @@
-package de.scheidgen.social.core.annotations
+package de.scheidgen.social.annotations
 
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration

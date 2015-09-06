@@ -9,8 +9,8 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated store -->
       <package
-            uri="http://de.scheidgen/social/store/1.0"
-            class="de.scheidgen.social.core.socialstore.SocialStorePackage"
+            uri="http://de.scheidgen/social/script/model/1.0"
+            class="de.scheidgen.social.script.model.SocialScriptModelPackage"
             genModel="model/store.genmodel"/>
    </extension>
 

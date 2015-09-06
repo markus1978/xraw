@@ -1,6 +1,6 @@
 package de.scheidgen.social.twitter.converter
 
-import de.scheidgen.social.core.annotations.Converter
+import de.scheidgen.social.annotations.Converter
 import java.text.SimpleDateFormat
 import java.util.Date
 

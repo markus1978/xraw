@@ -1,7 +1,7 @@
 package de.scheidgen.social.twitter.search
 
-import de.scheidgen.social.core.annotations.Request
-import de.scheidgen.social.core.annotations.Required
+import de.scheidgen.social.annotations.Request
+import de.scheidgen.social.annotations.Required
 import de.scheidgen.social.twitter.response.TwitterSearchResult
 import org.scribe.model.Verb
 

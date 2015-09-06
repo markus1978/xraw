@@ -1,9 +1,9 @@
 package de.scheidgen.social.tumblr.response
 
-import de.scheidgen.social.core.annotations.Response
-import de.scheidgen.social.core.annotations.WithConverter
-import java.util.Date
+import de.scheidgen.social.annotations.Response
+import de.scheidgen.social.annotations.WithConverter
 import de.scheidgen.social.tumblr.converter.TumblrDateConverter
+import java.util.Date
 
 @Response
 class TumblrBlog {

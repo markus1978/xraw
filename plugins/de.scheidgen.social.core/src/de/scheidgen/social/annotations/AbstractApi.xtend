@@ -1,4 +1,4 @@
-package de.scheidgen.social.core.annotations
+package de.scheidgen.social.annotations
 
 import de.scheidgen.social.core.SocialService
 

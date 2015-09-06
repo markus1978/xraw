@@ -1,9 +1,9 @@
 package de.scheidgen.social.twitter.statuses
 
-import de.scheidgen.social.core.annotations.Request
-import de.scheidgen.social.core.annotations.ReturnsList
-import org.scribe.model.Verb
+import de.scheidgen.social.annotations.Request
+import de.scheidgen.social.annotations.ReturnsList
 import de.scheidgen.social.twitter.response.TwitterStatus
+import org.scribe.model.Verb
 
 @Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/user_timeline.json", returnType=TwitterStatus)
 @ReturnsList

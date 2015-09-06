@@ -1,9 +1,9 @@
 package de.scheidgen.social.twitter.statuses
 
-import de.scheidgen.social.core.annotations.Request
-import de.scheidgen.social.core.annotations.Required
-import org.scribe.model.Verb
+import de.scheidgen.social.annotations.Request
+import de.scheidgen.social.annotations.Required
 import de.scheidgen.social.twitter.response.TwitterStatus
+import org.scribe.model.Verb
 
 @Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/show.json", returnType=TwitterStatus)
 class Show {

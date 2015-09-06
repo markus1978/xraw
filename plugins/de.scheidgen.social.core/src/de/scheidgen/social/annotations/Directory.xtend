@@ -1,4 +1,4 @@
-package de.scheidgen.social.core.annotations
+package de.scheidgen.social.annotations
 
 import de.scheidgen.social.core.SocialService
 import java.util.ArrayList
@@ -10,10 +10,15 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import org.scribe.builder.api.Api
 
 @Active(typeof(DirectoryCompilationParticipant))
 annotation Directory {
 	
+}
+
+annotation Service {
+	Class<? extends Api> value
 }
 
 class DirectoryCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -28,6 +33,18 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 				type = SocialService.newTypeReference
 				final = true
 			]
+			
+			val serviceAnnotation = clazz.findAnnotation(Service.findTypeGlobally)
+			if (serviceAnnotation != null) {
+				clazz.addMethod("getServiceClass") [
+					visibility = Visibility.PUBLIC
+					static = true
+					returnType = serviceAnnotation.getClassValue("value")
+					body = ['''
+						return «toJavaCode(serviceAnnotation.getClassValue("value"))».class;
+					''']
+				]
+			}
 			
 			clazz.addMethod("create") [
 				static = true
