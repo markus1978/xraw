@@ -2,12 +2,12 @@ package de.scheidgen.social.test
 
 import de.scheidgen.social.twitter.Twitter
 import de.scheidgen.social.twitter.search.SearchResultType
+import de.scheidgen.social.script.SocialScript
 
 class TwitterTest {
 	
-	static def void main(String[] args) {
-		val profile = SocialUtil::openProfile
-		val twitter = Twitter.create(SocialUtil::getTwitterService(profile))
+	static def void main(String[] args) {		
+		val twitter = SocialScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).send
 		val firstTweetId = userTimeline.get(0).id

@@ -39,7 +39,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 				clazz.addMethod("getServiceClass") [
 					visibility = Visibility.PUBLIC
 					static = true
-					returnType = serviceAnnotation.getClassValue("value")
+					returnType = Class.newTypeReference(newWildcardTypeReferenceWithLowerBound(serviceAnnotation.getClassValue("value")))
 					body = ['''
 						return «toJavaCode(serviceAnnotation.getClassValue("value"))».class;
 					''']

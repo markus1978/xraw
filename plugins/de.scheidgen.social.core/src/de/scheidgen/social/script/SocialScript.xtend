@@ -16,6 +16,10 @@ import de.scheidgen.social.core.SocialService
 import org.scribe.builder.ServiceBuilder
 import de.scheidgen.social.script.model.Service
 import de.scheidgen.social.script.model.Profile
+import java.util.Scanner
+import org.scribe.model.SignatureType
+import org.scribe.oauth.OAuthService
+import org.scribe.model.Verifier
 
 class SocialScript {
 	
@@ -56,24 +60,78 @@ class SocialScript {
 		this.application = application;
 	}
 	
-	private def createService(Application application) {
+	private def createService(Application application, Class<? extends Api> scribeServiceClass) {
 		val service = SocialScriptModelFactory.eINSTANCE.createService
+		service.scribeServiceClass = scribeServiceClass
 		
+		val in = new Scanner(System.in);
+		println("No data for " + scribeServiceClass.simpleName + " found.")
+		println("Enter a API key: ")
+		print(">>");
+		service.apiKey = in.nextLine().trim()
+		
+		println("Enter a API secret: ")
+		print(">>")
+		service.apiSecret = in.nextLine().trim()
+		
+		println("Enter a callback URL (if required by API): ")
+		print(">>")
+		val callbackLine = in.nextLine().trim()
+		if (!callbackLine.equals("")) {
+			service.callbackUrl = callbackLine
+		}
+		
+		println("Enter a scope (if required by API): ")
+		print(">>")
+		val scopeLine = in.nextLine().trim()
+		if (!scopeLine.equals("")) {
+			service.scope = scopeLine
+		}
+		
+		println("Enter a signature type [Header|QueryString] (if required by API): ")
+		print(">>")
+		val signatureLine = in.nextLine().trim()
+		if (signatureLine.equals("Header")) {
+			service.signatureType = SignatureType.Header
+		} else if (signatureLine.equals("QueryString")) {
+			service.signatureType = SignatureType.QueryString
+		} else {
+			service.signatureType = SignatureType.Header
+		}
+				
 		application.services.add(service)
 		service.eResource.save(null)
 		return service
 	}
 	
-	private def createProfile(Application application) {
+	private def createProfile(Application application, String profileId) {
 		val profile = SocialScriptModelFactory.eINSTANCE.createProfile
-		
+		profile.id = profileId
 		application.profiles.add(profile)
 		profile.eResource.save(null)
 		return profile
 	}
 	
-	private def createServiceCredentials(Profile profile, Service service) {
+	private def createServiceCredentials(Profile profile, Service service, OAuthService oAuthService) {
 		val credentials = SocialScriptModelFactory.eINSTANCE.createServiceCredentials
+		credentials.service = service
+		
+		val requestToken = oAuthService.requestToken
+		val authorizationUrl = oAuthService.getAuthorizationUrl(requestToken)
+		
+		val in = new Scanner(System.in);
+		println("No credentials for " + service.scribeServiceClass.simpleName + " and user " + profile.id + " found.")
+		println("Please go to the following URL, log in, and retrieve the 'verifier': ")
+		println(authorizationUrl)
+		println
+		
+		println("Enter the 'verifier'")
+		print(">>");
+		val verifier = new Verifier(in.nextLine().trim())
+		val accessToken = oAuthService.getAccessToken(requestToken, verifier)
+		
+		credentials.accessToken = accessToken.token
+		credentials.secret = accessToken.secret
 		
 		profile.services.add(credentials)
 		credentials.eResource.save(null)
@@ -81,36 +139,43 @@ class SocialScript {
 	}
 	
 	def <E> E serviceWithLogin(Class<E> serviceClass, String profileId) {
-		val scribeServiceClass = serviceClass.declaredMethods.findFirst[it.name.equals("getServiceClass")].invoke(null) as Class<? extends Api>
+		val scribeServiceClass = serviceClass.declaredMethods.findFirst[it.name.equals("getServiceClass")]?.invoke(null) as Class<? extends Api>
+		if (scribeServiceClass == null) {
+			throw new IllegalArgumentException("The class " + serviceClass.simpleName + " does not have the @Service annotation.")
+		}
 	
 		var serviceVar = application.services.findFirst[it.scribeServiceClass == scribeServiceClass]
 		if (serviceVar == null) {
-			serviceVar = createService(application)
+			serviceVar = createService(application, scribeServiceClass)
 		}	
 		val service = serviceVar
-		val oAuthService = new ServiceBuilder().provider(scribeServiceClass)
+		val serviceBuilder = new ServiceBuilder().provider(scribeServiceClass)
 			.apiKey(service.apiKey)
 			.apiSecret(service.apiSecret)
-			.callback(service.callbackUrl)
-			.scope(service.scope)
-			.signatureType(service.signatureType)
-			.build
+		if (service.callbackUrl != null) {
+			serviceBuilder.callback(service.callbackUrl)
+		} 
+		if (service.scope != null) {
+			serviceBuilder.scope(service.scope)
+		}
+		serviceBuilder.signatureType(service.signatureType)
+		val oAuthService =  serviceBuilder.build
 		
 		var Token accessToken = null
 		if (profileId != null) {
 			var profile = application.profiles.findFirst[id.equals(profileId)]
 			if (profile == null) {
-				profile = createProfile(application)
+				profile = createProfile(application, profileId)
 			}
 			var credentials = profile.services.findFirst[it.service == service]
 			if (credentials == null) {
-				credentials = createServiceCredentials(profile, service)
+				credentials = createServiceCredentials(profile, service, oAuthService)
 			}
 			
 			accessToken = new Token(credentials.getAccessToken(), credentials.getSecret())
 		}
 		
-		return serviceClass.declaredMethods.findFirst[it.name.equals("create")].invoke(new SocialService(oAuthService, accessToken)) as E		
+		return serviceClass.declaredMethods.findFirst[it.name.equals("create")].invoke(null, new SocialService(oAuthService, accessToken)) as E		
 	}
 	
 	def <E> E service(Class<E> serviceClass) {

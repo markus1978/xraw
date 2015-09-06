@@ -16,6 +16,7 @@ Export-Package: de.scheidgen.social.annotations,
  de.scheidgen.social.core,
  de.scheidgen.social.script,
  org.json,
+ org.scribe.builder.api,
  org.scribe.model
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
