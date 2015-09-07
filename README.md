@@ -1,7 +1,8 @@
-# xraw
+# XRaw
 Easy development of RESTful API wrapper for Java with xTend.
 
 ## quick example
+This is a simple script written based on a Twitter API wrapper generated with XRaw.
 ```scala
 // initialize Twitter API with user auth. Key store for app and user token,secrets
 val twitter = SocialScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
@@ -16,7 +17,7 @@ for (status: searchResults.statuses.filter[retweetCount > 20]) {
 ```
 
 ## how does it work
-XRaw uses a library of "active" annotations. These allow you to specify the REST API very easily and generates all necessary wrapper code for you. You simply write annotated classes with fields that correspond to REST resources and their parameters (@Request), as well as their JSON response (@Response).
+XRaw uses a library of "active" annotations. These allow you to specify the REST API very easily and generates all necessary wrapper code for you. You simply write annotated classes with fields that correspond to REST resources and their parameters (@Request), as well as their JSON responses (@Response).
 ```scala
 @Request(method=Verb.GET,
 	url="https://api.twitter.com/1.1/search/tweets.json",
