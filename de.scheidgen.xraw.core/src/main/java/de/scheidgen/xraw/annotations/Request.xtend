@@ -140,6 +140,9 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					
 					// send request and process response
 					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.send(_request);
+					if (response.getCode() != 200) {
+						throw new RuntimeException("API call returned with HTTP " + response.getCode());
+					}
 					String body = response.getBody();
 					«val responseContainerAnnotation = clazz.findAnnotation(ResponseContainer.findTypeGlobally)»
 					«IF responseContainerAnnotation != null»

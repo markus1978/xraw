@@ -13,7 +13,7 @@ class TwitterStatus {
 	boolean truncated = false
     @WithConverter(TwitterDateConverter) Date created_at
     @Name("id_str") String id
-    Object entities
+    TwitterEntities entities
     @Name("in_reply_to_user_id_str") String in_reply_to_user_id
     Object contributors
     String text
@@ -27,6 +27,3 @@ class TwitterStatus {
     String in_reply_to_screen_name
     String source
 }
-
-@Response
-class TwitterEntities {}

@@ -11,6 +11,8 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
+import org.eclipse.xtend.lib.macro.declaration.TypeReference
 
 @Active(typeof(ResponseCompilationParticipant))
 annotation Response {
@@ -94,12 +96,27 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 					returnType = field.type
 					body = [
 						val attributeName = NameUtil::name(context, field)
-		
-						if (newTypeReference(List).isAssignableFrom(field.type)) {
-							// array value
+						if (field.type.array) {
+							// array value to array
 							return '''
 								«toJavaCode(JSONArray.newTypeReference)» jsonArray = json.getJSONArray("«attributeName»");
-								return «toJavaCode(field.type.actualTypeArguments.get(0))».createList(jsonArray);
+								«toJavaCode(field.type.arrayComponentType)»[] result = new «toJavaCode(field.type.arrayComponentType)»[jsonArray.length()];
+								for (int i = 0; i < jsonArray.length(); i++) {
+									«generateObjectValue(context, it, field, field.type.arrayComponentType, "jsonArray.getString(i)", "jsonArray.get(i)")»
+									result[i] = value;
+								}
+								return result;
+							'''
+						} else if (newTypeReference(List).isAssignableFrom(field.type)) {
+							// array value to list
+							return '''
+								«toJavaCode(field.type)» result = new «toJavaCode(ArrayList.newTypeReference(field.type.actualTypeArguments.get(0)))»();
+								«toJavaCode(JSONArray.newTypeReference)» jsonArray = json.getJSONArray("«attributeName»");
+								for (int i = 0; i < jsonArray.length(); i++) {
+									«generateObjectValue(context, it, field, field.type.actualTypeArguments.get(0), "jsonArray.getString(i)", "jsonArray.get(i)")»
+									result.add(value);
+								}
+								return result;
 							'''
 						} else {
 							// single value
@@ -115,20 +132,8 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 										return null;
 									«ENDIF»
 								} else {
-									«val converterClass = context.withConverter(field)»
-									«IF converterClass != null»
-										Object objectValue = new «toJavaCode(converterClass)»().convert(json.getString("«attributeName»"));
-									«ELSE»
-										Object objectValue = json.get("«attributeName»");
-										«IF field.type.type instanceof ClassDeclaration && (field.type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
-											objectValue = «toJavaCode(field.type)».create((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
-										«ENDIF»
-									«ENDIF»
-									if (objectValue instanceof «toJavaCode(field.type.wrapperIfPrimitive)») {
-										return («toJavaCode(field.type.wrapperIfPrimitive)»)objectValue;
-									} else {
-										throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
-									}
+									«generateObjectValue(context, it, field, field.type, '''json.getString("«attributeName»")''', '''json.get("«attributeName»")''')»
+									return value;
 								}
 							'''
 						}
@@ -147,4 +152,22 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 			]				
 		}
 	}
+	
+	def generateObjectValue(extension TransformationContext transCtx, extension CompilationContext compCtx, MutableFieldDeclaration field, TypeReference type, String getString, String get) '''
+		«toJavaCode(type.wrapperIfPrimitive)» value = null;
+		«val converterClass = transCtx.withConverter(field)»
+		«IF converterClass != null»
+			Object objectValue = new «toJavaCode(converterClass)»().convert(«getString»);
+		«ELSE»
+			Object objectValue = «get»;
+			«IF type.type instanceof ClassDeclaration && (type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
+				objectValue = «toJavaCode(type)».create((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
+			«ENDIF»
+		«ENDIF»
+		if (objectValue instanceof «toJavaCode(type.wrapperIfPrimitive)») {
+			value = («toJavaCode(type.wrapperIfPrimitive)»)objectValue;
+		} else {
+			throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
+		}
+	'''
 }

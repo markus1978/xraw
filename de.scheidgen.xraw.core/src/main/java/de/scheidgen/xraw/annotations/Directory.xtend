@@ -73,6 +73,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 					field.final = true
 					clazz.addMethod("get" + field.simpleName.toFirstUpper) [
 						returnType = field.type
+						docComment = (field.type.type as ClassDeclaration).docComment
 						body = ['''
 							return «field.simpleName»;
 						''']
@@ -80,6 +81,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 				} else {
 					clazz.addMethod("get" + field.simpleName.toFirstUpper) [
 						returnType = field.type
+						docComment = (field.type.type as ClassDeclaration).docComment
 						body = ['''
 							return «toJavaCode(field.type)».create(_service);
 						''']
