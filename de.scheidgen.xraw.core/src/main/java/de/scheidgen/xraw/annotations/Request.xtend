@@ -109,7 +109,22 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 								return this; 
 							'''
 						} else '''
-							_request.addQuerystringParameter("«remoteName»", «toJavaCode(string)».valueOf(«localName»));
+							String valueStr = null;
+							«IF List.newTypeReference.isAssignableFrom(field.type)»
+								valueStr = "";
+								boolean first = true;
+								for («toJavaCode(field.type.actualTypeArguments.get(0))» value: «localName») {
+									if (first) {
+										first = false;
+									} else {
+										valueStr += ", ";
+									}
+									valueStr += «toJavaCode(string)».valueOf(value);
+								}
+							«ELSE»
+								valueStr = «toJavaCode(string)».valueOf(«localName»);								
+							«ENDIF»
+							_request.addQuerystringParameter("«remoteName»", valueStr);
 							_parameters.add("«remoteName»");
 							return this;
 						'''
@@ -141,7 +156,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					// send request and process response
 					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.send(_request);
 					if (response.getCode() != 200) {
-						throw new RuntimeException("API call returned with HTTP " + response.getCode());
+						throw new RuntimeException("API call " + _request.getCompleteUrl() + " returned with HTTP " + response.getCode());
 					}
 					String body = response.getBody();
 					«val responseContainerAnnotation = clazz.findAnnotation(ResponseContainer.findTypeGlobally)»

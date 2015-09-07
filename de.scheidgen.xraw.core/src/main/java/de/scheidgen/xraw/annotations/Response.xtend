@@ -13,6 +13,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
+import org.eclipse.xtend.lib.macro.declaration.EnumerationTypeDeclaration
 
 @Active(typeof(ResponseCompilationParticipant))
 annotation Response {
@@ -157,10 +158,16 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 		«toJavaCode(type.wrapperIfPrimitive)» value = null;
 		«val converterClass = transCtx.withConverter(field)»
 		«IF converterClass != null»
-			Object objectValue = new «toJavaCode(converterClass)»().convert(«getString»);
+			Object objectValue = new «toJavaCode(converterClass)»().convert(«get».toString());
 		«ELSE»
 			Object objectValue = «get»;
-			«IF type.type instanceof ClassDeclaration && (type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
+			«IF type.type instanceof EnumerationTypeDeclaration»
+				if (objectValue instanceof String) {
+					objectValue = «toJavaCode(type)».valueOf((String)objectValue);
+				} else {
+					throw new «toJavaCode(ClassCastException.newTypeReference)»("Cannot create an enum value from a non string json value.");
+				}
+			«ELSEIF type.type instanceof ClassDeclaration && (type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
 				objectValue = «toJavaCode(type)».create((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
 			«ENDIF»
 		«ENDIF»

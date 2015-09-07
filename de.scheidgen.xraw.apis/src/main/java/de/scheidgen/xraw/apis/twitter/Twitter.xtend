@@ -15,6 +15,7 @@ class Twitter {
 	Users users
 	Friends friends
 	Followers followers
+	Friendships friendships
 }
 
 @Directory 
@@ -38,6 +39,11 @@ class Friends {
 class Followers {
 	de.scheidgen.xraw.apis.twitter.followers.Id id
 	de.scheidgen.xraw.apis.twitter.followers.List list
+}
+
+@Directory
+class Friendships {
+	de.scheidgen.xraw.apis.twitter.friendships.Lookup lookup
 }
 
 @Directory
