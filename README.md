@@ -86,6 +86,7 @@ class TwitterStatus {
     String source
 }
 ```
+These API classes have to be written in xTend in order for xTend's active annotations to work. XTend is a language that compiles to Java and its active annotations allow you to manipulate the code generation process. Therefore these annotations allow as to add additional semantics to classes and their fields that realize the wrapper functionality.
 
 ## get started
 ```
