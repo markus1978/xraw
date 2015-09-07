@@ -15,9 +15,10 @@ for (status: searchResults.statuses.filter[retweetCount > 20]) {
     println("# " + status.retweetCount + ":" + status.text)
 }
 ```
+This is written in xTend. You could also use Scala, Java or any other JVM/bytecode based language.
 
 ## how does it work
-XRaw uses a library of "active" annotations. These allow you to specify the REST API very easily and generates all necessary wrapper code for you. You simply write annotated classes with fields that correspond to REST resources and their parameters (@Request), as well as their JSON responses (@Response).
+XRaw uses a library of "active" annotations. These allow you to specify the REST API very easily and generates all necessary wrapper Java code for you. You simply write annotated classes with fields that correspond to REST resources and their parameters (@Request), as well as their JSON responses (@Response).
 ```scala
 @Request(method=Verb.GET,
 	url="https://api.twitter.com/1.1/search/tweets.json",
