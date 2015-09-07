@@ -20,13 +20,13 @@ import org.scribe.oauth.OAuthService
 import de.scheidgen.xraw.model.XRawScriptModelFactory
 import de.scheidgen.xraw.model.XRawScriptModelPackage
 
-class SocialScript {
+class XRawScript {
 	
-	static def SocialScript create() {
-		return new SocialScript(XRawScriptModelFactory.eINSTANCE.createApplication)
+	static def XRawScript create() {
+		return new XRawScript(XRawScriptModelFactory.eINSTANCE.createApplication)
 	}
 	
-	static def SocialScript createWithStore(String fileName) {
+	static def XRawScript createWithStore(String fileName) {
 		EPackage.Registry.INSTANCE.put(XRawScriptModelPackage.eINSTANCE.getNsURI(), XRawScriptModelPackage.eINSTANCE);		
 		EPackage.Registry.INSTANCE.put(EcorePackage.eINSTANCE.getNsURI(), EcorePackage.eINSTANCE);
 		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
@@ -50,7 +50,7 @@ class SocialScript {
 			resource.save(null);
 		}
 		
-		return new SocialScript(application)
+		return new XRawScript(application)
 	}
 	
 	private val Application application;

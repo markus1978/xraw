@@ -12,8 +12,8 @@ class TwitterSearchResult {
 
 @Response
 class TwitterSearchMetaData {	
-    @Name("since_id_str") String max_id
-    @Name("max_id_str") String since_id
+    @Name("since_id_str") String since_id
+    @Name("max_id_str") String max_id
     @Name("refresh_url") String refresh_url_parameters
     @Name("next_results") String next_results_url_parameters
     int count
