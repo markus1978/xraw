@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.twitter.users
 
 import de.scheidgen.xraw.annotations.Request
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import org.scribe.model.Verb
 
 /**
  * Returns a variety of information about the user specified by the required user_id or screen_name parameter. The author’s most recent Tweet will be returned inline when possible.
@@ -18,7 +18,7 @@ import org.scribe.model.Verb
  * <li>Requests / 15-min window (app auth): 180</li>
  * </ul>	
  */
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/users/show.json", returnType=TwitterUser)
+@Request(url="https://api.twitter.com/1.1/users/show.json", response=@Response(resourceType=TwitterUser))
 class Show {
 	/**
 	 * The ID of the user for whom to return results for. Either an id or screen_name is required for this method.

@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.annotations.Name
+import de.scheidgen.xraw.annotations.Resource
 
-@Response
+@Resource
 class TwitterFriendship {
 	String name
     String screen_name

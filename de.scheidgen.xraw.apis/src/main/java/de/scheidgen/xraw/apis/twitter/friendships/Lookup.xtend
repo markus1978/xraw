@@ -1,10 +1,9 @@
 package de.scheidgen.xraw.apis.twitter.friendships
 
-import org.scribe.model.Verb
 import de.scheidgen.xraw.annotations.Request
-import java.util.List
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterFriendship
-import de.scheidgen.xraw.annotations.ReturnsList
+import java.util.List
 
 /**
  * Returns the relationships of the authenticating user to the comma-separated list of up to 100 screen_names or user_ids provided. Values for connections can be: following, following_requested, followed_by, none, blocking, muting.
@@ -14,8 +13,7 @@ import de.scheidgen.xraw.annotations.ReturnsList
  * <li>Requests / 15-min window (user auth): 15</li>
  * </ul>
  */
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/friendships/lookup.json",returnType=TwitterFriendship)
-@ReturnsList
+@Request(url="https://api.twitter.com/1.1/friendships/lookup.json", response=@Response(resourceType=TwitterFriendship, isList=true))
 class Lookup {
 	/**
 	 * A comma separated list of screen names, up to 100 are allowed in a single request.

@@ -15,12 +15,12 @@ import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationCo
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.EnumerationTypeDeclaration
 
-@Active(typeof(ResponseCompilationParticipant))
-annotation Response {
+@Active(typeof(ResourceCompilationParticipant))
+annotation Resource {
 
 }
 
-class ResponseCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
+class ResourceCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 	
 	def withConverter(extension TransformationContext context, MutableFieldDeclaration field) {
 		val converterAnnotation = field.findAnnotation(typeof(WithConverter).findTypeGlobally)
@@ -35,56 +35,12 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 			
 			clazz.addField("json") [
 				type = newTypeReference(JSONObject)
+				final = true
 				visibility = Visibility.PRIVATE 
 			]
-			
-			clazz.addMethod("create") [
-				static = true
-				visibility = Visibility.PUBLIC
-				addParameter("jsonStr", string)
-				returnType = newTypeReference(clazz)
-				body = ['''
-					return create(new «toJavaCode(JSONObject.newTypeReference)»(jsonStr));
-				''']
-			]
-			
-			clazz.addMethod("create") [
-				static = true
-				visibility = Visibility.PUBLIC
-				addParameter("json", JSONObject.newTypeReference)
-				returnType = newTypeReference(clazz)
-				body = ['''
-					return new «clazz.simpleName»(json);
-				''']
-			]
-			
-			clazz.addMethod("createList") [
-				static = true
-				visibility = Visibility.PUBLIC
-				addParameter("jsonStr", string)
-				returnType = newTypeReference(List, { newTypeReference(clazz) })
-				body = ['''
-					«toJavaCode(JSONArray.newTypeReference)» jsonArray = new «toJavaCode(JSONArray.newTypeReference)»(jsonStr);
-					return createList(jsonArray);					
-				''']
-			]
-			
-			clazz.addMethod("createList") [
-				static = true
-				visibility = Visibility.PUBLIC
-				addParameter("jsonArray", JSONArray.newTypeReference)
-				returnType = newTypeReference(List, { newTypeReference(clazz) })
-				body = ['''					
-					«toJavaCode(List.newTypeReference({newTypeReference(clazz)}))» result = new «toJavaCode(ArrayList.newTypeReference({newTypeReference(clazz)}))»();
-					for (int i = 0; i < jsonArray.length(); i++) {
-						result.add(new «clazz.simpleName»(jsonArray.getJSONObject(i)));
-					}
-					return result;
-				''']
-			]
-			
+
 			clazz.addConstructor[
-				visibility = Visibility.PRIVATE
+				visibility = Visibility.PUBLIC
 				addParameter("json", newTypeReference(JSONObject))
 				body = ['''
 					this.json = json;
@@ -167,8 +123,8 @@ class ResponseCompilationParticipant implements TransformationParticipant<Mutabl
 				} else {
 					throw new «toJavaCode(ClassCastException.newTypeReference)»("Cannot create an enum value from a non string json value.");
 				}
-			«ELSEIF type.type instanceof ClassDeclaration && (type.type as ClassDeclaration).findAnnotation(Response.findTypeGlobally) != null»
-				objectValue = «toJavaCode(type)».create((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
+			«ELSEIF type.type instanceof ClassDeclaration && (type.type as ClassDeclaration).findAnnotation(Resource.findTypeGlobally) != null»
+				objectValue = new «toJavaCode(type)»((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
 			«ENDIF»
 		«ENDIF»
 		if (objectValue instanceof «toJavaCode(type.wrapperIfPrimitive)») {

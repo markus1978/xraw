@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.twitter.statuses
 
-import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
-import org.scribe.model.Verb
+import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/show.json", returnType=TwitterStatus)
+@Request(url="https://api.twitter.com/1.1/statuses/show.json", response=@Response(resourceType=TwitterStatus))
 class Show {
 	/**
 	 * The numerical ID of the desired Tweet.

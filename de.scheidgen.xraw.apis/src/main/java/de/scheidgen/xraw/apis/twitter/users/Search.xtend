@@ -2,9 +2,8 @@ package de.scheidgen.xraw.apis.twitter.users
 
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
-import de.scheidgen.xraw.annotations.ReturnsList
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import org.scribe.model.Verb
 
 /**
  * Provides a simple, relevance-based search interface to public user accounts on Twitter. Try querying by topical interest, full name, company name, location, or other criteria. Exact match searches are not supported.
@@ -17,8 +16,7 @@ import org.scribe.model.Verb
  * <li>Requests / 15-min window (user auth): 180</li> 
  * </ul>
  */
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/users/search.json", returnType=TwitterUser)
-@ReturnsList
+@Request(url="https://api.twitter.com/1.1/users/search.json", response=@Response(resourceType=TwitterUser, isList=true))
 class Search {
 	/**
 	 * The search query to run against people search.

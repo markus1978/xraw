@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.twitter.friends
 
 import de.scheidgen.xraw.annotations.Request
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterUserCursor
-import org.scribe.model.Verb
 
 /**
  * Returns a cursored collection of user objects for every user the specified user is following (otherwise known as their “friends”).
@@ -16,7 +16,7 @@ import org.scribe.model.Verb
  * </ul>
  * Either a screen_name or a user_id must be provided.
  */
- @Request(method=Verb.GET, url="https://api.twitter.com/1.1/friends/list.json", returnType=TwitterUserCursor)
+ @Request(url="https://api.twitter.com/1.1/friends/list.json", response=@Response(resourceType=TwitterUserCursor))
 class List {
 	/**
 	 * The ID of the user for whom to return results for.

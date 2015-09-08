@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.tumblr.response
 
 import de.scheidgen.xraw.apis.tumblr.converter.TumblrDateConverter
-import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.annotations.WithConverter
 import java.util.Date
+import de.scheidgen.xraw.annotations.Resource
 
-@Response
+@Resource
 class TumblrBlog {
 	
 	/**

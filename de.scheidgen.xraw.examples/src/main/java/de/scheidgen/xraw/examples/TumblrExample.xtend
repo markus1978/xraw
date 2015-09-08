@@ -8,7 +8,7 @@ class TumblrExample {
 	static def void main(String[] args) {
 		val tumblr = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Tumblr, "markus")
 		
-		val response = tumblr.blog.info.baseHostname("cubemonstergames.tumblr.com").send
+		val response = tumblr.blog.info.baseHostname("cubemonstergames.tumblr.com").xExecute.xResult
 		println(response.description)		
 	}
 }

@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.apis.twitter.followers
 
 import de.scheidgen.xraw.annotations.Request
-import org.scribe.model.Verb
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
 
 /**
@@ -16,7 +16,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
  * </ul>
  * Either a screen_name or a user_id must be provided.
  */
- @Request(method=Verb.GET, url="https://api.twitter.com/1.1/followers/ids.json", returnType=TwitterIdCursor)
+ @Request(url="https://api.twitter.com/1.1/followers/ids.json", response=@Response(resourceType=TwitterIdCursor))
 class Id {
 	/**
 	 * The ID of the user for whom to return results for.

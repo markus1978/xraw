@@ -18,7 +18,7 @@ class IncrementalTwitterUserSearch {
 		
 		var i = 0;
 		while (result.size < 5) {
-			val usersWithKeywords = twitter.users.search.q(keyword).page(i++).count(20).send
+			val usersWithKeywords = twitter.users.search.q(keyword).page(i++).count(20).xExecute.xResults
 			result.addAll(usersWithKeywords.filter(filter))	
 			println(result.size)
 		}
@@ -31,7 +31,7 @@ class IncrementalTwitterUserSearch {
 			var String cursor = "-1"
 			while (true) {
 				println("%% " + cursor)
-				val current = twitter.followers.list.userId(user.id).count(1000).cursor(cursor).send				
+				val current = twitter.followers.list.userId(user.id).count(1000).cursor(cursor).xExecute.xResult				
 				result.addAll(current.users.filter(filter))	
 				cursor = current.nextCursor
 			}							

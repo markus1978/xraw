@@ -1,12 +1,10 @@
 package de.scheidgen.xraw.apis.twitter.statuses
 
 import de.scheidgen.xraw.annotations.Request
-import de.scheidgen.xraw.annotations.ReturnsList
+import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
-import org.scribe.model.Verb
 
-@Request(method=Verb.GET, url="https://api.twitter.com/1.1/statuses/user_timeline.json", returnType=TwitterStatus)
-@ReturnsList
+@Request(url="https://api.twitter.com/1.1/statuses/user_timeline.json", response=@Response(resourceType=TwitterStatus, isList=true))
 class UserTimeline {
 	/**
 	 * The ID of the user for whom to return results for.

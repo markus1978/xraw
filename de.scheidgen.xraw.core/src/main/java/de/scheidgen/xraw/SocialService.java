@@ -7,7 +7,7 @@ import org.scribe.oauth.OAuthService;
 
 /**
  * Simple wrapper around {@link OAuthService} that uses user credentials if
- * there are provided.
+ * there are provided. 
  */
 public class SocialService {
 

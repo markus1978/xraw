@@ -10,8 +10,8 @@ class TwitterAutoUnfollow {
 	def static void main(String[] args) {
 		val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
 		
-		val myId = twitter.users.show.screenName("mscheidgen").send.id
-		val friendIds = twitter.friends.id.userId(myId).count(5000).send.ids
+		val myId = twitter.users.show.screenName("mscheidgen").xResult.id
+		val friendIds = twitter.friends.id.userId(myId).count(5000).xResult.ids
 		println(friendIds.size)
 		
 		val notFollowingFriends = new ArrayList<TwitterFriendship>()
@@ -20,8 +20,8 @@ class TwitterAutoUnfollow {
 			for (var ii = 0; ii < 100 && i < friendIds.size; ii++) {
 				next100Ids.add(friendIds.get(i++))
 			}
-			val friendFriendships = twitter.friendships.lookup.userId(next100Ids).send
-			notFollowingFriends.addAll(friendFriendships.filter[it.connections.contains(TwitterConnections.followed_by)])		
+			val friendFriendships = twitter.friendships.lookup.userId(next100Ids).xResults
+			notFollowingFriends.addAll(friendFriendships.filter[!it.connections.contains(TwitterConnections.followed_by)])		
 		}		
 		
 		println(notFollowingFriends.size)
