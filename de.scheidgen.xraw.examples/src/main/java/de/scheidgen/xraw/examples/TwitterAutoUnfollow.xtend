@@ -24,6 +24,15 @@ class TwitterAutoUnfollow {
 			notFollowingFriends.addAll(friendFriendships.filter[!it.connections.contains(TwitterConnections.followed_by)])		
 		}		
 		
-		println(notFollowingFriends.size)
+		println("Found " + notFollowingFriends.size + "friend that are not following.")
+		val numberToUnfollow = Math.min(10, notFollowingFriends.size)
+		println("Try to unfollow the first " + numberToUnfollow + " user.")
+		for (i: 0..<numberToUnfollow) {
+			if (twitter.friendships.destroy.userId(notFollowingFriends.get(i).id).xResponse.successful) {
+				println("Success: unfollowed " + notFollowingFriends.get(i).screenName)
+			} else {
+				println("Failure")
+			}
+		} 
 	}
 }

@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.search
 
 import de.scheidgen.xraw.annotations.Request
-import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterSearchResult
@@ -15,7 +14,7 @@ class Tweets {
 	/**
 	 * A UTF-8, URL-encoded search query of 500 characters maximum, including operators. Queries may additionally be limited by complexity.
 	 */
-	@Required String q
+	String q
 
 	/**
 	 * Returns tweets by users located within a given radius of the given latitude/longitude. The location is preferentially taking from the Geotagging API, but will fall back to their Twitter profile. The parameter value is specified by “latitude,longitude,radius”, where radius units must be specified as either “mi” (miles) or “km” (kilometers). Note that you cannot use the near operator via the API to geocode arbitrary locations; however you can use this geocode parameter to search near geocodes directly. A maximum of 1,000 distinct “sub-regions” will be considered when using the radius modifier.

@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.statuses
 
 import de.scheidgen.xraw.annotations.Request
-import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
@@ -11,7 +10,7 @@ class Show {
 	/**
 	 * The numerical ID of the desired Tweet.
 	 */
-	@Required String id
+	String id
 
 	/**
 	 * When set to either true, t or 1, each tweet returned in a timeline will include a user object including only the status authors numerical ID. Omit this parameter to receive the complete user object.

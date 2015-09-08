@@ -44,6 +44,7 @@ class Followers {
 @Directory
 class Friendships {
 	de.scheidgen.xraw.apis.twitter.friendships.Lookup lookup
+	de.scheidgen.xraw.apis.twitter.friendships.Destroy destroy
 }
 
 @Directory

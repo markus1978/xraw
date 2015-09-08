@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.users
 
 import de.scheidgen.xraw.annotations.Request
-import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
@@ -22,7 +21,7 @@ class Search {
 	/**
 	 * The search query to run against people search.
 	 */
-	@Required String q
+	String q
 
 	/**
 	 * Specifies the page of results to retrieve.

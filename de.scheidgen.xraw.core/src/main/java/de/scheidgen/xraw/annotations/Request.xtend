@@ -4,9 +4,7 @@ import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.SocialService
 import java.lang.annotation.Target
 import java.util.ArrayList
-import java.util.Collection
 import java.util.Collections
-import java.util.HashSet
 import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
@@ -24,6 +22,7 @@ import org.scribe.model.Verb
 annotation Request {
 	String url
 	Response response
+	Verb method = Verb.GET
 }
 
 annotation Response {
@@ -33,8 +32,7 @@ annotation Response {
 	String resourceKey = ""
 }
 
-@Target(FIELD) annotation Required {}
-@Target(FIELD) annotation Post {}
+// TODO some form of "constraint language"
 @Target(FIELD) annotation UrlReplace { String value }
 
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -52,7 +50,8 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
 			
-			val responseAnnotation = clazz.findAnnotation(Request.findTypeGlobally).getAnnotationValue("response")
+			val requestAnnotation = clazz.findAnnotation(Request.findTypeGlobally)
+			val responseAnnotation = requestAnnotation.getAnnotationValue("response")
 			
 			clazz.addField("_service") [
 				type = newTypeReference(SocialService)
@@ -62,12 +61,6 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			clazz.addField("_request") [
 				type = newTypeReference(OAuthRequest)
 				final = false
-			]
-			
-			clazz.addField("_parameters") [
-				type = Collection.newTypeReference(string)
-				initializer = ['''new «toJavaCode(HashSet.newTypeReference(string))»()''']
-				final = true
 			]
 			
 			clazz.addField("_response") [
@@ -94,7 +87,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				
 					return '''
 						this._service = service;
-						this._request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».GET, "«url»");
+						this._request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«requestAnnotation.getEnumValue("method").simpleName», "«url»");
 					'''
 				]
 			]
@@ -166,9 +159,9 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						}
 						«val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)»
 						«IF (urlReplaceAnnotation != null)»					
-							«val method = Verb.GET /* TODO when post*/»
+							«val method = requestAnnotation.getEnumValue("method")»
 							String url = _request.getUrl().replace("«urlReplaceAnnotation.getStringValue("value")»", «toJavaCode(string)».valueOf(«localName»));
-							_request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.name», url);
+							_request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», url);
 							return this; 
 						«ELSE»
 							String valueStr = null;
@@ -187,7 +180,6 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 								valueStr = «toJavaCode(string)».valueOf(«localName»);								
 							«ENDIF»
 							_request.addQuerystringParameter("«remoteName»", valueStr);
-							_parameters.add("«remoteName»");
 							return this;
 						«ENDIF»
 					'''] 
@@ -199,16 +191,6 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				visibility = Visibility.PUBLIC				
 				
 				body = ['''					
-					// check required parameters were set
-					«FOR field: declaredFields»
-						«IF field.findAnnotation(Required.findTypeGlobally) != null»
-							if (!_parameters.contains("«NameUtil::name(context, field)»")) {
-								throw new IllegalArgumentException("Value for «NameUtil::snakeCaseToCamelCase(field.simpleName)» is required.");
-							}
-						«ENDIF»
-					«ENDFOR»
-					
-					// send request and process response
 					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.send(_request);
 					_response = new «toJavaCode(responseAnnotation.getClassValue("responseType"))»(response);
 					return this;
