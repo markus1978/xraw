@@ -2,6 +2,7 @@ package de.scheidgen.xraw.apis.twitter.friendships
 
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterFriendship
 import java.util.List
 
@@ -13,7 +14,7 @@ import java.util.List
  * <li>Requests / 15-min window (user auth): 15</li>
  * </ul>
  */
-@Request(url="https://api.twitter.com/1.1/friendships/lookup.json", response=@Response(resourceType=TwitterFriendship, isList=true))
+@Request(url="https://api.twitter.com/1.1/friendships/lookup.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterFriendship, isList=true))
 class Lookup {
 	/**
 	 * A comma separated list of screen names, up to 100 are allowed in a single request.

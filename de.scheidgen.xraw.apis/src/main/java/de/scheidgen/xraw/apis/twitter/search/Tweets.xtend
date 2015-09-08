@@ -3,13 +3,14 @@ package de.scheidgen.xraw.apis.twitter.search
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterSearchResult
 
 enum SearchResultType {
 	mixed, recent, popular
 }
 
-@Request(url="https://api.twitter.com/1.1/search/tweets.json", response=@Response(resourceType=TwitterSearchResult))
+@Request(url="https://api.twitter.com/1.1/search/tweets.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterSearchResult))
 class Tweets {
 	/**
 	 * A UTF-8, URL-encoded search query of 500 characters maximum, including operators. Queries may additionally be limited by complexity.

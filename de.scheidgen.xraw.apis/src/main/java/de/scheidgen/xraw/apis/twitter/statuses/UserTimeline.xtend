@@ -2,9 +2,10 @@ package de.scheidgen.xraw.apis.twitter.statuses
 
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 
-@Request(url="https://api.twitter.com/1.1/statuses/user_timeline.json", response=@Response(resourceType=TwitterStatus, isList=true))
+@Request(url="https://api.twitter.com/1.1/statuses/user_timeline.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterStatus, isList=true))
 class UserTimeline {
 	/**
 	 * The ID of the user for whom to return results for.

@@ -3,9 +3,10 @@ package de.scheidgen.xraw.apis.twitter.statuses
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 
-@Request(url="https://api.twitter.com/1.1/statuses/show.json", response=@Response(resourceType=TwitterStatus))
+@Request(url="https://api.twitter.com/1.1/statuses/show.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterStatus))
 class Show {
 	/**
 	 * The numerical ID of the desired Tweet.

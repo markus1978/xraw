@@ -2,6 +2,7 @@ package de.scheidgen.xraw.apis.twitter.users
 
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 import java.util.List
 
@@ -30,7 +31,7 @@ import java.util.List
  * <li>Requests / 15-min window (app auth): 60</li>
  * </ul>		
  */
-@Request(url="https://api.twitter.com/1.1/users/lookup.json", response=@Response(resourceType=TwitterUser, isList=true))
+@Request(url="https://api.twitter.com/1.1/users/lookup.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUser, isList=true))
 class Lookup {
 	/**
 	 * A comma separated list of screen names, up to 100 are allowed in a single request. You are strongly encouraged to use a POST for larger (up to 100 screen names) requests.

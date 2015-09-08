@@ -15,9 +15,11 @@ class TwitterExample {
 		
 		println(firstTweet.user.location)
 		
-		val searchResults = twitter.search.tweets.q("Barack Obama").resultType(SearchResultType.popular).xResult
-		for (status: searchResults.statuses) {
+		val searchResults = twitter.search.tweets.q("Barack Obama").resultType(SearchResultType.popular)
+		for (status: searchResults.xResult.statuses) {
 			println("# " + status.retweetCount + ":" + status.text)
 		}
+
+		println(searchResults.xResponse.rateLimitRemaining)
 	}
 }

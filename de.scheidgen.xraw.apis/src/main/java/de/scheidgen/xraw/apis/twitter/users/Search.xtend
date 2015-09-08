@@ -3,6 +3,7 @@ package de.scheidgen.xraw.apis.twitter.users
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 
 /**
@@ -16,7 +17,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterUser
  * <li>Requests / 15-min window (user auth): 180</li> 
  * </ul>
  */
-@Request(url="https://api.twitter.com/1.1/users/search.json", response=@Response(resourceType=TwitterUser, isList=true))
+@Request(url="https://api.twitter.com/1.1/users/search.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUser, isList=true))
 class Search {
 	/**
 	 * The search query to run against people search.

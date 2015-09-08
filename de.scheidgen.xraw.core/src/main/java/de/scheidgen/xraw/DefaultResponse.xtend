@@ -22,6 +22,10 @@ class DefaultResponse {
 		return scribeResponse.code
 	}
 	
+	public def getBody() {
+		return scribeResponse.body
+	}
+	
 	public def JSONArray getJSONArray(String key) {
 		if (scribeResponse.successful) {
 			if (key == "") {
@@ -48,9 +52,9 @@ class DefaultResponse {
 	
 	override toString() {
 		val builder = new StringBuilder
-		builder.append(code + ": " + if (successful) "Success" else "Failure")
+		builder.append(code + ": " + (if (successful) "Success" else "Failure") + "\n")
 		for(header: headers.entrySet) {
-			builder.append(header.key + ": " + header.value)
+			builder.append(header.key + ": " + header.value + "\n")
 		}
 		builder.append(scribeResponse.body)
 		return builder.toString
