@@ -9,7 +9,7 @@ class TwitterExample {
 	static def void main(String[] args) {		
 		val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
 		
-		val userTimeline = twitter.statuses.userTimeline.count(100).xResults
+		val userTimeline = twitter.statuses.userTimeline.count(100).xResult
 		val firstTweetId = userTimeline.get(0).id
 		val firstTweet = twitter.statuses.show.id(firstTweetId).xResult
 		

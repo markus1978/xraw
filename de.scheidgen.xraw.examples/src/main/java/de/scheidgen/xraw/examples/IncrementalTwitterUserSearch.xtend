@@ -18,7 +18,7 @@ class IncrementalTwitterUserSearch {
 		
 		var i = 0;
 		while (result.size < 5) {
-			val usersWithKeywords = twitter.users.search.q(keyword).page(i++).count(20).xExecute.xResults
+			val usersWithKeywords = twitter.users.search.q(keyword).page(i++).count(20).xExecute.xResult
 			result.addAll(usersWithKeywords.filter(filter))	
 			println(result.size)
 		}
