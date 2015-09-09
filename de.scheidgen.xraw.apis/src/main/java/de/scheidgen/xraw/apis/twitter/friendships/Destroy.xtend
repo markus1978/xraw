@@ -1,10 +1,11 @@
 package de.scheidgen.xraw.apis.twitter.friendships
 
+import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
-import org.scribe.model.Verb
 import de.scheidgen.xraw.annotations.Response
-import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
+import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import org.scribe.model.Verb
 
 /**
  * Allows the authenticating user to unfollow the user specified in the ID parameter.
@@ -18,6 +19,7 @@ import de.scheidgen.xraw.apis.twitter.TwitterResponse
  * </ul>
  */
 @Request(url="https://api.twitter.com/1.1/friendships/destroy.json", method=Verb.POST, response=@Response(resourceType=TwitterUser, responseType=TwitterResponse))
+@OrConstraint("screen_name", "user_id")
 class Destroy {
 	/**
 	 * The screen name of the user for whom to unfollow.

@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.friends
 
+import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
@@ -18,6 +19,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterUserCursor
  * Either a screen_name or a user_id must be provided.
  */
  @Request(url="https://api.twitter.com/1.1/friends/list.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUserCursor))
+ @OrConstraint("user_id", "screen_name")
 class List {
 	/**
 	 * The ID of the user for whom to return results for.

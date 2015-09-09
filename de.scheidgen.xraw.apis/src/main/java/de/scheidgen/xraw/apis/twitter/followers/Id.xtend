@@ -4,6 +4,7 @@ import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
+import de.scheidgen.xraw.annotations.OrConstraint
 
 /**
  * Returns a cursored collection of user IDs for every user the specified user is following (otherwise known as their “friends”).
@@ -18,6 +19,7 @@ import de.scheidgen.xraw.apis.twitter.TwitterResponse
  * Either a screen_name or a user_id must be provided.
  */
  @Request(url="https://api.twitter.com/1.1/followers/ids.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterIdCursor))
+ @OrConstraint("user_id", "screen_name")
 class Id {
 	/**
 	 * The ID of the user for whom to return results for.

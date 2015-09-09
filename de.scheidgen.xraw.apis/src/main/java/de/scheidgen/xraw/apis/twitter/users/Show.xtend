@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.users
 
+import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
@@ -20,6 +21,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterUser
  * </ul>	
  */
 @Request(url="https://api.twitter.com/1.1/users/show.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUser))
+@OrConstraint("screen_name", "user_id")
 class Show {
 	/**
 	 * The ID of the user for whom to return results for. Either an id or screen_name is required for this method.

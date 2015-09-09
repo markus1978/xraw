@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.followers
 
+import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
@@ -18,6 +19,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterUserCursor
  * Either a screen_name or a user_id must be provided.
  */
  @Request(url="https://api.twitter.com/1.1/followers/list.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUserCursor))
+ @OrConstraint("screen_name", "user_id")
 class List {
 	/**
 	 * The ID of the user for whom to return results for.

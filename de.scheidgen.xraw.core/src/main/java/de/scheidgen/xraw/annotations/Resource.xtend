@@ -14,6 +14,7 @@ import org.json.JSONObject
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.EnumerationTypeDeclaration
+import de.scheidgen.xraw.AbstractResource
 
 @Active(typeof(ResourceCompilationParticipant))
 annotation Resource {
@@ -33,17 +34,13 @@ class ResourceCompilationParticipant implements TransformationParticipant<Mutabl
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
 			
-			clazz.addField("json") [
-				type = newTypeReference(JSONObject)
-				final = true
-				visibility = Visibility.PRIVATE 
-			]
+			clazz.extendedClass = AbstractResource.newTypeReference
 
 			clazz.addConstructor[
 				visibility = Visibility.PUBLIC
 				addParameter("json", newTypeReference(JSONObject))
 				body = ['''
-					this.json = json;
+					super(json);
 				''']
 			]
 

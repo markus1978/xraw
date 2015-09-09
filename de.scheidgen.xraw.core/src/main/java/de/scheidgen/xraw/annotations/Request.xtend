@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.annotations
 
+import de.scheidgen.xraw.AbstractRequest
 import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.SocialService
 import java.lang.annotation.Target
@@ -15,7 +16,6 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
-import org.scribe.model.OAuthRequest
 import org.scribe.model.Verb
 
 @Active(typeof(RequestCompilationParticipant))
@@ -33,6 +33,8 @@ annotation Response {
 }
 
 // TODO some form of "constraint language"
+@Target(FIELD) annotation Required {}
+@Target(TYPE) annotation OrConstraint { String[] value }
 @Target(FIELD) annotation UrlReplace { String value }
 
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -52,22 +54,12 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			
 			val requestAnnotation = clazz.findAnnotation(Request.findTypeGlobally)
 			val responseAnnotation = requestAnnotation.getAnnotationValue("response")
-			
-			clazz.addField("_service") [
-				type = newTypeReference(SocialService)
-				final = true
-			]
-			
-			clazz.addField("_request") [
-				type = newTypeReference(OAuthRequest)
-				final = false
-			]
-			
-			clazz.addField("_response") [
-				type = responseAnnotation.getClassValue("responseType")
-				initializer = '''null'''
-				final = false
-			]
+			val fullResourceType = if (responseAnnotation.getBooleanValue("isList")) {
+				List.newTypeReference(responseAnnotation.getClassValue("resourceType"))
+			} else {
+				responseAnnotation.getClassValue("resourceType")
+			}
+			clazz.extendedClass = AbstractRequest.newTypeReference(responseAnnotation.getClassValue("responseType"), fullResourceType)
 			
 			clazz.addMethod("create") [
 				static = true
@@ -78,41 +70,54 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				''']
 			]
 			
+			clazz.addMethod("createResponse") [
+				visibility = Visibility.PROTECTED
+				addAnnotation(Override.newAnnotationReference)
+				addParameter("scribeResponse", org.scribe.model.Response.newTypeReference)
+				val responseType = responseAnnotation.getClassValue("responseType")
+				returnType = responseType
+				body = ['''
+					return new «toJavaCode(responseType)»(scribeResponse);
+				''']
+			]
+			
+			clazz.addMethod("validateConstraints") [
+				visibility = Visibility.PROTECTED
+				addAnnotation(Override.newAnnotationReference)
+				body = ['''
+					«FOR fieldWithRequiredAnnoation: declaredFields.filter[findAnnotation(Required.findTypeGlobally) != null]»
+						if (!xIsSetQueryStringParameter("«NameUtil::name(context, fieldWithRequiredAnnoation)»")) {
+							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("The parameter «fieldWithRequiredAnnoation.simpleName» is required.");
+						}
+					«ENDFOR»
+					«val orConstraintAnnoation = clazz.findAnnotation(OrConstraint.findTypeGlobally)»
+					«IF orConstraintAnnoation != null»
+						boolean orConstraintFulfilled = false;
+						«FOR parameterName: orConstraintAnnoation.getStringArrayValue("value")»
+							orConstraintFulfilled |= xIsSetQueryStringParameter("«parameterName»");
+						«ENDFOR»
+						if (!orConstraintFulfilled) {
+							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("At least one of the parameters «orConstraintAnnoation.getStringArrayValue("value").arrayToString»  has tobe set.");
+						}
+					«ENDIF»
+				''']
+			]
+			
 			clazz.addConstructor [
-				visibility = Visibility.PRIVATE
+				visibility = Visibility.PROTECTED
 				addParameter("service", newTypeReference(SocialService))
-				body = [
-					val request = clazz.findAnnotation(typeof(Request).findTypeGlobally)					
-					val url = request.getValue('url') as String
-				
-					return '''
-						this._service = service;
-						this._request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«requestAnnotation.getEnumValue("method").simpleName», "«url»");
-					'''
-				]
+				val url = requestAnnotation.getStringValue("url") 
+				val method = requestAnnotation.getEnumValue("method")
+				body = ['''
+					super(service, «toJavaCode(Verb.newTypeReference)».«method.simpleName», "«url»");
+				''']
 			]
 			
-			clazz.addMethod("xResponse") [
-				returnType = responseAnnotation.getClassValue("responseType")
-				docComment = '''
-					@return The {@link «responseAnnotation.getClassValue("responseType").simpleName»} instance that represents the response 
-					to this request after it was executed. Executes this request implicitely.
-				'''
+			clazz.addMethod("xResult") [
 				visibility = Visibility.PUBLIC
-				body = [generateIfHasResponse(context, '''					
-					return _response;
-				''')]
-			]
-			
-			val resultDocComment = '''
-				@return The result of this request. Null if this request was not executed successfully. 
-				Attempts to execute this request implicitely if it was not executed yet.
-			'''
-			if (responseAnnotation.getBooleanValue("isList")) {
-				clazz.addMethod("xResults") [
-					docComment = resultDocComment
-					returnType = List.newTypeReference(responseAnnotation.getClassValue("resourceType"))
-					visibility = Visibility.PUBLIC
+				addAnnotation(Override.newAnnotationReference)
+				returnType = fullResourceType
+				if (responseAnnotation.getBooleanValue("isList")) {
 					body = [generateIfHasResponse(context, '''
 						«toJavaCode(JSONArray.newTypeReference)» jsonArray = _response.getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
 						«toJavaCode(List.newTypeReference(responseAnnotation.getClassValue("resourceType")))» result = new «toJavaCode(ArrayList.newTypeReference(responseAnnotation.getClassValue("resourceType")))»(jsonArray.length());
@@ -120,10 +125,21 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 							result.add(new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonArray.getJSONObject(i)));
 						}
 						return «toJavaCode(Collections.newTypeReference())».unmodifiableList(result);
+					''')]					
+				} else {
+					body = [generateIfHasResponse(context, '''
+						«toJavaCode(JSONObject.newTypeReference)» jsonObject = _response.getJSONObject("«responseAnnotation.getStringValue("resourceKey")»");					
+						return new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonObject);
 					''')]
-				]
+				}
+			]
+			
+			if (responseAnnotation.getBooleanValue("isList")) {				
 				clazz.addMethod("xResultAsArray") [
-					docComment = resultDocComment
+					docComment = '''
+						@return The result of this request. Null if this request was not executed successfully. 
+						Attempts to execute this request implicitely if it was not executed yet.
+					'''
 					returnType = responseAnnotation.getClassValue("resourceType").newArrayTypeReference
 					body = [generateIfHasResponse(context, '''					
 						«toJavaCode(JSONArray.newTypeReference)» jsonArray = _response.getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
@@ -134,15 +150,6 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						return result;
 					''')]
 				]
-			} else {
-				clazz.addMethod("xResult") [
-					docComment = resultDocComment
-					returnType = responseAnnotation.getClassValue("resourceType")
-					body = [generateIfHasResponse(context, '''
-						«toJavaCode(JSONObject.newTypeReference)» jsonObject = _response.getJSONObject("«responseAnnotation.getStringValue("resourceKey")»");					
-						return new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonObject);
-					''')]
-				]	
 			}
 			
 			for (field : declaredFields) {
@@ -159,9 +166,8 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						}
 						«val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)»
 						«IF (urlReplaceAnnotation != null)»					
-							«val method = requestAnnotation.getEnumValue("method")»
-							String url = _request.getUrl().replace("«urlReplaceAnnotation.getStringValue("value")»", «toJavaCode(string)».valueOf(«localName»));
-							_request = new «toJavaCode(OAuthRequest.newTypeReference)»(«toJavaCode(Verb.newTypeReference)».«method.simpleName», url);
+							String url = xGetUrl().replace("«urlReplaceAnnotation.getStringValue("value")»", «toJavaCode(string)».valueOf(«localName»));
+							xSetUrl(url);
 							return this; 
 						«ELSE»
 							String valueStr = null;
@@ -179,7 +185,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 							«ELSE»
 								valueStr = «toJavaCode(string)».valueOf(«localName»);								
 							«ENDIF»
-							_request.addQuerystringParameter("«remoteName»", valueStr);
+							xPutQueryStringParameter("«remoteName»", valueStr);
 							return this;
 						«ENDIF»
 					'''] 
@@ -187,13 +193,11 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			}
 			
 			clazz.addMethod("xExecute") [
+				visibility = Visibility.PUBLIC
+				addAnnotation(Override.newAnnotationReference)
 				returnType = clazz.newTypeReference
-				visibility = Visibility.PUBLIC				
-				
-				body = ['''					
-					«toJavaCode(org.scribe.model.Response.newTypeReference)» response = _service.send(_request);
-					_response = new «toJavaCode(responseAnnotation.getClassValue("responseType"))»(response);
-					return this;
+				body = ['''
+					return («toJavaCode(clazz.newTypeReference)»)super.xExecute();
 				''']
 			]
 			
@@ -203,4 +207,5 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 		}
 	}
 
+	def arrayToString(String[] array) '''«FOR value:array SEPARATOR ","»«value»«ENDFOR»'''
 }

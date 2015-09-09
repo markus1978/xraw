@@ -1,28 +1,41 @@
 package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.DefaultResponse
-import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.annotations.Resource
-import org.json.JSONObject
 import java.util.ArrayList
 import java.util.List
+import org.json.JSONObject
+import org.scribe.model.Response
 
 class TwitterResponse extends DefaultResponse {
 	
-	new(org.scribe.model.Response scribeResponse) {
+	new(Response scribeResponse) {
 		super(scribeResponse)
 	}
 	
+	private def getIntegerHeader(String name) {
+		val valueStr = headers.get(name.toLowerCase)
+		if (valueStr != null && valueStr.trim != "") {
+			return Long.parseLong(valueStr)	
+		} else {
+			return Long.MAX_VALUE
+		}					
+	}
+	
 	def getRateLimitLimit() {
-		return Integer.parseInt(headers.get("X-Rate-Limit-Limit".toLowerCase))
+		return getIntegerHeader("X-Rate-Limit-Limit".toLowerCase)		
 	}
 	
 	def getRateLimitRemaining() {
-		return Integer.parseInt(headers.get("X-Rate-Limit-Remaining".toLowerCase))
+		return getIntegerHeader("X-Rate-Limit-Remaining".toLowerCase)			
 	}
 	
 	def getRateLimitReset() {
-		return Long.parseLong(headers.get("X-Rate-Limit-Reset".toLowerCase))
+		return getIntegerHeader("X-Rate-Limit-Reset".toLowerCase)		
+	}
+	
+	def isRateLimitExeeded() {
+		return !successful && code == 429
 	}
 	
 	def List<TwitterError> getErrors() {

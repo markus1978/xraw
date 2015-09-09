@@ -4,7 +4,6 @@ import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterFriendship
-import java.util.List
 
 /**
  * Returns the relationships of the authenticating user to the comma-separated list of up to 100 screen_names or user_ids provided. Values for connections can be: following, following_requested, followed_by, none, blocking, muting.
@@ -19,10 +18,10 @@ class Lookup {
 	/**
 	 * A comma separated list of screen names, up to 100 are allowed in a single request.
 	 */
-	List<String> screen_name
+	Iterable<String> screen_name
 
 	/**
 	 * A comma separated list of user IDs, up to 100 are allowed in a single request.
 	 */
-	List<String> user_id
+	Iterable<String> user_id
 }
