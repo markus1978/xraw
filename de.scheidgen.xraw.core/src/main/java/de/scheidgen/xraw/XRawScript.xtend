@@ -65,30 +65,34 @@ class XRawScript {
 		
 		val in = new Scanner(System.in);
 		println("No data for " + scribeServiceClass.simpleName + " found.")
+		println("OAuth2.0? [y for yes, nothing or n for no]:")
+		print(">> ");
+		service.setOAuth2(in.nextLine().trim().equals("y"))
+		
 		println("Enter a API key: ")
-		print(">>");
+		print(">> ");
 		service.apiKey = in.nextLine().trim()
 		
 		println("Enter a API secret: ")
-		print(">>")
+		print(">> ")
 		service.apiSecret = in.nextLine().trim()
 		
 		println("Enter a callback URL (if required by API): ")
-		print(">>")
+		print(">> ")
 		val callbackLine = in.nextLine().trim()
 		if (!callbackLine.equals("")) {
 			service.callbackUrl = callbackLine
 		}
 		
 		println("Enter a scope (if required by API): ")
-		print(">>")
+		print(">> ")
 		val scopeLine = in.nextLine().trim()
 		if (!scopeLine.equals("")) {
 			service.scope = scopeLine
 		}
 		
 		println("Enter a signature type [Header|QueryString] (if required by API): ")
-		print(">>")
+		print(">> ")
 		val signatureLine = in.nextLine().trim()
 		if (signatureLine.equals("Header")) {
 			service.signatureType = SignatureType.Header
@@ -115,7 +119,7 @@ class XRawScript {
 		val credentials = XRawScriptModelFactory.eINSTANCE.createServiceCredentials
 		credentials.service = service
 		
-		val requestToken = oAuthService.requestToken
+		val requestToken = if (service.OAuth2) null else oAuthService.requestToken
 		val authorizationUrl = oAuthService.getAuthorizationUrl(requestToken)
 		
 		val in = new Scanner(System.in);

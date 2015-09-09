@@ -35,6 +35,7 @@ annotation Response {
 // TODO some form of "constraint language"
 @Target(FIELD) annotation Required {}
 @Target(TYPE) annotation OrConstraint { String[] value }
+@Target(TYPE) annotation XorOrNothingConstraint { String[] value }
 @Target(FIELD) annotation UrlReplace { String value }
 
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -66,7 +67,12 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				addParameter("service", newTypeReference(SocialService))
 				returnType = clazz.newTypeReference
 				body = ['''
-					return new «toJavaCode(clazz.newTypeReference)»(service);
+					«toJavaCode(clazz.newTypeReference)» result = new «toJavaCode(clazz.newTypeReference)»(service);
+					«FOR field:declaredFields.filter[it.initializer != null]»
+						«val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)»
+						«localName»(«field.initializer»);
+					«ENDFOR»
+					return result;
 				''']
 			]
 			
@@ -98,6 +104,18 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						«ENDFOR»
 						if (!orConstraintFulfilled) {
 							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("At least one of the parameters «orConstraintAnnoation.getStringArrayValue("value").arrayToString»  has tobe set.");
+						}
+					«ENDIF»
+					«val xorOrNothingConstraintAnnoation = clazz.findAnnotation(XorOrNothingConstraint.findTypeGlobally)»
+					«IF xorOrNothingConstraintAnnoation != null»
+						int xorOrNothingConstraintParamsSet = 0;
+						«FOR parameterName: xorOrNothingConstraintAnnoation.getStringArrayValue("value")»
+							if (xIsSetQueryStringParameter("«parameterName»")) {
+								xorOrNothingConstraintParamsSet += 1;
+							}
+						«ENDFOR»
+						if (xorOrNothingConstraintParamsSet > 1) {
+							throw new «toJavaCode(IllegalArgumentException.newTypeReference)»("One one or none of the parameters «xorOrNothingConstraintAnnoation.getStringArrayValue("value").arrayToString»  must be set.");
 						}
 					«ENDIF»
 				''']

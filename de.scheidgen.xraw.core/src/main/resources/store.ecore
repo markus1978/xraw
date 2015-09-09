@@ -22,6 +22,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="callbackUrl" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="scope" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="signatureType" eType="#//SignatureType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="oAuth2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
