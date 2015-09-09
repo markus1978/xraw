@@ -56,7 +56,7 @@ class Twitter {
 	
 			if (request.xResponse.successful) {
 				function.apply(request)
-				continue = request.xResponse.rateLimitRemaining <= 0
+				continue = request.xResponse.rateLimitRemaining > 0
 			} else {
 				continue = false				
 			}
