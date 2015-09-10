@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.apis.youtube
+package de.scheidgen.xraw.apis.youtube.docparser
 
 import org.jsoup.Jsoup
 

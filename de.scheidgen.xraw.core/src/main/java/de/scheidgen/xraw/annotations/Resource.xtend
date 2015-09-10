@@ -15,6 +15,9 @@ import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationCo
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.EnumerationTypeDeclaration
 import de.scheidgen.xraw.AbstractResource
+import java.util.Map
+import java.util.HashMap
+import java.util.Iterator
 
 @Active(typeof(ResourceCompilationParticipant))
 annotation Resource {
@@ -69,6 +72,23 @@ class ResourceCompilationParticipant implements TransformationParticipant<Mutabl
 								for (int i = 0; i < jsonArray.length(); i++) {
 									«generateObjectValue(context, it, field, field.type.actualTypeArguments.get(0), "jsonArray.getString(i)", "jsonArray.get(i)")»
 									result.add(value);
+								}
+								return result;
+							'''
+						} else if (newTypeReference(Map).isAssignableFrom(field.type)) {
+							// object value to map
+							return '''
+								«toJavaCode(field.type)» result = new «toJavaCode(HashMap.newTypeReference(field.type.actualTypeArguments))»();
+								«toJavaCode(JSONObject.newTypeReference)» jsonObject = json.getJSONObject("«attributeName»");
+								if (jsonObject != null) {
+									«toJavaCode(Iterator.newTypeReference(string))» keyIterator = jsonObject.keys();
+									while(keyIterator.hasNext()) {
+										String key = keyIterator.next();
+										if (!jsonObject.isNull(key)) {
+											«generateObjectValue(context, it, field, field.type.actualTypeArguments.get(1), "jsonObject.getString(key)", "jsonObject.get(key)")»
+											result.put(key, value);
+										}
+									}
 								}
 								return result;
 							'''
