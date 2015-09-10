@@ -11,11 +11,17 @@ import java.util.Date
 @Service(Google2Api)
 class YouTube {
 	Search search
+	Channel channel
 }
 
 @Directory
 class Search {
 	List list
+}
+
+@Directory
+class Channel {
+	de.scheidgen.xraw.apis.youtube.channels.List list
 }
 
 class YouTubeDateConverter implements Converter<Date> {
