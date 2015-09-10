@@ -77,6 +77,11 @@
 			<artifactId>org.eclipse.xtext.xbase</artifactId>
 			<version>${xtext.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.mashape.unirest</groupId>
+		    <artifactId>unirest-java</artifactId>
+		    <version>1.4.7</version>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>de.scheidgen.xraw</groupId>
