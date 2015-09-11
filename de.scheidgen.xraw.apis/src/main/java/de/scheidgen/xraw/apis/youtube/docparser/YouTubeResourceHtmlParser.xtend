@@ -5,7 +5,7 @@ import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.jsoup.Jsoup
 
-import static extension de.scheidgen.xraw.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 import java.io.File
 import java.io.PrintWriter
 import java.util.Map

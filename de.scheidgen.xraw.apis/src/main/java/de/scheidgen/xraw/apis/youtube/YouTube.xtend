@@ -4,13 +4,18 @@ import de.scheidgen.xraw.annotations.Converter
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
 import de.scheidgen.xraw.apis.youtube.search.List
+import de.scheidgen.xraw.script.ServiceConfiguration
 import java.text.SimpleDateFormat
 import java.util.Date
 
 @Directory
-@Service(Google2Api)
+@Service
 class YouTube {
 	Search search
+	
+	override protected createService(ServiceConfiguration httpServiceConfig) {
+		return null; //TODO
+	}
 }
 
 @Directory

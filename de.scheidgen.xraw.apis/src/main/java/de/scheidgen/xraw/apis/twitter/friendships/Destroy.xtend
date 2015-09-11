@@ -1,11 +1,13 @@
 package de.scheidgen.xraw.apis.twitter.friendships
 
+import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import org.scribe.model.Verb
+
+import static extension com.mashape.unirest.http.HttpMethod.*
 
 /**
  * Allows the authenticating user to unfollow the user specified in the ID parameter.
@@ -18,7 +20,7 @@ import org.scribe.model.Verb
  * <li>Rate limited? Yes</li>
  * </ul>
  */
-@Request(url="https://api.twitter.com/1.1/friendships/destroy.json", method=Verb.POST, response=@Response(resourceType=TwitterUser, responseType=TwitterResponse))
+@Request(url="https://api.twitter.com/1.1/friendships/destroy.json", method=HttpMethod.POST, response=@Response(resourceType=TwitterUser, responseType=TwitterResponse))
 @OrConstraint("screen_name", "user_id")
 class Destroy {
 	/**

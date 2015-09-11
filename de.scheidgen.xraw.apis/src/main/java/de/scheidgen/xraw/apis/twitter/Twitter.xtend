@@ -12,9 +12,11 @@ import de.scheidgen.xraw.apis.twitter.search.Tweets
 import de.scheidgen.xraw.apis.twitter.statuses.Show
 import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
 import org.scribe.builder.api.TwitterApi
+import de.scheidgen.xraw.script.ServiceConfiguration
+import de.scheidgen.xraw.http.ScribeOAuth1Service
 
 @Directory
-@Service(TwitterApi)
+@Service
 class Twitter {
 	Statuses statuses
 	Search search
@@ -22,6 +24,10 @@ class Twitter {
 	Friends friends
 	Followers followers
 	Friendships friendships
+	
+	override protected createService(ServiceConfiguration httpServiceConfig) {
+		return new ScribeOAuth1Service(TwitterApi, httpServiceConfig)
+	}
 	
 	public static def <R extends AbstractResource> TwitterResponse safeCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
 		var cursor = "-1"

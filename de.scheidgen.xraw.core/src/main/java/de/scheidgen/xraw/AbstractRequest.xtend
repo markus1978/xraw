@@ -1,24 +1,20 @@
 package de.scheidgen.xraw
 
 import com.mashape.unirest.http.HttpMethod
-import com.mashape.unirest.request.HttpRequest
+import de.scheidgen.xraw.http.XRawHttpRequest
 import de.scheidgen.xraw.http.XRawHttpResponse
 import de.scheidgen.xraw.http.XRawRestService
-import java.util.Map
 
 abstract class AbstractRequest<ResponseType, ResourceType> {
 	
-	private val Map<String, String> queryStringParameters = newHashMap
-	private var String url = null
-	private var HttpMethod method = null
-	
 	private val XRawRestService service
+	private val XRawHttpRequest httpRequest
+	
 	private var ResponseType response = null
 
 	protected new(XRawRestService service, HttpMethod method, String url) {
 		this.service = service;
-		this.url = url
-		this.method = method
+		httpRequest = new XRawHttpRequest(method, url)
 	}
 
 	/**
@@ -34,7 +30,7 @@ abstract class AbstractRequest<ResponseType, ResourceType> {
 	
 	/**
 	 * 	@return The result of this request. Null if this request was not executed successfully. 
-	 *  Attempts to execute this request implicitely if it was not executed yet.
+	 *  Attempts to execute this request implicitly if it was not executed yet.
 	 */
 	public abstract def ResourceType xResult() 
 	
@@ -46,7 +42,7 @@ abstract class AbstractRequest<ResponseType, ResourceType> {
 	protected abstract def ResponseType createResponse(XRawHttpResponse httpResponse)
 	
 	public def xPutQueryStringParameter(String name, String value) {
-		queryStringParameters.put(name, value)
+		httpRequest.queryString.put(name, value)
 	}
 	
 	public def xIsSetQueryStringParameter(String name) {
@@ -54,23 +50,27 @@ abstract class AbstractRequest<ResponseType, ResourceType> {
 	}
 	
 	public def xGetQueryStringParameter(String name) {
-		return queryStringParameters.get(name)
+		return httpRequest.queryString.get(name)
 	}
 	
 	public def xSetMethod(HttpMethod method) {
-		this.method = method
+		httpRequest.method = method
 	}
 	
 	public def xGetMethod() {
-		return this.method
+		return httpRequest.method
 	}
 	
 	public def xSetUrl(String url) {
-		this.url = url
+		httpRequest.url = url
 	}
 	
 	public def xGetUrl() {
-		return this.url
+		return httpRequest.url
+	}
+	
+	public def boolean xIsExecuted() {
+		return response != null;
 	}
 
 	/**
@@ -83,9 +83,7 @@ abstract class AbstractRequest<ResponseType, ResourceType> {
 		if (response != null) {
 			throw new IllegalStateException("This request was already executed. Either reset it or create a new one.")
 		}
-	
-		val httpRequest = new HttpRequest(method, url)
-		queryStringParameters.entrySet.forEach[httpRequest.queryString(key, value.toString)]		
+			
 		val httpResponse = service.synchronousRestCall(httpRequest);
 		response = createResponse(httpResponse)
 		return this;

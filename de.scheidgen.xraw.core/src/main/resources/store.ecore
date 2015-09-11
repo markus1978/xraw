@@ -6,13 +6,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
         eType="#//ServiceCredentials" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ServiceCredentials">
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceCredentials" eSuperTypes="#//AbstractConfiguration">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="accessToken" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="secret" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="service" eType="#//Service"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Service">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scribeServiceClass">
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//AbstractConfiguration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceClass">
       <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass">
         <eTypeArguments/>
       </eGenericType>
@@ -21,8 +21,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="apiSecret" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="callbackUrl" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="scope" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="signatureType" eType="#//SignatureType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="oAuth2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Application">
     <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
@@ -30,5 +28,13 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="profiles" upperBound="-1"
         eType="#//Profile" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="SignatureType" instanceClassName="org.scribe.model.SignatureType"/>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractConfiguration" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="configuration" transient="true">
+      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eTypeArguments eClassifier="#//Serializable"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Serializable" instanceClassName="java.io.Serializable"/>
 </ecore:EPackage>

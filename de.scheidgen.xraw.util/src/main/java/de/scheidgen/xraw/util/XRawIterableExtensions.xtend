@@ -1,8 +1,7 @@
-package de.scheidgen.xraw
+package de.scheidgen.xraw.util
 
 import com.google.common.collect.AbstractIterator
 import com.google.common.collect.FluentIterable
-import de.scheidgen.xraw.XRawIterableExtensions.Result
 import java.util.ArrayList
 import java.util.Iterator
 
