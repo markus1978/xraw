@@ -7,6 +7,7 @@ import de.scheidgen.xraw.apis.youtube.search.List
 import de.scheidgen.xraw.script.ServiceConfiguration
 import java.text.SimpleDateFormat
 import java.util.Date
+import de.scheidgen.xraw.apis.google.GoogleOAuth2Service
 
 @Directory
 @Service
@@ -14,7 +15,7 @@ class YouTube {
 	Search search
 	
 	override protected createService(ServiceConfiguration httpServiceConfig) {
-		return null; //TODO
+		return new GoogleOAuth2Service(httpServiceConfig)
 	}
 }
 
