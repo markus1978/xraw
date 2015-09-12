@@ -13,6 +13,7 @@ import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 @Service
 class YouTube {
 	Search search
+	Channels channels
 	
 	override protected createService(XRawHttpServiceConfiguration httpServiceConfig) {
 		return new GoogleOAuth2Service(httpServiceConfig)
@@ -22,6 +23,11 @@ class YouTube {
 @Directory
 class Search {
 	List list
+}
+
+@Directory
+class Channels {
+	de.scheidgen.xraw.apis.youtube.channels.List list
 }
 
 class YouTubeDateConverter implements Converter<Date> {

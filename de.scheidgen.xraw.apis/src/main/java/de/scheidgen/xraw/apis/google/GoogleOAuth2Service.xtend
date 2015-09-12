@@ -27,7 +27,7 @@ class GoogleOAuth2Service implements XRawHttpService {
 		
 		var userToken = httpServiceConfiguration.get(USER, XRawHttpServiceConfiguration::userToken) as String
 		var userRefreshToken = httpServiceConfiguration.get(USER, "refreshToken") as String
-		var userTokenExpireTimeStr = httpServiceConfiguration.get(USER, "refreshToken") as String
+		var userTokenExpireTimeStr = httpServiceConfiguration.get(USER, "userTokenExpireTime") as String
 		var userTokenType = httpServiceConfiguration.get(USER, "userTokenType") as String
 		
 		if (userToken == null) {
