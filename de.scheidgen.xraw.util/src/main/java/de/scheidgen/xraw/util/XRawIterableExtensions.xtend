@@ -197,4 +197,11 @@ class XRawIterableExtensions {
 	 		return null
 	 	} 
 	}
+	
+	static def <E> Iterable<E> unique(Iterable<E> source) {
+		return source.fold(newHashSet)[result, element |
+			result.add(element)
+			return result
+		]		
+	}
 }

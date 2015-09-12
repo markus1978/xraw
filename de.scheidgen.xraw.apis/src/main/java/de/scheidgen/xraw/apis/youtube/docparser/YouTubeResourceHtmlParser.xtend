@@ -183,6 +183,6 @@ class YouTubeResourceHtmlParser {
 
 	public static def void main(String[] args) {
 		val parser = new YouTubeResourceHtmlParser()
-		parser.parse("https://developers.google.com/youtube/v3/docs/channels", null) 
+		parser.parse("https://developers.google.com/youtube/v3/docs/videos", null) 
 	}	
 }

@@ -144,10 +144,15 @@ class ResourceCompilationParticipant implements TransformationParticipant<Mutabl
 				objectValue = new «toJavaCode(type)»((«toJavaCode(JSONObject.newTypeReference)»)objectValue);
 			«ENDIF»
 		«ENDIF»
-		if (objectValue instanceof «toJavaCode(type.wrapperIfPrimitive)») {
-			value = («toJavaCode(type.wrapperIfPrimitive)»)objectValue;
-		} else {
-			throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response.");
-		}
+		try {
+			«IF type.primitive»
+				if (objectValue instanceof String) {
+					objectValue = «toJavaCode(type.wrapperIfPrimitive)».valueOf((String)objectValue);
+				}
+			«ENDIF»
+			value = («toJavaCode(type)»)objectValue;
+		} catch («toJavaCode(ClassCastException.newTypeReference)» e) {
+			throw new «toJavaCode(ClassCastException.newTypeReference)»("Un expected type found in response. Value was '" + objectValue.toString() + "', type " + objectValue.getClass().getSimpleName() + ", expected type «type.simpleName».");
+		}		
 	'''
 }

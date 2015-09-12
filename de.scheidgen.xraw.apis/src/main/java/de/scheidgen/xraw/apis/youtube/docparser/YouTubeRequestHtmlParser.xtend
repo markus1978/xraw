@@ -93,6 +93,6 @@ class RequestHtmlParser {
 	}
 
 	public static def void main(String[] args) {
-		new RequestHtmlParser().parse("https://developers.google.com/youtube/v3/docs/channels/list")
+		new RequestHtmlParser().parse("https://developers.google.com/youtube/v3/docs/videos/list")
 	}	
 }
