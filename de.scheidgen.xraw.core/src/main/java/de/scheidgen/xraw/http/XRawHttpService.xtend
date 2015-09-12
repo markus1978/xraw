@@ -17,7 +17,7 @@ import de.scheidgen.xraw.util.AddSuperConstructors
  * related "stuff". Implementing classes are free to execute
  * other request beforehand (e.g. to realize an a OAuth flow).  
  */
-interface XRawRestService {
+interface XRawHttpService {
 	def XRawHttpResponse synchronousRestCall(XRawHttpRequest request) throws XRawHttpException
 }
 

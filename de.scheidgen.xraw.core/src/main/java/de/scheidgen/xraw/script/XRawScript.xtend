@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 
 class XRawScript {
 	
-	static def <S extends AbstractService> S get(ServiceConfiguration config, Class<S> serviceClass) {
+	static def <S extends AbstractService> S get(XRawHttpServiceConfiguration config, Class<S> serviceClass) {
 		val serviceClassConfigurationConstructor = serviceClass.declaredConstructors.findFirst[
 			it.parameters.size == 1 && it.parameters.get(0).type.isAssignableFrom(config.class)
 		]

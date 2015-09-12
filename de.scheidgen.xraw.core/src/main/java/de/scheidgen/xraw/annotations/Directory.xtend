@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.annotations
 
 import de.scheidgen.xraw.AbstractService
-import de.scheidgen.xraw.http.XRawRestService
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.List
@@ -12,7 +11,8 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.script.ServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.http.XRawHttpService
 
 @Active(typeof(DirectoryCompilationParticipant))
 @Target(TYPE)
@@ -33,7 +33,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 				clazz.extendedClass = AbstractService.newTypeReference
 
 				clazz.addConstructor [
-					addParameter("service", XRawRestService.newTypeReference)
+					addParameter("service", XRawHttpService.newTypeReference)
 					visibility = Visibility.PUBLIC
 					body = ['''
 						super(service);
@@ -43,7 +43,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 					''']
 				]
 				clazz.addConstructor [
-					addParameter("serviceConfiguration", ServiceConfiguration.newTypeReference)
+					addParameter("serviceConfiguration", XRawHttpServiceConfiguration.newTypeReference)
 					visibility = Visibility.PUBLIC
 					body = ['''
 						super(serviceConfiguration);
@@ -54,11 +54,11 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 				]
 			} else {
 				clazz.addField("_httpService") [
-					type = XRawRestService.newTypeReference
+					type = XRawHttpService.newTypeReference
 					final = true
 				]
 				clazz.addConstructor [
-					addParameter("service", XRawRestService.newTypeReference)
+					addParameter("service", XRawHttpService.newTypeReference)
 					visibility = Visibility.PUBLIC
 					body = ['''
 						this._httpService = service;

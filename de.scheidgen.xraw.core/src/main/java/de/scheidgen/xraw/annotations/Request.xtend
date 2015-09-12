@@ -4,7 +4,6 @@ import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.AbstractRequest
 import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.http.XRawHttpResponse
-import de.scheidgen.xraw.http.XRawRestService
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.Collections
@@ -17,6 +16,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
+import de.scheidgen.xraw.http.XRawHttpService
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -56,7 +56,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			clazz.extendedClass = AbstractRequest.newTypeReference(responseAnnotation.getClassValue("responseType"), fullResourceType)
 			
 			clazz.addConstructor[
-				addParameter("service", newTypeReference(XRawRestService))
+				addParameter("service", newTypeReference(XRawHttpService))
 				val url = requestAnnotation.getStringValue("url") 
 				val method = requestAnnotation.getEnumValue("method")
 				body = ['''

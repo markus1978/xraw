@@ -1,8 +1,6 @@
 package de.scheidgen.xraw.http
 
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
-import de.scheidgen.xraw.script.ServiceConfiguration
-import de.scheidgen.xraw.script.ServiceConfigurationScope
 import org.scribe.builder.ServiceBuilder
 import org.scribe.builder.api.Api
 import org.scribe.model.SignatureType
@@ -10,15 +8,17 @@ import org.scribe.model.Token
 import org.scribe.model.Verifier
 import org.scribe.oauth.OAuthService
 
-import static de.scheidgen.xraw.script.ServiceConfiguration.*
-import static de.scheidgen.xraw.script.ServiceConfigurationScope.*
+import static de.scheidgen.xraw.script.XRawHttpServiceConfiguration.*
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
+import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 
-class ScribeOAuth1Service implements XRawRestService {
+class ScribeOAuth1Service implements XRawHttpService {
 	
 	val OAuthService httpService
 	val Token accessToken
 	
-	new(Class<? extends Api> apiClass, ServiceConfiguration httpServiceConfiguration) {
+	new(Class<? extends Api> apiClass, XRawHttpServiceConfiguration httpServiceConfiguration) {
 		
 		val String apiKey = httpServiceConfiguration.getInteractive(true, API, apiKey, "We need your API key:")
 		val String apiSecret = httpServiceConfiguration.getInteractive(true, API, apiSecret, "We need your API secret:")
@@ -56,8 +56,8 @@ class ScribeOAuth1Service implements XRawRestService {
 				accessToken = httpService.getAccessToken(requestToken, new Verifier(verifier))
 				userToken = accessToken.token
 				userSecret = accessToken.secret
-				httpServiceConfiguration.set(USER, ServiceConfiguration::userToken, userToken)
-				httpServiceConfiguration.set(USER, ServiceConfiguration::userSecret, userSecret)									
+				httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userToken, userToken)
+				httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userSecret, userSecret)									
 			} else {
 				accessToken = null
 				throw new IllegalArgumentException("Configuration does not contain any user credentials.")
@@ -67,7 +67,7 @@ class ScribeOAuth1Service implements XRawRestService {
 		}
 	}
 	
-	private def String getInteractive(ServiceConfiguration configuration, boolean checkNull, ServiceConfigurationScope scope, String key, String message) {
+	private def String getInteractive(XRawHttpServiceConfiguration configuration, boolean checkNull, XRawHttpServiceConfigurationScope scope, String key, String message) {
 		if (configuration instanceof InteractiveServiceConfiguration) {
 			return configuration.getInteractive(scope, key, message)
 		} else {

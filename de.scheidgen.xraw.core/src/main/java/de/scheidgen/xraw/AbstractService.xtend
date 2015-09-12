@@ -1,18 +1,18 @@
 package de.scheidgen.xraw
 
-import de.scheidgen.xraw.http.XRawRestService
 import de.scheidgen.xraw.util.AddConstructor
-import de.scheidgen.xraw.script.ServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.http.XRawHttpService
 
 @AddConstructor
 abstract class AbstractService {
-	protected val XRawRestService _httpService
+	protected val XRawHttpService _httpService
 	
-	new(ServiceConfiguration httpServiceConfig) {
+	new(XRawHttpServiceConfiguration httpServiceConfig) {
 		_httpService = createService(httpServiceConfig)
 	}
 	
-	protected def XRawRestService createService(ServiceConfiguration httpServiceConfig) {
+	protected def XRawHttpService createService(XRawHttpServiceConfiguration httpServiceConfig) {
 		throw new UnsupportedOperationException("Not implemented.")
 	}
 }

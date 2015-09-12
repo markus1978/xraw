@@ -8,11 +8,11 @@ import de.scheidgen.xraw.util.AddConstructor
 import java.util.Scanner
 import org.eclipse.emf.common.util.EList
 
-enum ServiceConfigurationScope {
+enum XRawHttpServiceConfigurationScope {
 	API, USER
 }
 
-interface ServiceConfiguration {
+interface XRawHttpServiceConfiguration {
 	public static val apiKey = "apiKey"
 	public static val apiSecret = "apiSecret"
 	public static val userToken = "accessToken"
@@ -20,13 +20,13 @@ interface ServiceConfiguration {
 	public static val callbackUrl = "callbackUrl"
 	public static val scope = "scope"
 	
-	def String get(ServiceConfigurationScope scope, String key)
-	def void set(ServiceConfigurationScope scope, String key, String value)	
+	def String get(XRawHttpServiceConfigurationScope scope, String key)
+	def void set(XRawHttpServiceConfigurationScope scope, String key, String value)	
 }
 
-interface InteractiveServiceConfiguration extends ServiceConfiguration {
+interface InteractiveServiceConfiguration extends XRawHttpServiceConfiguration {
 	def  String aquireInteractively(String message)
-	def  String getInteractive(ServiceConfigurationScope scope, String key, String message)
+	def  String getInteractive(XRawHttpServiceConfigurationScope scope, String key, String message)
 }
 
 abstract class AbstractInteractiveServiceConfiguration implements InteractiveServiceConfiguration {
@@ -47,7 +47,7 @@ abstract class AbstractInteractiveServiceConfiguration implements InteractiveSer
 		return result
 	}
 	
-	override getInteractive(ServiceConfigurationScope scope, String key, String message) {
+	override getInteractive(XRawHttpServiceConfigurationScope scope, String key, String message) {
 		var result = get(scope, key)
 		if (result == null) {
 			result = aquireInteractively(message)
@@ -87,8 +87,8 @@ class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveService
 		}
 	}  
 		
-	override get(ServiceConfigurationScope scope, String key) {
-		if (scope == ServiceConfigurationScope.USER) {
+	override get(XRawHttpServiceConfigurationScope scope, String key) {
+		if (scope == XRawHttpServiceConfigurationScope.USER) {
 			val existingFeature = user.eClass.EAllStructuralFeatures.findFirst[name==key]
 			if (existingFeature != null) {
 				return user.eGet(existingFeature) as String
@@ -100,7 +100,7 @@ class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveService
 			return api.eGet(existingFeature) as String
 		}
 		
-		if (scope == ServiceConfigurationScope.USER) {
+		if (scope == XRawHttpServiceConfigurationScope.USER) {
 			val value = user.configuration.get(key)
 			if (value == null) {
 				return api.configuration.findFirst[it.key == key]?.value
@@ -112,8 +112,8 @@ class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveService
 		}
 	}
 	
-	override set(ServiceConfigurationScope scope, String key, String value) {
-		if (scope == ServiceConfigurationScope.USER) {
+	override set(XRawHttpServiceConfigurationScope scope, String key, String value) {
+		if (scope == XRawHttpServiceConfigurationScope.USER) {
 			val existingFeature = user.eClass.EAllStructuralFeatures.findFirst[name==key]
 			if (existingFeature != null) {
 				user.eSet(existingFeature, value)

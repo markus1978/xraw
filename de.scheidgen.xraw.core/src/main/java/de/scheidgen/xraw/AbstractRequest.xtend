@@ -3,16 +3,16 @@ package de.scheidgen.xraw
 import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.http.XRawHttpRequest
 import de.scheidgen.xraw.http.XRawHttpResponse
-import de.scheidgen.xraw.http.XRawRestService
+import de.scheidgen.xraw.http.XRawHttpService
 
 abstract class AbstractRequest<ResponseType, ResourceType> {
 	
-	private val XRawRestService service
+	private val XRawHttpService service
 	private val XRawHttpRequest httpRequest
 	
 	private var ResponseType response = null
 
-	protected new(XRawRestService service, HttpMethod method, String url) {
+	protected new(XRawHttpService service, HttpMethod method, String url) {
 		this.service = service;
 		httpRequest = new XRawHttpRequest(method, url)
 	}

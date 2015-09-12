@@ -4,28 +4,28 @@ import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.http.UnirestHttpResponse
 import de.scheidgen.xraw.http.XRawHttpException
 import de.scheidgen.xraw.http.XRawHttpRequest
-import de.scheidgen.xraw.http.XRawRestService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
-import de.scheidgen.xraw.script.ServiceConfiguration
-import de.scheidgen.xraw.script.ServiceConfigurationScope
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.Date
 
-import static de.scheidgen.xraw.script.ServiceConfigurationScope.*
 import org.json.JSONException
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
+import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
+import de.scheidgen.xraw.http.XRawHttpService
 
 @AddConstructor
-class GoogleOAuth2Service implements XRawRestService {
+class GoogleOAuth2Service implements XRawHttpService {
 	
-	val ServiceConfiguration httpServiceConfiguration
+	val XRawHttpServiceConfiguration httpServiceConfiguration
 	
 	private def authenticate(XRawHttpRequest httpRequest) throws XRawHttpException {	
-		val String apiKey = httpServiceConfiguration.getInteractive(true, API, ServiceConfiguration::apiKey, "We need your API key:")
-		val String apiSecret = httpServiceConfiguration.getInteractive(true, API, ServiceConfiguration::apiSecret, "We need your API secret:")
-		val String callbackURL = httpServiceConfiguration.getInteractive(false, API, ServiceConfiguration::callbackUrl, "Provide a valid callback URL, if required by the API:")
-		val String scope = httpServiceConfiguration.getInteractive(false, API, ServiceConfiguration::scope, "Provide a scope string, if required by the API:")		
+		val String apiKey = httpServiceConfiguration.getInteractive(true, API, XRawHttpServiceConfiguration::apiKey, "We need your API key:")
+		val String apiSecret = httpServiceConfiguration.getInteractive(true, API, XRawHttpServiceConfiguration::apiSecret, "We need your API secret:")
+		val String callbackURL = httpServiceConfiguration.getInteractive(false, API, XRawHttpServiceConfiguration::callbackUrl, "Provide a valid callback URL, if required by the API:")
+		val String scope = httpServiceConfiguration.getInteractive(false, API, XRawHttpServiceConfiguration::scope, "Provide a scope string, if required by the API:")		
 		
-		var userToken = httpServiceConfiguration.get(USER, ServiceConfiguration::userToken) as String
+		var userToken = httpServiceConfiguration.get(USER, XRawHttpServiceConfiguration::userToken) as String
 		var userRefreshToken = httpServiceConfiguration.get(USER, "refreshToken") as String
 		var userTokenExpireTimeStr = httpServiceConfiguration.get(USER, "refreshToken") as String
 		var userTokenType = httpServiceConfiguration.get(USER, "userTokenType") as String
@@ -70,7 +70,7 @@ class GoogleOAuth2Service implements XRawRestService {
 						throw new XRawHttpException("Unexpected response.", e)
 					}
 					
-					httpServiceConfiguration.set(USER, ServiceConfiguration::userToken, userToken)
+					httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userToken, userToken)
 					httpServiceConfiguration.set(USER, "refreshToken", userRefreshToken)
 					httpServiceConfiguration.set(USER, "userTokenExpireTime", userTokenExpireTimeStr) 
 					httpServiceConfiguration.set(USER, "userTokenType", userTokenType)
@@ -98,7 +98,7 @@ class GoogleOAuth2Service implements XRawRestService {
 					val expiresIn = authentication.body.object.getLong("expires_in")
 					userTokenExpireTimeStr = Long.toString(new Date().time + expiresIn*1000)
 					
-					httpServiceConfiguration.set(USER, ServiceConfiguration::userToken, userToken)
+					httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userToken, userToken)
 					httpServiceConfiguration.set(USER, "userTokenExpireTime", userTokenExpireTimeStr) 
 					httpServiceConfiguration.set(USER, "userTokenType", userTokenType)					
 				} else {
@@ -111,7 +111,7 @@ class GoogleOAuth2Service implements XRawRestService {
   		return httpRequest
 	}
 	
-	private def String getInteractive(ServiceConfiguration configuration, boolean checkNull, ServiceConfigurationScope scope, String key, String message) {
+	private def String getInteractive(XRawHttpServiceConfiguration configuration, boolean checkNull, XRawHttpServiceConfigurationScope scope, String key, String message) {
 		if (configuration instanceof InteractiveServiceConfiguration) {
 			return configuration.getInteractive(scope, key, message)
 		} else {
