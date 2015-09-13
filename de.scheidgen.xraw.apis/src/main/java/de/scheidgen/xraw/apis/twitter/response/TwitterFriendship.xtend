@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import de.scheidgen.xraw.annotations.JSON
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
 
 @JSON
 class TwitterFriendship {

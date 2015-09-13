@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
 import java.util.List
-import de.scheidgen.xraw.annotations.JSON
 
 @JSON
 class TwitterSearchResult {

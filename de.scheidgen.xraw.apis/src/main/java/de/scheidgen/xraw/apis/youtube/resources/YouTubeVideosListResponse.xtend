@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
+import de.scheidgen.xraw.json.JSON
 import java.util.List
-import de.scheidgen.xraw.annotations.JSON
 
 @JSON
 class YouTubeVideosListResponse extends AbstractYouTubeResource {

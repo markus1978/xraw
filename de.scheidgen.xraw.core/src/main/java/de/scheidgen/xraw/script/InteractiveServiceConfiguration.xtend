@@ -1,12 +1,7 @@
 package de.scheidgen.xraw.script
 
-import de.scheidgen.xraw.model.EStringToSerializableMapEntry
-import de.scheidgen.xraw.model.Service
-import de.scheidgen.xraw.model.ServiceCredentials
-import de.scheidgen.xraw.model.XRawScriptModelFactory
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.Scanner
-import org.eclipse.emf.common.util.EList
 
 enum XRawHttpServiceConfigurationScope {
 	API, USER
@@ -67,72 +62,53 @@ abstract class AbstractInteractiveServiceConfiguration implements InteractiveSer
 
 @AddConstructor
 class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveServiceConfiguration {
-	
+	val XRawStore store
 	val Service api
 	val ServiceCredentials user
-	
-	private static def get(EList<EStringToSerializableMapEntry> map, String key) {
-		return map.findFirst[it.key == key]?.value
-	}
-	
-	private static def put(EList<EStringToSerializableMapEntry> map, String key, String value) {
-		val existingEntry = map.findFirst[it.key == key]
-		if (existingEntry == null) {
-			val newEntry = XRawScriptModelFactory.eINSTANCE.createEStringToSerializableMapEntry
-			newEntry.key = key
-			newEntry.value = value
-			map.add(newEntry)
-		} else {
-			existingEntry.value = value	
-		}
-	}  
 		
 	override get(XRawHttpServiceConfigurationScope scope, String key) {
 		if (scope == XRawHttpServiceConfigurationScope.USER) {
-			val existingFeature = user.eClass.EAllStructuralFeatures.findFirst[name==key]
-			if (existingFeature != null) {
-				return user.eGet(existingFeature) as String
-			}
+			if (!user.xJson.isNull(key)) {
+				return user.xJson.getString(key)
+			}			
 		}
 		
-		val existingFeature = api.eClass.EAllStructuralFeatures.findFirst[name==key]
-		if (existingFeature != null) {
-			return api.eGet(existingFeature) as String
+		if (!api.xJson.isNull(key)) {
+			return api.xJson.getString(key)
 		}
 		
 		if (scope == XRawHttpServiceConfigurationScope.USER) {
-			val value = user.configuration.get(key)
+			val value = if (user.more.isNull(key)) null else user.more.getString(key)
 			if (value == null) {
-				return api.configuration.findFirst[it.key == key]?.value
+				return if (api.more.isNull(key)) null else api.more.getString(key)
 			} else {
 				return value
 			}
 		} else {
-			return api.configuration.get(key)
+			return if (api.more.isNull(key)) null else api.more.getString(key)
 		}
 	}
 	
 	override set(XRawHttpServiceConfigurationScope scope, String key, String value) {
 		if (scope == XRawHttpServiceConfigurationScope.USER) {
-			val existingFeature = user.eClass.EAllStructuralFeatures.findFirst[name==key]
-			if (existingFeature != null) {
-				user.eSet(existingFeature, value)
+			if (!user.xJson.isNull(key)) {
+				user.xJson.put(key, value)
 			} else {
-				user.configuration.put(key, value.toString)
+				user.more.put(key, value.toString)
 			}
 		} else {
-			val existingFeature = api.eClass.EAllStructuralFeatures.findFirst[name==key]
-			if (existingFeature != null) {
-				api.eSet(existingFeature, value)
+			
+			if (api.xJson.isNull(key)) {
+				api.xJson.put(key, value)
 			} else {
-				api.configuration.put(key, value.toString)
+				api.more.put(key, value.toString)
 			}
 		}
 		save()
 	}
 	
 	override protected save() {
-		api.eResource.save(null)
+		store.save
 	}
 	
 }

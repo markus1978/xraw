@@ -1,13 +1,13 @@
 package de.scheidgen.xraw.apis.youtube
 
-import de.scheidgen.xraw.annotations.Converter
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
+import de.scheidgen.xraw.apis.google.GoogleOAuth2Service
 import de.scheidgen.xraw.apis.youtube.search.List
+import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import java.text.SimpleDateFormat
 import java.util.Date
-import de.scheidgen.xraw.apis.google.GoogleOAuth2Service
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 
 @Directory
 @Service
@@ -38,8 +38,12 @@ class Videos {
 
 class YouTubeDateConverter implements Converter<Date> {
 
-	override convert(String value) {
+	override toValue(String value) {
 		return new SimpleDateFormat("YYYY-MM-DDThh:mm:ss.sZ").parse(value);
+	}
+	
+	override toString(Date value) {
+		return new SimpleDateFormat("YYYY-MM-DDThh:mm:ss.sZ").format(value);
 	}
 
 }

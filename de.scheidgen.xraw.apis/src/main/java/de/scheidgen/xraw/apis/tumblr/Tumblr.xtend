@@ -4,8 +4,8 @@ import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
 import de.scheidgen.xraw.apis.tumblr.blog.Info
 import de.scheidgen.xraw.http.ScribeOAuth1Service
-import org.scribe.builder.api.TumblrApi
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import org.scribe.builder.api.TumblrApi
 
 @Directory @Service class Tumblr {
 	Blog blog

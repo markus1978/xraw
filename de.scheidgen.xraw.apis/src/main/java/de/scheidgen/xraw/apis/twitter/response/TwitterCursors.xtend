@@ -1,10 +1,10 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import java.util.List
-import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterIdConverter
-import de.scheidgen.xraw.annotations.JSON
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
+import de.scheidgen.xraw.json.WithConverter
+import java.util.List
 
 @JSON
 public class TwitterIdCursor {

@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.JSON
+import de.scheidgen.xraw.json.JSON
 
 @JSON
 class AbstractYouTubeResource {

@@ -20,7 +20,7 @@ class YouTubeSearchExample {
 		return request
 	}
 	
-	val YouTube youtube = XRawScript::get("data/store.xmi", "markus", YouTube)
+	val YouTube youtube = XRawScript::get("data/store.json", "markus", YouTube)
 	
 	val String keywordStr
 	val String language

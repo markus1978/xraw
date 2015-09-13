@@ -1,16 +1,7 @@
 package de.scheidgen.xraw.script
 
 import de.scheidgen.xraw.AbstractService
-import de.scheidgen.xraw.model.Application
-import de.scheidgen.xraw.model.XRawScriptModelFactory
-import de.scheidgen.xraw.model.XRawScriptModelPackage
 import java.io.File
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.EPackage
-import org.eclipse.emf.ecore.EcorePackage
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 
 class XRawScript {
 	
@@ -22,55 +13,43 @@ class XRawScript {
 	}
 	
 	static def <S extends AbstractService> S get(String storeFile, String userName, Class<S> serviceClass) {
-		EPackage.Registry.INSTANCE.put(XRawScriptModelPackage.eINSTANCE.getNsURI(), XRawScriptModelPackage.eINSTANCE);		
-		EPackage.Registry.INSTANCE.put(EcorePackage.eINSTANCE.getNsURI(), EcorePackage.eINSTANCE);
-		Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl());
 		
-		val file = new File(if (storeFile.endsWith(".xmi")) storeFile else storeFile + ".xmi")
-		val storeURI = URI.createFileURI(file.path)
-		val rs = new ResourceSetImpl()
-		var Resource resource = null;
-		if (file.exists) {
-			resource = rs.getResource(storeURI, true);
+		val file = new File(if (storeFile.endsWith(".json")) storeFile else storeFile + ".json")
+		val store =	if (file.exists) {
+			XRawStore::load(file.absolutePath)
 		} else {
-			resource = rs.createResource(storeURI);
+			val result = new XRawStore
+			result.application = new Application
+			result
 		}
+		store.file = file.absolutePath
 		
-		var Application application = null;
-		if (!resource.contents.empty) {
-			application = resource.contents.get(0) as Application
-		} else {
-			application = XRawScriptModelFactory.eINSTANCE.createApplication
-			resource.contents.add(application)
-			resource.save(null);
-		}
+		val application = store.application
 		
 		var profile = application.profiles.findFirst[it.id==userName]
 		if (profile == null) {
-			profile = XRawScriptModelFactory.eINSTANCE.createProfile
+			profile = new Profile
 			profile.id = userName
 			application.profiles.add(profile)
-			resource.save(null)
 		}
 		
 		var service = application.services.findFirst[it.serviceClass == serviceClass]
 		if (service == null) {
-			service = XRawScriptModelFactory.eINSTANCE.createService
-			service.serviceClass = serviceClass
+			service = new Service
+			service.serviceClass = serviceClass			
 			application.services.add(service)
-			resource.save(null)
 		}
 		val serviceVal = service
 		
-		var serviceCredentials = profile.services.findFirst[it.service == serviceVal]
+		var serviceCredentials = profile.services.findFirst[it.serviceClass == serviceVal.serviceClass]
 		if (serviceCredentials == null) {
-			serviceCredentials = XRawScriptModelFactory.eINSTANCE.createServiceCredentials
-			serviceCredentials.service = service
+			serviceCredentials = new ServiceCredentials
+			serviceCredentials.serviceClass = service.serviceClass
 			profile.services.add(serviceCredentials)
-			resource.save(null)
 		}
+		store.save
 		
-		val configuration = new EmfStoreInteractiveServiceConfiguration(service, serviceCredentials)
+		val configuration = new EmfStoreInteractiveServiceConfiguration(store, service, serviceCredentials)
 		return get(configuration, serviceClass)
 	}
 }

@@ -4,15 +4,15 @@ import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.http.UnirestHttpResponse
 import de.scheidgen.xraw.http.XRawHttpException
 import de.scheidgen.xraw.http.XRawHttpRequest
+import de.scheidgen.xraw.http.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.Date
-
 import org.json.JSONException
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
-import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
-import de.scheidgen.xraw.http.XRawHttpService
 
 @AddConstructor
 class GoogleOAuth2Service implements XRawHttpService {

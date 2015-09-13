@@ -1,11 +1,15 @@
 package de.scheidgen.xraw.apis.twitter.converter
 
-import de.scheidgen.xraw.annotations.Converter
+import de.scheidgen.xraw.json.Converter
 
 class TwitterIdConverter implements Converter<String> {
 	
-	override convert(String value) {
+	override toValue(String value) {
 		return value
+	}
+	
+	override toString(String value) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
 }

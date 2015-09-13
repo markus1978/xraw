@@ -1,10 +1,15 @@
 package de.scheidgen.xraw.apis.tumblr.converter
 
-import de.scheidgen.xraw.annotations.Converter
+import de.scheidgen.xraw.json.Converter
 import java.util.Date
 
 class TumblrDateConverter implements Converter<Date> {
-	override convert(String value) {
+	override toValue(String value) {
 		return new Date(Long.parseLong(value))
 	}
+	
+	override toString(Date value) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
 }

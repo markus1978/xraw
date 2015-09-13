@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import de.scheidgen.xraw.annotations.UrlConverter
-import de.scheidgen.xraw.annotations.WithConverter
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
+import de.scheidgen.xraw.json.UrlConverter
+import de.scheidgen.xraw.json.WithConverter
 import java.net.URL
 import java.util.List
-import de.scheidgen.xraw.annotations.JSON
 
 @JSON
 class TwitterEntities {

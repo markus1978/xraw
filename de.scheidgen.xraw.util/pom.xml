@@ -4,7 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>de.scheidgen.xraw.util</artifactId>
 	<name>XRaw util</name>
-	
+	<dependencies>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20141113</version>
+		</dependency>
+	</dependencies>
 	<parent>
 		<groupId>de.scheidgen.xraw</groupId>
 		<artifactId>de.scheidgen.xraw</artifactId>

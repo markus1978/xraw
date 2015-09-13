@@ -5,66 +5,11 @@
 	<artifactId>de.scheidgen.xraw.core</artifactId>
 	<name>XRaw core</name>
 
-	<build>
-		<plugins>
-			<!-- <plugin>
-			    <artifactId>maven-clean-plugin</artifactId>
-			    <version>2.6.1</version>
-			    <configuration>
-			      <filesets>
-			        <fileset>
-			          <directory>${project.basedir}/src/main/java/de/scheidgen/xraw/model</directory>			          
-			          <followSymlinks>false</followSymlinks>
-			        </fileset>
-			      </filesets>
-			    </configuration>
-			</plugin>-->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<executions>
-					<execution>
-						<phase>validate</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<includeProjectDependencies>false</includeProjectDependencies>
-					<includePluginDependencies>true</includePluginDependencies>
-					<mainClass>org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher</mainClass>
-					<arguments>
-						<argument>file://${project.basedir}/src/main/resources/storegen.mwe2</argument>
-					</arguments>
-					<workingDirectory>${project.basedir}</workingDirectory> 
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xtext</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-					<dependency>
-						<groupId>org.eclipse.xtext</groupId>
-						<artifactId>org.eclipse.xtext.xbase</artifactId>
-						<version>${xtext.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-		</plugins>
-	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.scribe</groupId>
 			<artifactId>scribe</artifactId>
 			<version>1.3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20141113</version>
 		</dependency>
 		<!--  instead of EMF, we use xtext and let them handle all the emf, mwe, etc. dependencies -->
 		<dependency>

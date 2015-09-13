@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.DefaultResponse
+import de.scheidgen.xraw.json.JSON
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.ArrayList
 import java.util.List
 import org.json.JSONObject
-import de.scheidgen.xraw.annotations.JSON
 
 @AddConstructor
 class TwitterResponse extends DefaultResponse {

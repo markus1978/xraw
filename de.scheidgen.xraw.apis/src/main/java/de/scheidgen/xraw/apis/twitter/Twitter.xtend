@@ -10,10 +10,10 @@ import de.scheidgen.xraw.apis.twitter.friendships.Lookup
 import de.scheidgen.xraw.apis.twitter.search.Tweets
 import de.scheidgen.xraw.apis.twitter.statuses.Show
 import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
-import org.scribe.builder.api.TwitterApi
 import de.scheidgen.xraw.http.ScribeOAuth1Service
+import de.scheidgen.xraw.json.AbstractJSONWrapper
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
-import de.scheidgen.xraw.AbstractJSONWrapper
+import org.scribe.builder.api.TwitterApi
 
 @Directory
 @Service

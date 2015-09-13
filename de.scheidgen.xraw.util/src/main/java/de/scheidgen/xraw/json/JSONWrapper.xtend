@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.annotations
+package de.scheidgen.xraw.json
 
 import com.google.common.collect.AbstractIterator
 import java.util.AbstractList
@@ -22,14 +22,77 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONObject
-import de.scheidgen.xraw.AbstractJSONWrapper
+import org.json.JSONArray
 
 @Active(typeof(JSONWrapperCompilationParticipant))
 annotation JSON {
-
+	boolean mutable = false
 }
 
 class JSONWrapperCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
+
+	def generatePutStatement(extension CompilationContext cmpCtx, extension TransformationContext tnsCtx,
+			CharSequence sourceExpr, CharSequence keyExpr, CharSequence valueExpr, TypeReference valueTypeRef, Element source) {
+		val converterAnnotation = if (source instanceof FieldDeclaration) {
+			source.findAnnotation(WithConverter.findTypeGlobally) 
+		} 	
+			
+		if (converterAnnotation != null) {
+			return '''
+				«sourceExpr».put(«keyExpr», new «toJavaCode(converterAnnotation.getClassValue("value"))»().toString(«valueExpr»));
+			'''
+		} else if (valueTypeRef.wrapper) {
+			val wrapper = valueTypeRef.wrapperIfPrimitive
+			val cast = switch wrapper {
+				case wrapper == Boolean.newTypeReference: "(boolean)"
+				case wrapper == Long.newTypeReference: "(long)"
+				case wrapper == Integer.newTypeReference: "(int)"
+				case wrapper == Double.newTypeReference: "(double)"
+				default: ""
+			}
+			if (cast == "") {
+//				tnsCtx.addError(source, "Unsupported primitive type " + valueTypeRef.simpleName + ".")
+			}
+			return '''
+				«sourceExpr».put(«keyExpr», («cast»)«valueExpr»);
+			'''		
+		} else if (valueTypeRef.primitive) {
+			return '''
+				«sourceExpr».put(«keyExpr», «valueExpr»);
+			'''	
+		} else if (valueTypeRef == string) {
+			return '''
+				«sourceExpr».put(«keyExpr», «valueExpr»);
+			'''
+		} else if (valueTypeRef.type instanceof EnumerationTypeDeclaration) {
+			return '''
+				«sourceExpr».put(«keyExpr», «valueExpr».name());
+			'''			
+		} else if (JSONObject.newTypeReference.isAssignableFrom(valueTypeRef)) {
+			return '''
+				«sourceExpr».put(«keyExpr», «valueExpr»);
+			'''
+		} else {
+			val valueType = valueTypeRef.type
+			if (valueType instanceof ClassDeclaration) {
+				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {
+					return '''
+						«sourceExpr».put(«keyExpr», «valueExpr».xJson());
+					'''
+				} else {
+//					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
+					return '''
+						throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Object type «valueTypeRef.simpleName» is not a JSON type.");
+					'''		
+				}
+			} else {
+//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
+				return '''
+					throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Unsupported type «valueTypeRef.simpleName».");
+				'''		
+			}
+		}
+	}
 
 	def generateAccessExpr(extension CompilationContext cmpCtx, extension TransformationContext tnsCtx,
 			CharSequence sourceExpr, CharSequence keyExpr, TypeReference valueTypeRef, Element source) {
@@ -38,7 +101,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 		} 	
 			
 		if (converterAnnotation != null) {
-			return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(converterAnnotation.getClassValue("value"))»().convert(«sourceExpr».getString(«keyExpr»))'''
+			return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(converterAnnotation.getClassValue("value"))»().toValue(«sourceExpr».getString(«keyExpr»))'''
 		} else if (valueTypeRef.primitive || valueTypeRef.wrapper) {
 			val wrapper = valueTypeRef.wrapperIfPrimitive
 			val accessMethodName = switch wrapper {
@@ -49,7 +112,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				default: "get"
 			}
 			if (accessMethodName == "get") {
-				tnsCtx.addError(source, "Unsupported primitive type " + valueTypeRef.simpleName + ".")
+//				tnsCtx.addError(source, "Unsupported primitive type " + valueTypeRef.simpleName + ".")
 			}
 
 			if (valueTypeRef.wrapper) {
@@ -94,11 +157,11 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {
 					return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»))'''
 				} else {
-					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
+//					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
 					return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''		
 				}
 			} else {
-				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
+//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
 				return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''
 			}
 		}
@@ -110,13 +173,25 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
 			
-			clazz.extendedClass = AbstractJSONWrapper.newTypeReference
+			val jsonAnnotation = clazz.findAnnotation(JSON.findTypeGlobally)
+			val mutable = jsonAnnotation.getBooleanValue("mutable")
+			
+			if (clazz.extendedClass == null || clazz.extendedClass == Object.newTypeReference) {
+				clazz.extendedClass = AbstractJSONWrapper.newTypeReference				
+			}
 
 			clazz.addConstructor[
 				visibility = Visibility.PUBLIC
 				addParameter("json", newTypeReference(JSONObject))
 				body = ['''
 					super(json);
+				''']
+			]
+			
+			clazz.addConstructor[
+				visibility = Visibility.PUBLIC			
+				body = ['''
+					super();
 				''']
 			]
 			
@@ -127,20 +202,26 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 					body = [
 						val jsonName = NameUtil::name(context, field)
 						if (field.type.array) {
-							addError(field, "Arrays are not supported")
+//							addError(field, "Arrays are not supported")
 							'''
 								return null;
 							'''
 						} else if (List.newTypeReference.isAssignableFrom(field.type)) {
-							val elementType = toJavaCode(field.type.actualTypeArguments.get(0))
+							val elementTypeRef = field.type.actualTypeArguments.get(0)
+							val elementType = toJavaCode(elementTypeRef)
 							'''
 								if (json.isNull("«jsonName»")) {
-									return null;
+									«IF mutable»
+										json.put("«jsonName»", new «toJavaCode(JSONArray.newTypeReference)»());
+										return get«NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper»();
+									«ELSE»
+										return null;
+									«ENDIF»
 								} else {
 									return new «toJavaCode(AbstractList.newTypeReference(field.type.actualTypeArguments))»() {
 										@Override
 										public «elementType» get(int index) {
-											return «generateAccessExpr(context, '''json.getJSONArray("«jsonName»")''', "index", field.type.actualTypeArguments.get(0), field)»;
+											return «generateAccessExpr(context, '''json.getJSONArray("«jsonName»")''', "index", elementTypeRef, field)»;
 										}
 										
 										@Override
@@ -150,24 +231,39 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 										
 										@Override
 										public void add(int index, «elementType» element) {
-											throw new UnsupportedOperationException("Mutable arrays not supported yet");
+											«IF mutable» 
+												«generatePutStatement(context, '''json.getJSONArray("«jsonName»")''', "index", "element", elementTypeRef, field)»
+											«ELSE»
+												throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Object is immutable.");
+											«ENDIF»											
 										}
 										
 										@Override
 										public «elementType» set(int index, «toJavaCode(field.type.actualTypeArguments.get(0))» element) {
-											throw new UnsupportedOperationException("Mutable arrays not supported yet");
+											«IF mutable»
+												«generatePutStatement(context, '''json.getJSONArray("«jsonName»")''', "index", "element", elementTypeRef, field)»
+												return element;
+											«ELSE»
+												throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Object is immutable.");
+											«ENDIF»
 										}
 										
 										@Override
 										public «elementType» remove(int index) {
-											throw new UnsupportedOperationException("Mutable arrays not supported yet");
+											«IF mutable»
+												«elementType» old = get(index);
+												json.getJSONArray("«jsonName»").remove(index);
+												return old;
+											«ELSE»
+												throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Object is immutable.");
+											«ENDIF»
 										}
 									};
 								}
 							'''
 						} else if (newTypeReference(Map).isAssignableFrom(field.type)) {
 							if (field.type.actualTypeArguments.get(0) != string) {
-								addError(field, "Only string keys are allowed for maps.")
+//								addError(field, "Only string keys are allowed for maps.")
 							}
 							val elementTypeRef = field.type.actualTypeArguments.get(1)
 							val elementType = toJavaCode(elementTypeRef)
@@ -231,13 +327,35 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				]
 			}
 			
+			if (mutable) {
+				for (field : declaredFields) {						
+					if (!field.type.array 
+							&& !List.newTypeReference.isAssignableFrom(field.type) 
+							&& !newTypeReference(Map).isAssignableFrom(field.type)) {
+																
+						clazz.addMethod("set" + NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper) [
+							docComment = field.docComment
+							addParameter("value", field.type)
+							body = [
+								val jsonName = NameUtil::name(context, field)
+								return generatePutStatement(context, "json", '''"«jsonName»"''', "value", field.type, field)
+							]					
+						]
+					}
+				}
+			}
+			
 			clazz.addMethod("toString") [
 				addAnnotation(Override.newAnnotationReference)
 				returnType = string
 				body = ['''
 					return json.toString();
 				''']
-			]				
+			]
+			
+			for(field: clazz.declaredFields) {
+				field.remove
+			}				
 		}
 	}
 }

@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.youtube.YouTubeDateConverter
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.WithConverter
 import java.util.Date
 import java.util.List
 import java.util.Map
-import de.scheidgen.xraw.annotations.JSON
 
 @JSON
 class YouTubeChannels extends AbstractYouTubeResource {
