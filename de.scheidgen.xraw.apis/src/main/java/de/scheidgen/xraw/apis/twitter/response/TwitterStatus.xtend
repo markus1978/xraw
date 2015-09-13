@@ -4,9 +4,9 @@ import de.scheidgen.xraw.annotations.Name
 import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterDateConverter
 import java.util.Date
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class TwitterStatus {
 	Object coordinates	
 	boolean favorited = false

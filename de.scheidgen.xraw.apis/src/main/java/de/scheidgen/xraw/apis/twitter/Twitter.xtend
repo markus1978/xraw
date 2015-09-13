@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.AbstractRequest
-import de.scheidgen.xraw.AbstractResource
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
 import de.scheidgen.xraw.apis.twitter.friends.Id
@@ -14,6 +13,7 @@ import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
 import org.scribe.builder.api.TwitterApi
 import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.AbstractJSONWrapper
 
 @Directory
 @Service
@@ -29,7 +29,7 @@ class Twitter {
 		return new ScribeOAuth1Service(TwitterApi, httpServiceConfig)
 	}
 	
-	public static def <R extends AbstractResource> TwitterResponse safeCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
+	public static def <R extends AbstractJSONWrapper> TwitterResponse safeCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
 		var cursor = "-1"
 		var continue = true
 		

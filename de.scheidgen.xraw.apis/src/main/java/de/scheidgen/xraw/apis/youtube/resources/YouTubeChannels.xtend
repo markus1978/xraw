@@ -1,13 +1,13 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
 import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.youtube.YouTubeDateConverter
 import java.util.Date
 import java.util.List
 import java.util.Map
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class YouTubeChannels extends AbstractYouTubeResource {
 	/**
 	 * The ID that YouTube uses to uniquely identify the channel.
@@ -61,7 +61,7 @@ class YouTubeChannels extends AbstractYouTubeResource {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsSnippet {
 	/**
 	 * The channel's title.
@@ -95,7 +95,7 @@ class YouTubeChannelsSnippet {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsSnippetThumbnails {
 	/**
 	 * The image's URL.
@@ -114,7 +114,7 @@ class YouTubeChannelsSnippetThumbnails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsContentDetails {
 	/**
 	 * The <code>relatedPlaylists</code> object is a map that identifies playlists associated with the channel, such as the channel's uploaded videos or favorite videos. You can retrieve any of these playlists using the <code><a href="/youtube/v3/docs/playlists/list">playlists.list</a></code> method.
@@ -128,7 +128,7 @@ class YouTubeChannelsContentDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsContentDetailsRelatedPlaylists {
 	/**
 	 * The ID of the playlist that contains the channel's liked videos. Use the <code><a href="/youtube/v3/docs/playlistItems/insert">playlistItems.insert</a></code> and <code><a href="/youtube/v3/docs/playlistItems/delete">playlistItems.delete</a></code> to add or remove items from that list.
@@ -157,7 +157,7 @@ class YouTubeChannelsContentDetailsRelatedPlaylists {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsStatistics {
 	/**
 	 * The number of times the channel has been viewed.
@@ -186,7 +186,7 @@ class YouTubeChannelsStatistics {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsTopicDetails {
 	/**
 	 * A list of Freebase topic IDs associated with the channel. You can retrieve information about each topic using the <a href="http://wiki.freebase.com/wiki/Topic_API">Freebase Topic API</a>.
@@ -195,7 +195,7 @@ class YouTubeChannelsTopicDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsStatus {
 	/**
 	 * Privacy status of the channel.<br><br>Valid values for this property are: 
@@ -224,7 +224,7 @@ class YouTubeChannelsStatus {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsBrandingSettings {
 	/**
 	 * The <code>channel</code> object encapsulates branding properties of the channel page.
@@ -248,7 +248,7 @@ class YouTubeChannelsBrandingSettings {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsBrandingSettingsChannel {
 	/**
 	 * The channel's title. The title has a maximum length of 30 characters.
@@ -317,7 +317,7 @@ class YouTubeChannelsBrandingSettingsChannel {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsBrandingSettingsWatch {
 	/**
 	 * The background color for the video watch page's branded area.
@@ -336,7 +336,7 @@ class YouTubeChannelsBrandingSettingsWatch {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsBrandingSettingsImage {
 	/**
 	 * The URL for the banner image shown on the channel page on the YouTube website. The image is 1060px by 175px.
@@ -425,7 +425,7 @@ class YouTubeChannelsBrandingSettingsImage {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsBrandingSettingsHints {
 	/**
 	 * A property.
@@ -439,7 +439,7 @@ class YouTubeChannelsBrandingSettingsHints {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotion {
 	/**
 	 * The <code>defaultTiming</code> object identifies the channel's default timing settings for when a promoted item will display during a video playback. These default settings can be overriden by more specific <code><a href="#invideoPromotion.items[].timing">timing</a></code> settings for any given promoted item.
@@ -463,7 +463,7 @@ class YouTubeChannelsInvideoPromotion {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotionDefaultTiming {
 	/**
 	 * The timing method that determines when the promoted item is inserted during the video playback. If the value is <code>offsetFromStart</code>, then the <code>offsetMs</code> field represents an offset from the start of the video. If the value is <code>offsetFromEnd</code>, then the <code>offsetMs</code> field represents an offset from the end of the video.
@@ -482,7 +482,7 @@ class YouTubeChannelsInvideoPromotionDefaultTiming {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotionPosition {
 	/**
 	 * The manner in which the promoted item is positioned in the video player.<br><br>Valid values for this property are: 
@@ -505,7 +505,7 @@ class YouTubeChannelsInvideoPromotionPosition {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotionItems {
 	/**
 	 * Identifies the promoted item.
@@ -529,7 +529,7 @@ class YouTubeChannelsInvideoPromotionItems {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotionItemsId {
 	/**
 	 * The promoted item's type.<br><br>Valid values for this property are: 
@@ -558,7 +558,7 @@ class YouTubeChannelsInvideoPromotionItemsId {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsInvideoPromotionItemsTiming {
 	/**
 	 * The timing method that determines when the promoted item is inserted during the video playback. If the value is <code>offsetFromStart</code>, then the <code>offsetMs</code> field represents an offset from the start of the video. If the value is <code>offsetFromEnd</code>, then the <code>offsetMs</code> field represents an offset from the end of the video.
@@ -577,7 +577,7 @@ class YouTubeChannelsInvideoPromotionItemsTiming {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsAuditDetails {
 	/**
 	 * This field indicates whether there are any issues with the channel. Currently, this field represents the result of the logical <code>AND</code> operation over the <code>communityGuidelinesGoodStanding</code>, <code>copyrightStrikesGoodStanding</code>, and <code>contentIdClaimsGoodStanding</code> properties, meaning that this property has a value of <code>true</code> if all of those other properties also have a value of <code>true</code>. However, this property will have a value of <code>false</code> if any of those properties has a value of <code>false</code>. Note, however, that the methodology used to set this property's value is subject to change.
@@ -601,7 +601,7 @@ class YouTubeChannelsAuditDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsContentOwnerDetails {
 	/**
 	 * The ID of the content owner linked to the channel.

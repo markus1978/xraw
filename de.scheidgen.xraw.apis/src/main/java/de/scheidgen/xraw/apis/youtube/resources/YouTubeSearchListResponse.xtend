@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
 import java.util.List
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class YouTubeSearchListResponse {
 
     /**
@@ -24,7 +24,7 @@ class YouTubeSearchListResponse {
  	List<YouTubeSearchResult> items  
 }
 
-@Resource
+@JSON
 class YouTubeSearchListResponsePageInfo {
 	/**
 	 * The total number of results in the result set.Please note that the value is an approximation and may not represent an exact value. In addition, the maximum value is 1,000,000.

@@ -8,9 +8,9 @@ import de.scheidgen.xraw.apis.twitter.converter.TwitterColorConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterDateConverter
 import java.net.URL
 import java.util.Date
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class TwitterUser {
     @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_fill_color
     @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_border_color

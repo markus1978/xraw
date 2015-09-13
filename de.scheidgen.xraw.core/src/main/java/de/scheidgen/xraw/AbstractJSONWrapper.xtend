@@ -2,7 +2,7 @@ package de.scheidgen.xraw
 
 import org.json.JSONObject
 
-class AbstractResource {
+class AbstractJSONWrapper {
 	protected val JSONObject json
 
 	new(JSONObject json) {

@@ -5,16 +5,16 @@ import de.scheidgen.xraw.annotations.UrlConverter
 import de.scheidgen.xraw.annotations.WithConverter
 import java.net.URL
 import java.util.List
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class TwitterEntities {
 	List<TwitterHashtag> hashtags
 	List<TwitterUrl> urls
 	List<TwitterUserMention> user_mentions
 }
 
-@Resource
+@JSON
 class TwitterUrl {
 	String display_url
     String expanded_url
@@ -22,7 +22,7 @@ class TwitterUrl {
     @WithConverter(UrlConverter) URL url
 }
 
-@Resource
+@JSON
 class TwitterUserMention {
 	@Name("id_str") String id
     int[] indices
@@ -30,7 +30,7 @@ class TwitterUserMention {
 	String screen_name
 }
 
-@Resource
+@JSON
 class TwitterHashtag {
 	String text
 	int[] indices        

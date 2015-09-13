@@ -1,13 +1,13 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
 import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.youtube.YouTubeDateConverter
 import java.util.Date
 import java.util.List
 import java.util.Map
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class YouTubeVideos extends AbstractYouTubeResource {
 	/**
 	 * The ID that YouTube uses to uniquely identify the video.
@@ -71,7 +71,7 @@ class YouTubeVideos extends AbstractYouTubeResource {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosSnippet {
 	/**
 	 * The date and time that the video was published. The value is specified in <a href="//www.w3.org/TR/NOTE-datetime">ISO 8601</a> (<code>YYYY-MM-DDThh:mm:ss.sZ</code>) format.
@@ -134,7 +134,7 @@ class YouTubeVideosSnippet {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosSnippetThumbnails {
 	/**
 	 * The image's URL.
@@ -153,7 +153,7 @@ class YouTubeVideosSnippetThumbnails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosContentDetails {
 	/**
 	 * The length of the video. The tag value is an <a href="//en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601</a> duration. For example, for a video that is at least one minute long and less than one hour long, the duration is in the format <code>PT#M#S</code>, in which the letters <code>PT</code> indicate that the value specifies a period of time, and the letters <code>M</code> and <code>S</code> refer to length in minutes and seconds, respectively. The <code>#</code> characters preceding the <code>M</code> and <code>S</code> letters are both integers that specify the number of minutes (or seconds) of the video. For example, a value of <code>PT15M33S</code> indicates that the video is 15 minutes and 33 seconds long.<br><br>If the video is at least one hour long, the duration is in the format <code>PT#H#M#S</code>, in which the <code>#</code> preceding the letter <code>H</code> specifies the length of the video in hours and all of the other details are the same as described above. If the video is at least one day long, the letters <code>P</code> and <code>T</code> are separated, and the value's format is <code>P#DT#H#M#S</code>. Please refer to the ISO 8601 specification for complete details.
@@ -200,7 +200,7 @@ class YouTubeVideosContentDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosContentDetailsRegionRestriction {
 	/**
 	 * A list of region codes that identify countries where the video is viewable. If this property is present and a country is not listed in its value, then the video is blocked from appearing in that country. If this property is present and contains an empty list, the video is blocked in all countries.
@@ -214,7 +214,7 @@ class YouTubeVideosContentDetailsRegionRestriction {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosContentDetailsContentRating {
 	/**
 	 * The video's Australian Classification Board (ACB) or Australian Communications and Media Authority (ACMA) rating. ACMA ratings are used to classify children's television programming.<br><br>Valid values for this property are: 
@@ -1038,7 +1038,7 @@ class YouTubeVideosContentDetailsContentRating {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosStatus {
 	/**
 	 * The status of the uploaded video.<br><br>Valid values for this property are: 
@@ -1117,7 +1117,7 @@ class YouTubeVideosStatus {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosStatistics {
 	/**
 	 * The number of times the video has been viewed.
@@ -1146,7 +1146,7 @@ class YouTubeVideosStatistics {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosPlayer {
 	/**
 	 * An <code>&lt;iframe&gt;</code> tag that embeds a player that will play the video.
@@ -1155,7 +1155,7 @@ class YouTubeVideosPlayer {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosTopicDetails {
 	/**
 	 * A list of Freebase topic IDs that are centrally associated with the video. These are topics that are centrally featured in the video, and it can be said that the video is mainly about each of these. You can retrieve information about each topic using the <a href="http://wiki.freebase.com/wiki/Topic_API">Freebase Topic API</a>.
@@ -1169,7 +1169,7 @@ class YouTubeVideosTopicDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosRecordingDetails {
 	/**
 	 * The text description of the location where the video was recorded.
@@ -1188,7 +1188,7 @@ class YouTubeVideosRecordingDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosRecordingDetailsLocation {
 	/**
 	 * Latitude in degrees.
@@ -1207,7 +1207,7 @@ class YouTubeVideosRecordingDetailsLocation {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosFileDetails {
 	/**
 	 * The uploaded file's name. This field is present whether a video file or another type of file was uploaded.
@@ -1275,7 +1275,7 @@ class YouTubeVideosFileDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosFileDetailsVideoStreams {
 	/**
 	 * The encoded video content's width in pixels. You can calculate the video's encoding aspect ratio as <code>width_pixels</code>&nbsp;/&nbsp;<code>height_pixels</code>.
@@ -1326,7 +1326,7 @@ class YouTubeVideosFileDetailsVideoStreams {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosFileDetailsAudioStreams {
 	/**
 	 * The number of audio channels that the stream contains.
@@ -1350,7 +1350,7 @@ class YouTubeVideosFileDetailsAudioStreams {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosFileDetailsRecordingLocation {
 	/**
 	 * Latitude in degrees.
@@ -1369,7 +1369,7 @@ class YouTubeVideosFileDetailsRecordingLocation {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosProcessingDetails {
 	/**
 	 * The video's processing status. This value indicates whether YouTube was able to process the video or if the video is still being processed.<br><br>Valid values for this property are: 
@@ -1425,7 +1425,7 @@ class YouTubeVideosProcessingDetails {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosProcessingDetailsProcessingProgress {
 	/**
 	 * An estimate of the total number of parts that need to be processed for the video. The number may be updated with more precise estimates while YouTube processes the video.
@@ -1444,7 +1444,7 @@ class YouTubeVideosProcessingDetailsProcessingProgress {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosSuggestions {
 	/**
 	 * A list of errors that will prevent YouTube from successfully processing the uploaded video. These errors indicate that, regardless of the video's current <a href="#processingProgress.processingStatus">processing status</a>, eventually, that status will almost certainly be <code>failed</code>.<br><br>Valid values for this property are: 
@@ -1500,7 +1500,7 @@ class YouTubeVideosSuggestions {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosSuggestionsTagSuggestions {
 	/**
 	 * The keyword tag suggested for the video.
@@ -1514,7 +1514,7 @@ class YouTubeVideosSuggestionsTagSuggestions {
 	
 }
 
-@Resource
+@JSON
 class YouTubeVideosLiveStreamingDetails {
 	/**
 	 * The time that the broadcast actually started. The value is specified in <a href="//www.w3.org/TR/NOTE-datetime">ISO 8601</a> (<code>YYYY-MM-DDThh:mm:ss.sZ</code>) format. This value will not be available until the broadcast begins.

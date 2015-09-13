@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
 import de.scheidgen.xraw.annotations.WithConverter
 import java.util.Date
 import de.scheidgen.xraw.apis.youtube.YouTubeDateConverter
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class YouTubeSearchResult extends AbstractYouTubeResource {
 	/**
 	 * The id object contains information that can be used to uniquely identify the resource that matches the search request.
@@ -18,7 +18,7 @@ class YouTubeSearchResult extends AbstractYouTubeResource {
   	YouTubeSearchSnippet snippet
 }
 
-@Resource
+@JSON
 class YouTubeSearchResultId {
 	/**
 	 * The type of the API resource.
@@ -41,7 +41,7 @@ class YouTubeSearchResultId {
     String playlistId
 }
 
-@Resource
+@JSON
 class YouTubeSearchSnippet {
 	/**
 	 * The creation date and time of the resource that the search result identifies. The value is specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.

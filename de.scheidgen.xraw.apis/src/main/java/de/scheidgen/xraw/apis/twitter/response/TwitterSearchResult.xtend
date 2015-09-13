@@ -2,15 +2,15 @@ package de.scheidgen.xraw.apis.twitter.response
 
 import de.scheidgen.xraw.annotations.Name
 import java.util.List
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.JSON
 
-@Resource
+@JSON
 class TwitterSearchResult {
 	List<TwitterStatus> statuses
 	TwitterSearchMetaData search_metadata
 }
 
-@Resource
+@JSON
 class TwitterSearchMetaData {	
     @Name("since_id_str") String since_id
     @Name("max_id_str") String max_id
