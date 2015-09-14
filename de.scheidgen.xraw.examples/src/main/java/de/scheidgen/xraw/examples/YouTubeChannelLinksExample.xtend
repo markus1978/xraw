@@ -11,6 +11,7 @@ import org.jsoup.Jsoup
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 import com.mashape.unirest.http.Unirest
 import java.net.HttpURLConnection
+import de.scheidgen.xraw.util.XRawIterateExtensions
 
 @AddConstructor
 class YouTubeChannelLinksExample {
@@ -28,6 +29,8 @@ class YouTubeChannelLinksExample {
 	val String[] titles
 	val String language 
 	
+	val concurrent = XRawIterateExtensions::concurrent
+	
 	def run() {
 		titles.forEach[title|
 			val search = youtube.search.list.part("snippet").q(title).relevanceLanguage(language).type("channel").xCheck
@@ -36,9 +39,10 @@ class YouTubeChannelLinksExample {
 			println(channel.brandingSettings.channel.title + ":")
 			
 			val channelAbout = Jsoup::parse(new URL('''https://www.youtube.com/channel/«channel.id»/about'''), 1000)
-			val links = channelAbout.getElementsByClass("about-custom-links").collectAll[
+			val rawLinks = channelAbout.getElementsByClass("about-custom-links").collectAll[
 				it.getElementsByTag("a").collect[it.attr("href")]
-			].map[link|
+			]
+			val links = concurrent.collect(rawLinks)[link|
 				var location = link
 				try {
 					var connection = new URL(location).openConnection() as HttpURLConnection
