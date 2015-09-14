@@ -97,7 +97,7 @@ class YouTubeSearchExample {
 		
 		allScores.sort[one,two|Integer.compare(two.value, one.value)]
 		allScores.first(10).forEach[
-			println('''[«it.key.statistics.viewCount»:«it.key.statistics.subscriberCount»] «it.key.brandingSettings.channel.title»: «it.key.brandingSettings.channel.description»''')
+			println('''[«it.key.statistics.viewCount»:«it.key.statistics.subscriberCount»] «it.key.brandingSettings.channel.title»: «it.key.brandingSettings.hints.join(", ")['''«property»: "«value»"''']»''')
 			println("-----------------------")
 			println("")
 		]
