@@ -78,14 +78,14 @@ class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveService
 		}
 		
 		if (scope == XRawHttpServiceConfigurationScope.USER) {
-			val value = if (user.more.isNull(key)) null else user.more.getString(key)
+			val value = user.more.get(key)
 			if (value == null) {
-				return if (api.more.isNull(key)) null else api.more.getString(key)
+				return api.more.get(key)
 			} else {
 				return value
 			}
 		} else {
-			return if (api.more.isNull(key)) null else api.more.getString(key)
+			return api.more.get(key)
 		}
 	}
 	

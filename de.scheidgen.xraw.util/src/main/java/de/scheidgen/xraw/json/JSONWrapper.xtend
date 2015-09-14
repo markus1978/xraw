@@ -271,55 +271,79 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 							val entryType = toJavaCode(entryTypeRef)
 							'''
 								if (json.isNull("«jsonName»")) {
-									return null;
+									«IF mutable»
+										json.put("«jsonName»", new «toJavaCode(JSONObject.newTypeReference)»());
+										return get«NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper»();
+									«ELSE»
+										return null;
+									«ENDIF»
 								} else {
 									return new «toJavaCode(AbstractMap.newTypeReference(string,elementTypeRef))»() {
 										@Override
 										public «toJavaCode(Set.newTypeReference(entryTypeRef))» entrySet() {
 											return new «toJavaCode(AbstractSet.newTypeReference(entryTypeRef))»() {
-												private final «toJavaCode(JSONObject.newTypeReference)» source = json.getJSONObject("«jsonName»");
-												@Override
-												public «toJavaCode(Iterator.newTypeReference(entryTypeRef))» iterator() {
-													return new «toJavaCode(AbstractIterator.newTypeReference(entryTypeRef))»() {
-														private «toJavaCode(Iterator.newTypeReference(string))» sourceKeys = json.getJSONObject("«jsonName»").keys();
+												private final «toJavaCode(Iterator.newTypeReference(string))» sourceKeySetIt = json.getJSONObject("«jsonName»").keySet().iterator();
+							    				@Override
+							    				public «toJavaCode(Iterator.newTypeReference(entryTypeRef))» iterator() {    					
+							    					return new «toJavaCode(Iterator.newTypeReference(entryTypeRef))»() {
 														@Override
-														protected «entryType» computeNext() {
-															if (sourceKeys.hasNext()) {
-																return new «entryType»() {
-																	private final «toJavaCode(string)» key = sourceKeys.next();
-																	@Override
-																	public «toJavaCode(string)» getKey() {
-																		return key;
-																	}
-																	
-																	@Override
-																	public «elementType» getValue() {
-																		return «generateAccessExpr(context, "source", "key", elementTypeRef, field)»;
-																	}
-																	
-																	@Override
-																	public «elementType» setValue(«elementType» value) {
-																		throw new UnsupportedOperationException("Mutable maps are not supported.");
-																	}
-																};
-															} else {
-																return endOfData();
-															}
+														public boolean hasNext() {
+															return sourceKeySetIt.hasNext();
+														}
+							
+														@Override
+														public «toJavaCode(entryTypeRef)» next() {
+															return new «entryType»() {
+																private final «toJavaCode(string)» key = sourceKeySetIt.next();
+																@Override
+																public «toJavaCode(string)» getKey() {
+																	return key;
+																}
+																
+																@Override
+																public «elementType» getValue() {
+																	return «generateAccessExpr(context, '''json.getJSONObject("«jsonName»")''', "key", elementTypeRef, field)»;
+																}
+																
+																@Override
+																public «elementType» setValue(«elementType» value) {
+																	«elementType» old = «generateAccessExpr(context, '''json.getJSONObject("«jsonName»")''', "key", elementTypeRef, field)»;
+																	«generatePutStatement(context, '''json.getJSONObject("«jsonName»")''', "key", "value", elementTypeRef, field)»
+																	return old;
+																}
+															};
+														}
+							
+														@Override
+														public void remove() {
+															sourceKeySetIt.remove();
 														}
 													};
-												}
-												
+							    				}
+
 												@Override
 												public int size() {
-													return source.length();
+													return json.getJSONObject("«jsonName»").length();
 												}
 											};
+										}
+										
+										@Override
+										public «toJavaCode(elementTypeRef)» put(«toJavaCode(string)» key,  «toJavaCode(elementTypeRef)» value) {
+											«elementType» old = «generateAccessExpr(context, '''json.getJSONObject("«jsonName»")''', "key", elementTypeRef, field)»;
+											«generatePutStatement(context, '''json.getJSONObject("«jsonName»")''', "key", "value", elementTypeRef, field)»
+											return old;
 										}
 									};
 								}
 							'''
 						} else {
 							'''
+								«IF (mutable && JSONObject.newTypeReference.isAssignableFrom(field.type))»
+									if (json.isNull("«jsonName»")) {
+										json.put("«jsonName»", new «toJavaCode(JSONObject.newTypeReference)»());
+									}
+								«ENDIF»
 								return «generateAccessExpr(context, "json", '''"«jsonName»"''', field.type, field)»;
 							'''	
 						}					

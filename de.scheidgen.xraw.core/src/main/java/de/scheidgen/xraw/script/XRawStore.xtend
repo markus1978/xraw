@@ -8,6 +8,7 @@ import org.json.JSONObject
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.charset.StandardCharsets
+import java.util.Map
 
 @JSON(mutable=true) class XRawStore {
 	Application application
@@ -30,7 +31,7 @@ import java.nio.charset.StandardCharsets
 }
 
 @JSON(mutable=true) class AbstractConfiguration {
-	JSONObject more
+	Map<String,String> more
 }
 
 @JSON(mutable=true) class Profile {
