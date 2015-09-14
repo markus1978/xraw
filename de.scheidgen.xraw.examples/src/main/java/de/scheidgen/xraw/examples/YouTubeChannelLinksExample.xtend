@@ -32,11 +32,10 @@ class YouTubeChannelLinksExample {
 	val concurrent = XRawIterateExtensions::concurrent
 	
 	def run() {
-		titles.forEach[title|
+		concurrent.collect(titles) [title|
 			val search = youtube.search.list.part("snippet").q(title).relevanceLanguage(language).type("channel").xCheck
 			val channelList = youtube.channels.list.id(search.xResult.items.get(0).snippet.channelId).part("brandingSettings,statistics,status,snippet,contentDetails,contentOwnerDetails,id").xCheck
 			val channel = channelList.xResult.items.get(0)
-			println(channel.brandingSettings.channel.title + ":")
 			
 			val channelAbout = Jsoup::parse(new URL('''https://www.youtube.com/channel/«channel.id»/about'''), 1000)
 			val rawLinks = channelAbout.getElementsByClass("about-custom-links").collectAll[
@@ -61,10 +60,14 @@ class YouTubeChannelLinksExample {
 				return location
 			]
 			
-			println(links.join("\n"))
-			
-			println("")			
-		]
+			return '''
+				«channel.brandingSettings.channel.title»:
+				«FOR link: links»
+					«link»
+				«ENDFOR»
+				
+			'''.toString					
+		].forEach[println(it)]
 	}
 		
 	static def void main(String[] args) {		

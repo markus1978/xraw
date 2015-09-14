@@ -12,15 +12,15 @@ class XRawIterateExtensions {
 		var elements = new ArrayList<T>
 		var iterables = new ArrayList<Iterable<T>>
 		
-		def void add(T element) {
+		synchronized def void add(T element) {
 			elements.add(element)
 		}
 		
-		def void addAll(Iterable<T> iterable) {
+		synchronized def void addAll(Iterable<T> iterable) {
 			iterables.add(iterable)
 		}		
 		
-		def reset() {
+		synchronized def reset() {
 			elements.clear
 			iterables.clear
 			iterables.add(elements)
@@ -74,19 +74,15 @@ class XRawIterateExtensions {
 		}
 	}
 	
-	private static def <E,T> Iterable<T> concurrentIterate(Iterable<E> source, Functions.Function2<E, Result<T>, Void> function) {		
-		return new FluentIterable<T>() {			
-			override iterator() {
-				val result = new Result<T>
-				val futures = source.map[value|
-					CompletableFuture::runAsync[
-						function.apply(value, result)
-					]
-				]
-				CompletableFuture::allOf(futures).join				
-				return result
-			}			
-		}
+	private static def <E,T> Iterable<T> concurrentIterate(Iterable<E> source, Functions.Function2<E, Result<T>, Void> function) {
+		val result = new Result<T>
+		val futures = source.map[value|
+			return CompletableFuture::runAsync[
+				function.apply(value, result)
+			]
+		]
+		CompletableFuture::allOf(futures.toList.toArray(#{})).join				
+		return result.elements				
 	}
 	
 	public static def standard() {
