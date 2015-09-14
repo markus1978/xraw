@@ -1,8 +1,7 @@
-package de.scheidgen.xraw
+package de.scheidgen.xraw.util
 
 import com.google.common.collect.AbstractIterator
 import com.google.common.collect.FluentIterable
-import de.scheidgen.xraw.XRawIterableExtensions.Result
 import java.util.ArrayList
 import java.util.Iterator
 
@@ -197,5 +196,12 @@ class XRawIterableExtensions {
 	 	} else {
 	 		return null
 	 	} 
+	}
+	
+	static def <E> Iterable<E> unique(Iterable<E> source) {
+		return source.fold(newHashSet)[result, element |
+			result.add(element)
+			return result
+		]		
 	}
 }

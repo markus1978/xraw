@@ -1,17 +1,14 @@
 package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.DefaultResponse
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.util.AddConstructor
 import java.util.ArrayList
 import java.util.List
 import org.json.JSONObject
-import org.scribe.model.Response
 
+@AddConstructor
 class TwitterResponse extends DefaultResponse {
-	
-	new(Response scribeResponse) {
-		super(scribeResponse)
-	}
 	
 	private def getIntegerHeader(String name) {
 		val valueStr = headers.get(name.toLowerCase)
@@ -57,7 +54,7 @@ class TwitterResponse extends DefaultResponse {
 	}
 }
 
-@Resource class TwitterError {
+@JSON class TwitterError {
 	int code
 	String message
 }

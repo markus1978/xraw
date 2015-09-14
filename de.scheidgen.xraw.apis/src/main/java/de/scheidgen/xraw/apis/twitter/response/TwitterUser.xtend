@@ -1,16 +1,16 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import de.scheidgen.xraw.annotations.UrlConverter
-import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterColor
 import de.scheidgen.xraw.apis.twitter.converter.TwitterColorConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterDateConverter
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
+import de.scheidgen.xraw.json.UrlConverter
+import de.scheidgen.xraw.json.WithConverter
 import java.net.URL
 import java.util.Date
-import de.scheidgen.xraw.annotations.Resource
 
-@Resource
+@JSON
 class TwitterUser {
     @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_fill_color
     @WithConverter(TwitterColorConverter) TwitterColor profile_sidebar_border_color

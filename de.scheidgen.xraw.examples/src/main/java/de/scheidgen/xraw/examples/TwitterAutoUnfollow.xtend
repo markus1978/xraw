@@ -1,15 +1,16 @@
 package de.scheidgen.xraw.examples
 
-import static extension de.scheidgen.xraw.XRawIterableExtensions.*
-import de.scheidgen.xraw.XRawScript
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
+import de.scheidgen.xraw.script.XRawScript
+
+import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 
 class TwitterAutoUnfollow {
 	
 	def static void main(String[] args) {		
 		val screenName = "mscheidgen"
-		val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
+		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter)
 		
 		println('''Looking for friends for "«screenName»"''')		
 		val friends = newArrayList

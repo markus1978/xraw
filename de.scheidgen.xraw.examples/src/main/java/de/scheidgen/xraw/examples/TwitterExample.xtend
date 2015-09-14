@@ -2,12 +2,12 @@ package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.search.SearchResultType
-import de.scheidgen.xraw.XRawScript
+import de.scheidgen.xraw.script.XRawScript
 
 class TwitterExample {
 	
 	static def void main(String[] args) {		
-		val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
+		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter)
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).xResult
 		val firstTweetId = userTimeline.get(0).id

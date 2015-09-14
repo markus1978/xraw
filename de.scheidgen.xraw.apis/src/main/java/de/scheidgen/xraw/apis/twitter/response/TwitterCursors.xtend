@@ -1,19 +1,19 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import java.util.List
-import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.converter.TwitterIdConverter
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
+import de.scheidgen.xraw.json.WithConverter
+import java.util.List
 
-@Resource
+@JSON
 public class TwitterIdCursor {
 	@Name("previous_cursor_str") String previous_cursor
 	@Name("next_cursor_str") String next_cursor
 	@WithConverter(TwitterIdConverter) List<String> ids
 }
 
-@Resource
+@JSON
 public class TwitterUserCursor {
 	@Name("previous_cursor_str") String previous_cursor
 	@Name("next_cursor_str") String next_cursor

@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.json.JSON
 
-@Resource
+@JSON
 class AbstractYouTubeResource {
 	/**
 	 * Identifies the API resource's type. The value will be youtube#searchListResponse.

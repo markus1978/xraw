@@ -1,37 +1,37 @@
 package de.scheidgen.xraw
 
+import de.scheidgen.xraw.http.XRawHttpResponse
 import org.json.JSONArray
 import org.json.JSONObject
-import org.scribe.model.Response
 
 class DefaultResponse {
-	val Response scribeResponse
-	new (Response scribeResponse) {
-		this.scribeResponse = scribeResponse
+	val XRawHttpResponse httpResponse
+	new (XRawHttpResponse httpResponse) {
+		this.httpResponse = httpResponse
 	}
 	
 	public def isSuccessful() {
-		return scribeResponse.successful
+		return httpResponse.status == 200
 	}
 	
 	public def getHeaders() {
-		return scribeResponse.headers
+		return httpResponse.headers
 	}
 	
 	public def getCode() {
-		return scribeResponse.code
+		return httpResponse.status
 	}
 	
 	public def getBody() {
-		return scribeResponse.body
+		return httpResponse.body
 	}
 	
 	public def JSONArray getJSONArray(String key) {
-		if (scribeResponse.successful) {
+		if (successful) {
 			if (key == "") {
-				return new JSONArray(scribeResponse.body)
+				return new JSONArray(httpResponse.body)
 			} else {
-				return new JSONObject(scribeResponse.body).getJSONArray(key)
+				return new JSONObject(httpResponse.body).getJSONArray(key)
 			}
 		} else {
 			return null
@@ -39,11 +39,11 @@ class DefaultResponse {
 	}
 	
 	public def JSONObject getJSONObject(String key) {
-		if (scribeResponse.successful) {
+		if (successful) {
 			if (key == "") {
-				return new JSONObject(scribeResponse.body)
+				return new JSONObject(httpResponse.body)
 			} else {
-				return new JSONObject(scribeResponse.body).getJSONObject(key)
+				return new JSONObject(httpResponse.body).getJSONObject(key)
 			}
 		} else {
 			return null
@@ -56,7 +56,7 @@ class DefaultResponse {
 		for(header: headers.entrySet) {
 			builder.append(header.key + ": " + header.value + "\n")
 		}
-		builder.append(scribeResponse.body)
+		builder.append(httpResponse.body)
 		return builder.toString
 	}
 }

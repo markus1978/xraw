@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.annotations
+package de.scheidgen.xraw.json
 
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration

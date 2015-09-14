@@ -5,7 +5,7 @@ import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.jsoup.Jsoup
 
-import static extension de.scheidgen.xraw.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 import java.io.File
 import java.io.PrintWriter
 import java.util.Map
@@ -183,6 +183,6 @@ class YouTubeResourceHtmlParser {
 
 	public static def void main(String[] args) {
 		val parser = new YouTubeResourceHtmlParser()
-		parser.parse("https://developers.google.com/youtube/v3/docs/channels", null) 
+		parser.parse("https://developers.google.com/youtube/v3/docs/videos", null) 
 	}	
 }

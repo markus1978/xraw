@@ -1,20 +1,20 @@
 package de.scheidgen.xraw.apis.twitter.response
 
-import de.scheidgen.xraw.annotations.Name
-import de.scheidgen.xraw.annotations.UrlConverter
-import de.scheidgen.xraw.annotations.WithConverter
+import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.Name
+import de.scheidgen.xraw.json.UrlConverter
+import de.scheidgen.xraw.json.WithConverter
 import java.net.URL
 import java.util.List
-import de.scheidgen.xraw.annotations.Resource
 
-@Resource
+@JSON
 class TwitterEntities {
 	List<TwitterHashtag> hashtags
 	List<TwitterUrl> urls
 	List<TwitterUserMention> user_mentions
 }
 
-@Resource
+@JSON
 class TwitterUrl {
 	String display_url
     String expanded_url
@@ -22,7 +22,7 @@ class TwitterUrl {
     @WithConverter(UrlConverter) URL url
 }
 
-@Resource
+@JSON
 class TwitterUserMention {
 	@Name("id_str") String id
     int[] indices
@@ -30,7 +30,7 @@ class TwitterUserMention {
 	String screen_name
 }
 
-@Resource
+@JSON
 class TwitterHashtag {
 	String text
 	int[] indices        

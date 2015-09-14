@@ -1,8 +1,11 @@
 package de.scheidgen.xraw.annotations
 
+import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.AbstractRequest
 import de.scheidgen.xraw.DefaultResponse
-import de.scheidgen.xraw.SocialService
+import de.scheidgen.xraw.http.XRawHttpResponse
+import de.scheidgen.xraw.http.XRawHttpService
+import de.scheidgen.xraw.json.NameUtil
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.Collections
@@ -10,19 +13,17 @@ import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
-import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONArray
 import org.json.JSONObject
-import org.scribe.model.Verb
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
 	String url
 	Response response
-	Verb method = Verb.GET
+	HttpMethod method = HttpMethod.GET
 }
 
 annotation Response {
@@ -40,13 +41,6 @@ annotation Response {
 
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 
-	private def generateIfHasResponse(extension CompilationContext compilationContext, extension TransformationContext transformationContext, CharSequence code) '''
-		if (_response == null) {
-			xExecute();	
-		}
-		«code»
-	'''
-
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
 			extension TransformationContext context) {
 		for (clazz : annotatedTargetElements) {
@@ -62,28 +56,27 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			}
 			clazz.extendedClass = AbstractRequest.newTypeReference(responseAnnotation.getClassValue("responseType"), fullResourceType)
 			
-			clazz.addMethod("create") [
-				static = true
-				addParameter("service", newTypeReference(SocialService))
-				returnType = clazz.newTypeReference
+			clazz.addConstructor[
+				addParameter("service", newTypeReference(XRawHttpService))
+				val url = requestAnnotation.getStringValue("url") 
+				val method = requestAnnotation.getEnumValue("method")
 				body = ['''
-					«toJavaCode(clazz.newTypeReference)» result = new «toJavaCode(clazz.newTypeReference)»(service);
+					super(service, «toJavaCode(HttpMethod.newTypeReference)».«method.simpleName», "«url»");
 					«FOR field:declaredFields.filter[it.initializer != null]»
 						«val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)»
 						«localName»(«field.initializer»);
 					«ENDFOR»
-					return result;
 				''']
 			]
 			
 			clazz.addMethod("createResponse") [
 				visibility = Visibility.PROTECTED
 				addAnnotation(Override.newAnnotationReference)
-				addParameter("scribeResponse", org.scribe.model.Response.newTypeReference)
+				addParameter("httpResponse", XRawHttpResponse.newTypeReference)
 				val responseType = responseAnnotation.getClassValue("responseType")
 				returnType = responseType
 				body = ['''
-					return new «toJavaCode(responseType)»(scribeResponse);
+					return new «toJavaCode(responseType)»(httpResponse);
 				''']
 			]
 			
@@ -121,34 +114,24 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				''']
 			]
 			
-			clazz.addConstructor [
-				visibility = Visibility.PROTECTED
-				addParameter("service", newTypeReference(SocialService))
-				val url = requestAnnotation.getStringValue("url") 
-				val method = requestAnnotation.getEnumValue("method")
-				body = ['''
-					super(service, «toJavaCode(Verb.newTypeReference)».«method.simpleName», "«url»");
-				''']
-			]
-			
 			clazz.addMethod("xResult") [
 				visibility = Visibility.PUBLIC
 				addAnnotation(Override.newAnnotationReference)
 				returnType = fullResourceType
 				if (responseAnnotation.getBooleanValue("isList")) {
-					body = [generateIfHasResponse(context, '''
-						«toJavaCode(JSONArray.newTypeReference)» jsonArray = _response.getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
+					body = ['''
+						«toJavaCode(JSONArray.newTypeReference)» jsonArray = xResponse().getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
 						«toJavaCode(List.newTypeReference(responseAnnotation.getClassValue("resourceType")))» result = new «toJavaCode(ArrayList.newTypeReference(responseAnnotation.getClassValue("resourceType")))»(jsonArray.length());
 						for (int i = 0; i < jsonArray.length(); i++) {
 							result.add(new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonArray.getJSONObject(i)));
 						}
 						return «toJavaCode(Collections.newTypeReference())».unmodifiableList(result);
-					''')]					
+					''']					
 				} else {
-					body = [generateIfHasResponse(context, '''
-						«toJavaCode(JSONObject.newTypeReference)» jsonObject = _response.getJSONObject("«responseAnnotation.getStringValue("resourceKey")»");					
+					body = ['''
+						«toJavaCode(JSONObject.newTypeReference)» jsonObject = xResponse().getJSONObject("«responseAnnotation.getStringValue("resourceKey")»");					
 						return new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonObject);
-					''')]
+					''']
 				}
 			]
 			
@@ -159,14 +142,14 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						Attempts to execute this request implicitely if it was not executed yet.
 					'''
 					returnType = responseAnnotation.getClassValue("resourceType").newArrayTypeReference
-					body = [generateIfHasResponse(context, '''					
-						«toJavaCode(JSONArray.newTypeReference)» jsonArray = _response.getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
+					body = ['''					
+						«toJavaCode(JSONArray.newTypeReference)» jsonArray = xResponse().getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
 						«toJavaCode(responseAnnotation.getClassValue("resourceType").newArrayTypeReference)» result = new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»[jsonArray.length()];
 						for (int i = 0; i < jsonArray.length(); i++) {
 							result[i] = new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonArray.getJSONObject(i));
 						}
 						return result;
-					''')]
+					''']
 				]
 			}
 			
@@ -179,7 +162,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					returnType = clazz.newTypeReference
 					val remoteName = NameUtil::name(context, field)
 					body = ['''
-						if (_response != null) {
+						if (xIsExecuted()) {
 							throw new «toJavaCode(IllegalStateException.newTypeReference)»("This request was already executed. Its parameters cannot be changed anymore.");
 						}
 						«val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)»

@@ -1,6 +1,7 @@
 package de.scheidgen.xraw.annotations
 
-import de.scheidgen.xraw.SocialService
+import de.scheidgen.xraw.AbstractService
+import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.List
 import org.eclipse.xtend.lib.macro.Active
@@ -10,16 +11,14 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import org.scribe.builder.api.Api
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.http.XRawHttpService
 
 @Active(typeof(DirectoryCompilationParticipant))
-annotation Directory {
-	
-}
+@Target(TYPE)
+annotation Directory {}
 
-annotation Service {
-	Class<? extends Api> value
-}
+@Target(TYPE) annotation Service {}
 
 class DirectoryCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 	
@@ -29,43 +28,46 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
 			
-			clazz.addField("_service") [
-				type = SocialService.newTypeReference
-				final = true
-			]
-			
 			val serviceAnnotation = clazz.findAnnotation(Service.findTypeGlobally)
 			if (serviceAnnotation != null) {
-				clazz.addMethod("getServiceClass") [
+				clazz.extendedClass = AbstractService.newTypeReference
+
+				clazz.addConstructor [
+					addParameter("service", XRawHttpService.newTypeReference)
 					visibility = Visibility.PUBLIC
-					static = true
-					returnType = Class.newTypeReference(newWildcardTypeReferenceWithLowerBound(serviceAnnotation.getClassValue("value")))
 					body = ['''
-						return «toJavaCode(serviceAnnotation.getClassValue("value"))».class;
+						super(service);
+						«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
+							this.«field.simpleName» = new «toJavaCode(field.type)»(_httpService); 
+						«ENDFOR»
+					''']
+				]
+				clazz.addConstructor [
+					addParameter("serviceConfiguration", XRawHttpServiceConfiguration.newTypeReference)
+					visibility = Visibility.PUBLIC
+					body = ['''
+						super(serviceConfiguration);
+						«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
+							this.«field.simpleName» = new «toJavaCode(field.type)»(_httpService); 
+						«ENDFOR»
+					''']
+				]
+			} else {
+				clazz.addField("_httpService") [
+					type = XRawHttpService.newTypeReference
+					final = true
+				]
+				clazz.addConstructor [
+					addParameter("service", XRawHttpService.newTypeReference)
+					visibility = Visibility.PUBLIC
+					body = ['''
+						this._httpService = service;
+						«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
+							this.«field.simpleName» = new «toJavaCode(field.type)»(_httpService); 
+						«ENDFOR»
 					''']
 				]
 			}
-			
-			clazz.addMethod("create") [
-				static = true
-				visibility = Visibility.PUBLIC
-				addParameter("service", SocialService.newTypeReference)
-				returnType = clazz.newTypeReference
-				body = ['''
-					return new «toJavaCode(clazz.newTypeReference)»(service);
-				''']
-			]
-			
-			clazz.addConstructor [
-				addParameter("service", SocialService.newTypeReference)
-				visibility = Visibility.PRIVATE
-				body = ['''
-					this._service = service;
-					«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
-						this.«field.simpleName» = «toJavaCode(field.type)».create(_service); 
-					«ENDFOR»
-				''']
-			]
 			
 			for (field: declaredFields) {
 				if ((field.type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null) {
@@ -83,7 +85,7 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 						returnType = field.type
 						docComment = (field.type.type as ClassDeclaration).docComment
 						body = ['''
-							return «toJavaCode(field.type)».create(_service);
+							return new «toJavaCode(field.type)»(_httpService);
 						''']
 					]
 					field.remove

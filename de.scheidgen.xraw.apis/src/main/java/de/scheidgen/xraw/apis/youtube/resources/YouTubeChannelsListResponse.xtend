@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.apis.youtube.resources
 
-import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.json.JSON
 import java.util.List
 
-@Resource
+@JSON
 class YouTubeChannelsListResponse extends AbstractYouTubeResource {
 	/**
 	 * The token that can be used as the value of the <code>pageToken</code> parameter to retrieve the next page in the result set.
@@ -27,7 +27,7 @@ class YouTubeChannelsListResponse extends AbstractYouTubeResource {
 	
 }
 
-@Resource
+@JSON
 class YouTubeChannelsListResponsePageInfo {
 	/**
 	 * The total number of results in the result set.

@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.converter
 
-import de.scheidgen.xraw.annotations.Converter
+import de.scheidgen.xraw.json.Converter
 
 class TwitterColor {
 	public val int r
@@ -20,7 +20,12 @@ class TwitterColor {
 }
 
 class TwitterColorConverter implements Converter<TwitterColor> {
-	override convert(String value) {
+	override toValue(String value) {
 		return new TwitterColor(value)
 	}
+	
+	override toString(TwitterColor value) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
 }

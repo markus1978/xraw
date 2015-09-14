@@ -1,12 +1,16 @@
-package de.scheidgen.xraw
+package de.scheidgen.xraw.json
 
 import org.json.JSONObject
 
-class AbstractResource {
+class AbstractJSONWrapper {
 	protected val JSONObject json
 
 	new(JSONObject json) {
 		this.json = json
+	}
+	
+	new() {
+		this.json = new JSONObject
 	}
 	
 	public def xGetString(String key) {
@@ -15,6 +19,10 @@ class AbstractResource {
 		} else {
 			return json.get(key).toString
 		}
+	}
+	
+	public def xJson() {
+		return json
 	}
 
 }

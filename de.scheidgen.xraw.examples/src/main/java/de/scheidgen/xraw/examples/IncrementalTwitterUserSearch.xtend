@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.examples
 
-import de.scheidgen.xraw.XRawScript
 import de.scheidgen.xraw.apis.twitter.Twitter
-import java.util.ArrayList
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.script.XRawScript
+import java.util.ArrayList
 
 class IncrementalTwitterUserSearch {
 	static val keyword = "letsplay"
@@ -12,7 +12,7 @@ class IncrementalTwitterUserSearch {
 	]
 	
 	def static void main(String[] args) {
-		val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
+		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter)
 		
 		val result = new ArrayList<TwitterUser>()
 		
