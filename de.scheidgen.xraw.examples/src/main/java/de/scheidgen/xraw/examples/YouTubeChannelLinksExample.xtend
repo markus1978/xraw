@@ -5,13 +5,12 @@ import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.apis.youtube.YouTube
 import de.scheidgen.xraw.script.XRawScript
 import de.scheidgen.xraw.util.AddConstructor
+import de.scheidgen.xraw.util.XRawIterateExtensions
+import java.net.HttpURLConnection
 import java.net.URL
 import org.jsoup.Jsoup
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-import com.mashape.unirest.http.Unirest
-import java.net.HttpURLConnection
-import de.scheidgen.xraw.util.XRawIterateExtensions
 
 @AddConstructor
 class YouTubeChannelLinksExample {

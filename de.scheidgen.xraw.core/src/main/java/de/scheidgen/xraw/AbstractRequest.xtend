@@ -5,7 +5,7 @@ import de.scheidgen.xraw.http.XRawHttpRequest
 import de.scheidgen.xraw.http.XRawHttpResponse
 import de.scheidgen.xraw.http.XRawHttpService
 
-abstract class AbstractRequest<ResponseType, ResourceType> {
+abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceType> {
 	
 	private val XRawHttpService service
 	private val XRawHttpRequest httpRequest
@@ -26,6 +26,14 @@ abstract class AbstractRequest<ResponseType, ResourceType> {
 			xExecute();
 		}
 		return response;
+	}
+	
+	public def <R extends AbstractRequest<? extends DefaultResponse,?>> xCheck() {
+		if (!xResponse.successful) {
+			println("Api error: " + xResponse.code)
+			throw new RuntimeException("Abort")
+		}
+		return this
 	}
 	
 	/**
