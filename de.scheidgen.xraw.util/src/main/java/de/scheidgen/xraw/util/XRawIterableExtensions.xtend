@@ -4,6 +4,7 @@ import com.google.common.collect.AbstractIterator
 import com.google.common.collect.FluentIterable
 import java.util.ArrayList
 import java.util.Iterator
+import org.eclipse.xtext.xbase.lib.Functions.Function1
 
 class XRawIterableExtensions {
 	private static class Result<T> implements Iterator<T> {		
@@ -198,10 +199,14 @@ class XRawIterableExtensions {
 	 	} 
 	}
 	
-	static def <E> Iterable<E> unique(Iterable<E> source) {
-		return source.fold(newHashSet)[result, element |
-			result.add(element)
+	static def <E> Iterable<E> unique(Iterable<E> source, Function1<E,Object> keyPredicate) {
+		return source.fold(newHashMap)[result, element |
+			result.put(keyPredicate.apply(element), element)
 			return result
-		]		
+		].values		
+	}
+	
+	static def <E> Iterable<E> unique(Iterable<E> source) {
+		return source.unique[it]		
 	}
 }
