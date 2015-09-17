@@ -21,7 +21,7 @@ class YouTubeSearchListResponse {
   	/**
   	 * A list of results that match the search criteria.
   	 */
- 	List<YouTubeSearchResult> items  
+ 	List<YouTubeSearchResult> items 
 }
 
 @JSON

@@ -29,7 +29,13 @@ class AddSuperConstructorCompilationParticipant implements TransformationPartici
 				clazz.addConstructor[
 					visibility = superConstructor.visibility
 					for(superParam: superConstructor.parameters) {
-						addParameter(superParam.simpleName, superParam.type)				
+						val typeParamIndex = superClassDeclaration.typeParameters.indexed.findFirst[it.value.simpleName == superParam.type.name]?.key 
+						val type = if (typeParamIndex != null) {
+							clazz.extendedClass.actualTypeArguments.get(typeParamIndex) 
+						} else {
+							superParam.type							
+						} 
+						addParameter(superParam.simpleName, type)				
 					}
 					body = ['''
 						super(«FOR superParam: superConstructor.parameters SEPARATOR ", "»«superParam.simpleName»«ENDFOR»);
