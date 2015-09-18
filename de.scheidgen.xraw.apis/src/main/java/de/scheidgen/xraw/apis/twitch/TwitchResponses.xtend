@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.apis.twitch.response
+package de.scheidgen.xraw.apis.twitch
 
 import de.scheidgen.xraw.json.Converter
 import de.scheidgen.xraw.json.JSON
@@ -83,7 +83,7 @@ class TwitchDateConverter implements Converter<Date> {
     String status
     String tag_list
     String _id
-    @WithConverter(de.scheidgen.xraw.apis.twitch.response.TwitchDateConverter) Date recorded_at
+    @WithConverter(TwitchDateConverter) Date recorded_at
     String game
     int length
     String preview

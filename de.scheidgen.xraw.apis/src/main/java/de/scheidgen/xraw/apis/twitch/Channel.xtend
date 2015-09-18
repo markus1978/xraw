@@ -3,8 +3,6 @@ package de.scheidgen.xraw.apis.twitch
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.annotations.UrlReplace
-import de.scheidgen.xraw.apis.twitch.response.TwitchChannel
-import de.scheidgen.xraw.apis.twitch.response.TwitchVideoList
 
 @Request(url="https://api.twitch.tv/kraken/channels/{channel}", response=@Response(resourceType=TwitchChannel))
 class Channel {
