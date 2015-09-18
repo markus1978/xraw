@@ -20,7 +20,7 @@ import java.util.Map
 	}
 	
 	def save() {
-		Files.write(Paths.get(file), xJson.toString.getBytes());
+		Files.write(Paths.get(file), xJson.toString(4).getBytes());
 	}
 	
 }
