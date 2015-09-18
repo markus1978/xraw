@@ -9,7 +9,7 @@ class Channel {
 	@UrlReplace("{channel}") String channelName
 }
 
-@Request(url="https://api.twitch.tv/kraken/channels/{channel}/videos", response=@Response(resourceType=TwitchVideoList,isList=true))
+@Request(url="https://api.twitch.tv/kraken/channels/{channel}/videos", response=@Response(resourceType=TwitchVideoList))
 class ChannelVideos {
 	@UrlReplace("{channel}") String channelName
 	int limit
