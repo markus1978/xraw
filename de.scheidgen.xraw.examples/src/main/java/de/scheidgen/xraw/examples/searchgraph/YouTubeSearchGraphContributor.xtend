@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.examples.powersearch
+package de.scheidgen.xraw.examples.searchgraph
 
 import com.tinkerpop.blueprints.Direction
 import com.tinkerpop.blueprints.Vertex
@@ -8,96 +8,8 @@ import de.scheidgen.xraw.apis.youtube.resources.YouTubeChannels
 import de.scheidgen.xraw.apis.youtube.resources.YouTubeVideos
 import de.scheidgen.xraw.script.XRawScript
 import java.net.URL
-import java.util.List
 import java.util.regex.Pattern
-import org.eclipse.xtend.lib.annotations.Accessors
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-
-interface SearchGraphContributor {
-	static val NODE_TYPE = "type"
-	static val NODE_CONTENT = "content"
-
-	static val PLATFORM_TYPE = "platform"
-	static val CONTENT_TYPE = "content"
-	static val USER_TYPE = "user"
-	
-	static val USER_EDGE = "user"
-	static val CONTENT_EDGE = "content"
-	static val OWNER_EDGE = "owner"
-	static val LINK_EDGE = "link"
-
-	/**
-	 * Performs a search for content of a specific user. Adds all the results
-	 * to the graph and establishes edges between user nodes, platform node,
-	 * and the created content nodes.
-	 */
-	def List<Vertex> addContentSearchResults(Vertex userNode, String searchStr)
-
-	/**
-	 * Performs a search for a user. Adds all the results to the graph
-	 * and established edges between platform node and the create user node.
-	 */
-	def List<Vertex> addUserSearchResults(String searchStr)
-
-	/**
-	 * Looks for links in the given user or content node. Resolves those links
-	 * and adds link targets to the graph.
-	 */
-	def List<Vertex> addLinks(Vertex node)
-
-	/**
-	 * Checks if the given url is for the contributor's platform. If true
-	 * it resolves the identified content or user, or retrieves all necessary
-	 * information and adds the identified resource to the graph.
-	 */
-	def Vertex resolveOrAddLinkTarget(String url)
-}
-
-class SearchGraph {
-	@Accessors(PUBLIC_GETTER) val graph = new TinkerGraph
-	val List<? extends SearchGraphContributor> contributors = #{new YouTubeSearchGraphContributor(this)}.toList
-
-	public static def findLinks(String code) {
-		Jsoup::parse('''<html><body>«code»</body></html>''').findLinks
-	}
-
-	public static def findLinks(Document jsoupDoc) {
-		return jsoupDoc.getElementsByClass("about-custom-links").collectAll [
-			it.getElementsByTag("a").collect[it.attr("href")]
-		]
-	}
-
-	public def resolveOrAddLinkTarget(String url) {
-		// todo shorteners
-		return contributors.map[it.resolveOrAddLinkTarget(url)].findFirst[it != null]
-	}
-
-	public def build(String searchStr) {
-		val firstOrderNodesWithContributors = newHashMap
-		contributors.forEach [ contributor |
-			val userNodes = contributor.addUserSearchResults(searchStr)
-			userNodes.forEach[firstOrderNodesWithContributors.put(it, contributor)]
-			userNodes.forEach [
-				val contentNodes = contributor.addContentSearchResults(it, searchStr)
-				contentNodes.forEach[node|firstOrderNodesWithContributors.put(it, contributor)]
-			]
-		]
-		
-		val secondOrderNodes = newArrayList
-		firstOrderNodesWithContributors.keySet.forEach[node|
-			secondOrderNodes.addAll(firstOrderNodesWithContributors.get(node).addLinks(node))
-		]
-	}
-
-	static public def void main(String[] args) {
-		val searchGraph = new SearchGraph()
-		searchGraph.build("markiplier")
-		println(searchGraph.graph.vertices.join(",")[it.id.toString])
-	}
-}
 
 class YouTubeSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
@@ -197,10 +109,11 @@ class YouTubeSearchGraphContributor implements SearchGraphContributor {
 	override addLinks(Vertex node) {
 		val nodeType = node.getProperty(NODE_TYPE)
 		val linkStrings = if (nodeType == USER_TYPE) {
-				(node.getProperty(NODE_CONTENT) as YouTubeChannels).retrieveChannelLinks
-			} else if (nodeType == CONTENT_TYPE) {
-				SearchGraph::findLinks((node.getProperty(NODE_CONTENT) as YouTubeVideos).snippet.description)
-			}
+			(node.getProperty(NODE_CONTENT) as YouTubeChannels).retrieveChannelLinks
+		} else if (nodeType == CONTENT_TYPE) {
+			SearchGraph::findLinks((node.getProperty(NODE_CONTENT) as YouTubeVideos).snippet.description)
+		}
+		println(linkStrings.join("\n"))
 		val result = newArrayList
 		linkStrings.forEach [
 			val linkTargetNode = searchGraph.resolveOrAddLinkTarget(it)
@@ -212,9 +125,9 @@ class YouTubeSearchGraphContributor implements SearchGraphContributor {
 		result
 	}
 
-	val youTubeChannelUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube/channel/(?<id>[^/]*).*$")
-	val youTubeUserUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube/user/(?<id>[^/]*).*$")
-	val youTubeVideoUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube/watch?v=(?<id>[^&]*).*$")
+	val youTubeChannelUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/channel/(?<id>[^/\\?]*).*$")
+	val youTubeUserUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/user/(?<id>[^/\\?]*).*$")
+	val youTubeVideoUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/watch?v=(?<id>[^&]*).*$")
 	val youTubeShortVideoUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtu\\.be/(?<id>[^&]*).*$")
 
 	private def match(String str, Pattern pattern, String groupName) {

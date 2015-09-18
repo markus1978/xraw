@@ -8,10 +8,22 @@ import java.net.URL
 import java.util.List
 
 @JSON
-class TwitterEntities {
+class TwitterStatusEntities {
+	TwitterStatusEntities description
 	List<TwitterHashtag> hashtags
 	List<TwitterUrl> urls
 	List<TwitterUserMention> user_mentions
+}
+
+@JSON
+class TwitterUserEntities {
+	TwitterUserUrlEntity description
+	TwitterUserUrlEntity url
+}
+
+@JSON
+class TwitterUserUrlEntity {
+	List<TwitterUrl> urls
 }
 
 @JSON

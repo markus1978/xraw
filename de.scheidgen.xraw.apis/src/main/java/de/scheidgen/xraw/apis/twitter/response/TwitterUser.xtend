@@ -23,7 +23,7 @@ class TwitterUser {
     @WithConverter(TwitterColorConverter) TwitterColor profile_link_color
     boolean is_translator = false
     @Name("id_str") String id
-    TwitterEntities entities
+    TwitterUserEntities entities
     boolean default_profile = true
     boolean contributors_enabled = true
     int favourites_count
