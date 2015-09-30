@@ -23,10 +23,15 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONObject
 import org.json.JSONArray
+import org.eclipse.xtend.lib.macro.declaration.TypeParameterDeclaration
 
 @Active(typeof(JSONWrapperCompilationParticipant))
 annotation JSON {
 	boolean mutable = false
+}
+
+interface TypeArgumentFactory<T> {
+	def T create(JSONObject json)
 }
 
 class JSONWrapperCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -154,17 +159,45 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 		} else {
 			val valueType = valueTypeRef.type
 			if (valueType instanceof ClassDeclaration) {
-				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {
-					return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»))'''
+				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {					
+					if (valueType.typeParameters.empty) {
+						return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»))'''
+					} else {
+						return '''
+							«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(
+								«sourceExpr».getJSONObject(«keyExpr»),
+								«FOR typeArgument:valueTypeRef.actualTypeArguments SEPARATOR ","»
+									new «toJavaCode(TypeArgumentFactory.newTypeReference(typeArgument))»() {
+										@Override
+										public «toJavaCode(typeArgument)» create(«toJavaCode(JSONObject.newTypeReference)» json) {
+											return new «toJavaCode(typeArgument)»(json);
+										}
+									}
+								«ENDFOR»
+							)
+						'''						
+					}
 				} else {
 //					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
 					return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''		
 				}
-			} else {
+			} else if (valueType instanceof TypeParameterDeclaration) {
+				if (valueType.upperBounds.exists[it.type instanceof ClassDeclaration && (it.type as ClassDeclaration).findAnnotation(JSON.findTypeGlobally) != null]) {
+					return '''«sourceExpr».isNull(«keyExpr»)?null:«valueType.factoryFieldName».create(«sourceExpr».getJSONObject(«keyExpr»))'''
+				} else {
 //				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
-				return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''
+					return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr») // unsupported type «valueTypeRef.simpleName»'''					
+				}
+				
+			} else {
+//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")			
+				return '''«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''
 			}
 		}
+	}
+	
+	private def factoryFieldName(TypeParameterDeclaration typeParameter) {
+		return "_" + typeParameter.simpleName.toFirstLower + "Factory"
 	}
 	
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
@@ -179,19 +212,38 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			if (clazz.extendedClass == null || clazz.extendedClass == Object.newTypeReference) {
 				clazz.extendedClass = AbstractJSONWrapper.newTypeReference				
 			}
+			
+			for (typeParameter:clazz.typeParameters) {
+			 	clazz.addField(typeParameter.factoryFieldName) [
+			 		type = TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference)
+			 		final = true
+			 	]
+			}
 
 			clazz.addConstructor[
 				visibility = Visibility.PUBLIC
 				addParameter("json", newTypeReference(JSONObject))
-				body = ['''
+				for (typeParameter:clazz.typeParameters) {
+					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
+				}
+				body = ['''				
 					super(json);
+					«FOR typeParameter:clazz.typeParameters»
+						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
+					«ENDFOR»
 				''']
 			]
 			
 			clazz.addConstructor[
-				visibility = Visibility.PUBLIC			
+				visibility = Visibility.PUBLIC		
+				for (typeParameter:clazz.typeParameters) {
+					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
+				}	
 				body = ['''
 					super();
+					«FOR typeParameter:clazz.typeParameters»
+						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
+					«ENDFOR»
 				''']
 			]
 			
@@ -377,7 +429,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				''']
 			]
 			
-			for(field: clazz.declaredFields) {
+			for(field: declaredFields) {
 				field.remove
 			}				
 		}
