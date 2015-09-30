@@ -9,6 +9,11 @@ class Channel {
 	@UrlReplace("{channel}") String channelName
 }
 
+@Request(url="https://api.twitch.tv/api/channels/{channel}/panels", response=@Response(resourceType=TwitchPanel,isList=true))
+class ChannelPanels {
+	@UrlReplace("{channel}") String channelName
+}
+
 @Request(url="https://api.twitch.tv/kraken/channels/{channel}/videos", response=@Response(resourceType=TwitchVideoList))
 class ChannelVideos {
 	@UrlReplace("{channel}") String channelName

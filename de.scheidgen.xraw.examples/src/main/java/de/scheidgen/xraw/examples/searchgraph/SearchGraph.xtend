@@ -62,7 +62,11 @@ interface SearchGraphContributor {
 
 class SearchGraph {
 	@Accessors(PUBLIC_GETTER) val graph = new TinkerGraph
-	val List<? extends SearchGraphContributor> contributors = #{new YouTubeSearchGraphContributor(this), new TwitterSearchGraphContributor(this)}.toList
+	val List<? extends SearchGraphContributor> contributors = #{
+		new YouTubeSearchGraphContributor(this), 
+		new TwitterSearchGraphContributor(this),
+		new TwitchSearchGraphContributor(this)
+	}.toList
 
 	public static def findLinks(String code) {
 		Jsoup::parse('''<html><body>«code»</body></html>''').findLinks
@@ -118,12 +122,11 @@ class SearchGraph {
 		println(searchGraph.graph.vertices.join(",")[it.id.toString])
 		
 		val graph = new GraphJung(searchGraph.graph)
-//		val graph = new GraphJung(new TinkerGraph)
 		
 		val layout = new FRLayout<Vertex, Edge>(graph)
-		layout.size = new Dimension(1000, 1000)
+		layout.size = new Dimension(1600, 1100)
 		val viz = new BasicVisualizationServer<Vertex, Edge>(layout);
-		viz.preferredSize = new Dimension(1000, 1000)
+		viz.preferredSize = new Dimension(1600, 1100)
 
 		val vertexLabelTransformer = new Transformer<Vertex, String>() {
 		    override String transform(Vertex vertex) {
@@ -141,6 +144,8 @@ class SearchGraph {
 		      		Color.RED		      		
 		      	} else if (id.toLowerCase=="twitter") {
 		      		Color.BLUE
+		      	} else if (id.toLowerCase=="twitch") {
+		      		Color.MAGENTA
 		      	} else {
 		      		Color.BLACK
 		      	}

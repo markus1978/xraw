@@ -31,6 +31,10 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	public def <R extends AbstractRequest<? extends DefaultResponse,?>> xCheck() {
 		if (!xResponse.successful) {
 			println("Api error: " + xResponse.code)
+			println("Request: " + httpRequest.url + "?" + httpRequest.queryString.entrySet.join("&")[
+				it.key + "=" + it.value
+			])
+			println(xResponse.getJSONObject("").toString(4))
 			throw new RuntimeException("Abort")
 		}
 		return this

@@ -126,7 +126,7 @@ class YouTubeSearchGraphContributor implements SearchGraphContributor {
 	}
 
 	val youTubeChannelUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/channel/(?<id>[^/\\?]*).*$")
-	val youTubeUserUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/user/(?<id>[^/\\?]*).*$")
+	val youTubeUserUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/(user/)?(?<id>[^/\\?]*).*$")
 	val youTubeVideoUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtube.com/watch?v=(?<id>[^&]*).*$")
 	val youTubeShortVideoUrlRegex = Pattern.compile("(http(s)?://)?(www\\.)?youtu\\.be/(?<id>[^&]*).*$")
 

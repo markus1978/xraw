@@ -35,7 +35,7 @@ import java.util.List
 	String game
 	int delay
 	String language
-	String _id
+	long _id
 	String name
 	@WithConverter(TwitchDateConverter) Date created_at
 	@WithConverter(TwitchDateConverter) Date updated_at
@@ -92,6 +92,23 @@ class TwitchDateConverter implements Converter<Date> {
     String broadcast_type
     @Name("_links") TwitchLinks links
 	TwitchChannel channel      
+}
+
+@JSON class TwitchPanel {
+	long _id
+	int display_order
+	String kind
+	String html_description
+	long user_id
+	TwitchPanelData data
+	String channel 	
+}
+
+@JSON class TwitchPanelData {
+	String link
+	String image
+	String title
+	String description
 }
 
 class TwitchResponses {

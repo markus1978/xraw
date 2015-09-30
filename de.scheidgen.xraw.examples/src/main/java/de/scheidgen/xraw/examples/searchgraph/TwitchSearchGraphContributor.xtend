@@ -3,16 +3,11 @@ package de.scheidgen.xraw.examples.searchgraph
 import com.tinkerpop.blueprints.Direction
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph
-import de.scheidgen.xraw.apis.twitter.Twitter
-import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
-import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.apis.twitch.Twitch
+import de.scheidgen.xraw.apis.twitch.TwitchChannel
+import de.scheidgen.xraw.apis.twitch.TwitchVideo
 import de.scheidgen.xraw.script.XRawScript
 import java.util.regex.Pattern
-
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-import de.scheidgen.xraw.apis.twitch.Twitch
-import de.scheidgen.xraw.apis.twitch.TwitchVideo
-import de.scheidgen.xraw.apis.twitch.TwitchChannel
 
 class TwitchSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
@@ -53,7 +48,7 @@ class TwitchSearchGraphContributor implements SearchGraphContributor {
 		
 		if (result.getEdges(Direction.OUT, "owner").empty) {
 			val userNode = if (givenUserNode == null) {
-				resolveOrAddUserNode((result.getProperty(NODE_CONTENT) as TwitterStatus).user.id, null)
+				resolveOrAddUserNode((result.getProperty(NODE_CONTENT) as TwitchVideo).channel.name, null)
 			} else {
 				givenUserNode
 			}	
@@ -85,10 +80,9 @@ class TwitchSearchGraphContributor implements SearchGraphContributor {
 	}
 
 	override addContentSearchResults(Vertex userNode, String searchStr) {
-		// TODO confusing format/code
-		val userId = (userNode.getProperty(NODE_CONTENT) as TwitterUser).id
-		val statuses = twitch.channelVideos.channelName(userId).limit(contentCount).xCheck.xResult.videos	
-		return statuses.map [resolveOrAddContentNode(it.id, it, userNode)].toList
+		val userId = (userNode.getProperty(NODE_CONTENT) as TwitchChannel).name
+		val videos = twitch.channelVideos.channelName(userId).limit(contentCount).xCheck.xResult.videos	
+		return videos.map [resolveOrAddContentNode(it.id, it, userNode)].toList
 	}
 
 	override addUserSearchResults(String searchStr) {
@@ -100,8 +94,7 @@ class TwitchSearchGraphContributor implements SearchGraphContributor {
 		val nodeType = node.getProperty(NODE_TYPE)
 		val linkStrings = if (nodeType == USER_TYPE) {
 				val channel = (node.getProperty(NODE_CONTENT) as TwitchChannel)
-				// TODO: SearchGraph::findLinks(channel.ur)
-				#{}				
+				twitch.channelPanels.channelName(channel.name).xCheck.xResult.map[data.link]
 			} else if (nodeType == CONTENT_TYPE) {
 				val video = (node.getProperty(NODE_CONTENT) as TwitchVideo)
 				SearchGraph::findLinks(video.description)
