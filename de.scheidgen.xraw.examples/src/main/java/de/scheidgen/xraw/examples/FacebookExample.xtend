@@ -10,5 +10,6 @@ class FacebookExample {
 		val result = facebook.pages.id("cubemonstergames").fields("likes,about,name,description_html,website,posts{link,from}").xCheck.xResult
 		
 		println(result.about)		
+		println(result.posts.data.map[it.link].join(", "))
 	}
 }

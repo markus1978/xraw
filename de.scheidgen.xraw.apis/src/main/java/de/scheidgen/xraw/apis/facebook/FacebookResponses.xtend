@@ -12,6 +12,11 @@ import java.util.List
 	List<Type> data
 }
 
+@JSON class FacebookProfile extends FacebookObject {
+	String name
+	String id
+}
+
 @JSON class FacebookObject {
 	
 }
