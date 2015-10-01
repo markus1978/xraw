@@ -24,6 +24,8 @@ import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.json.JSONObject
 import org.json.JSONArray
 import org.eclipse.xtend.lib.macro.declaration.TypeParameterDeclaration
+import org.eclipse.xtend.lib.macro.declaration.CompilationUnit
+import javax.sound.sampled.Control.Type
 
 @Active(typeof(JSONWrapperCompilationParticipant))
 annotation JSON {
@@ -166,14 +168,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 						return '''
 							«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(
 								«sourceExpr».getJSONObject(«keyExpr»),
-								«FOR typeArgument:valueTypeRef.actualTypeArguments SEPARATOR ","»
-									new «toJavaCode(TypeArgumentFactory.newTypeReference(typeArgument))»() {
-										@Override
-										public «toJavaCode(typeArgument)» create(«toJavaCode(JSONObject.newTypeReference)» json) {
-											return new «toJavaCode(typeArgument)»(json);
-										}
-									}
-								«ENDFOR»
+								«generateTypeArguments(cmpCtx, tnsCtx, valueTypeRef)»
 							)
 						'''						
 					}
@@ -195,6 +190,17 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			}
 		}
 	}
+	
+	private def generateTypeArguments(extension CompilationContext cmpCtx, extension TransformationContext trnsCtx, TypeReference typeWithArguments) '''
+		«FOR typeArgument:typeWithArguments.actualTypeArguments SEPARATOR ","»
+			new «toJavaCode(TypeArgumentFactory.newTypeReference(typeArgument))»() {
+				@Override
+				public «toJavaCode(typeArgument)» create(«toJavaCode(JSONObject.newTypeReference)» json) {
+					return new «toJavaCode(typeArgument)»(json);
+				}
+			}
+		«ENDFOR»
+	'''
 	
 	private def factoryFieldName(TypeParameterDeclaration typeParameter) {
 		return "_" + typeParameter.simpleName.toFirstLower + "Factory"
@@ -226,8 +232,14 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				for (typeParameter:clazz.typeParameters) {
 					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
 				}
-				body = ['''				
-					super(json);
+				body = ['''	
+					«IF clazz.extendedClass.actualTypeArguments.empty»			
+						super(json);
+					«ELSE»
+						super(json,
+							«generateTypeArguments(context, clazz.extendedClass)»
+						);
+					«ENDIF»
 					«FOR typeParameter:clazz.typeParameters»
 						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
 					«ENDFOR»
@@ -240,7 +252,13 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
 				}	
 				body = ['''
-					super();
+					«IF clazz.extendedClass.actualTypeArguments.empty»			
+						super();
+					«ELSE»
+						super(
+							«generateTypeArguments(context, clazz.extendedClass)»
+						);
+					«ENDIF»
 					«FOR typeParameter:clazz.typeParameters»
 						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
 					«ENDFOR»

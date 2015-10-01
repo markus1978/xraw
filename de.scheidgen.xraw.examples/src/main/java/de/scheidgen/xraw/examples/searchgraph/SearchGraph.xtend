@@ -18,6 +18,7 @@ import org.jsoup.nodes.Document
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 import static extension de.scheidgen.xraw.examples.searchgraph.SearchGraphContributor.*
+import de.scheidgen.xraw.apis.facebook.Facebook
 
 interface SearchGraphContributor {
 	static val NODE_TYPE = "type"
@@ -65,7 +66,8 @@ class SearchGraph {
 	val List<? extends SearchGraphContributor> contributors = #{
 		new YouTubeSearchGraphContributor(this), 
 		new TwitterSearchGraphContributor(this),
-		new TwitchSearchGraphContributor(this)
+		new TwitchSearchGraphContributor(this),
+		new FacebookSearchGraphContributor(this)
 	}.toList
 
 	public static def findLinks(String code) {
@@ -79,7 +81,7 @@ class SearchGraph {
 	}
 
 
-	public def resolveOrAddLinkTarget(String url) {
+	public def resolveOrAddLinkTarget(String url) {		
 		// todo url normalization
 		// todo shorteners
 		val result = contributors.map[it.resolveOrAddLinkTarget(url)].findFirst[it != null]
@@ -143,9 +145,11 @@ class SearchGraph {
 		      	if (id.toLowerCase=="youtube") {
 		      		Color.RED		      		
 		      	} else if (id.toLowerCase=="twitter") {
-		      		Color.BLUE
+		      		Color.CYAN
 		      	} else if (id.toLowerCase=="twitch") {
 		      		Color.MAGENTA
+		      	} else if (id.toLowerCase=="facebook") {
+		      		 Color.BLUE
 		      	} else {
 		      		Color.BLACK
 		      	}

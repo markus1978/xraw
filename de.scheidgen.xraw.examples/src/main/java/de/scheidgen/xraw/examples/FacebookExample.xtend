@@ -11,5 +11,13 @@ class FacebookExample {
 		
 		println(result.about)		
 		println(result.posts.data.map[it.link].join(", "))
+		println("----")
+		
+		val searchResult = facebook.search.page.limit(1).q("markiplier").fields("likes,about,name,description_html,website,posts.limit(2){link,from}").xCheck.xResult
+		for(aResult:searchResult.data) {
+			println(aResult.about)		
+			println(aResult.posts.data.map[it.link].join(", "))
+			println("----")			
+		}
 	}
 }

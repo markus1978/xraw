@@ -24,6 +24,12 @@ annotation Request {
 	String url
 	Response response
 	HttpMethod method = HttpMethod.GET
+	Parameter[] parameters = #[]
+}
+
+annotation Parameter {
+	String name
+	String value
 }
 
 annotation Response {
@@ -53,7 +59,8 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				List.newTypeReference(responseAnnotation.getClassValue("resourceType"))
 			} else {
 				responseAnnotation.getClassValue("resourceType")
-			}
+			} 
+			
 			clazz.extendedClass = AbstractRequest.newTypeReference(responseAnnotation.getClassValue("responseType"), fullResourceType)
 			
 			clazz.addConstructor[
@@ -65,6 +72,9 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					«FOR field:declaredFields.filter[it.initializer != null]»
 						«val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)»
 						«localName»(«field.initializer»);
+					«ENDFOR»
+					«FOR parameterAnnotation:requestAnnotation.getAnnotationArrayValue("parameters")»
+						xPutQueryStringParameter("«parameterAnnotation.getStringValue("name")»", "«parameterAnnotation.getStringValue("value")»");
 					«ENDFOR»
 				''']
 			]

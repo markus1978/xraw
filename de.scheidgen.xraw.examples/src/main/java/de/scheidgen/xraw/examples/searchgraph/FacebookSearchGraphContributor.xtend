@@ -13,6 +13,8 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
 	val contentCount = 3
 	
+	val pageReadFields = '''likes,about,id,name,description_html,website,posts.limit(«contentCount»){link,from,id}'''.toString
+	
 	val facebook = XRawScript::get("data/store.json", "markus", Facebook)
 	val platformId = "facebook"
 	val SearchGraph searchGraph
@@ -63,7 +65,7 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 		val existingVertex = graph.getVertex(nodeId)
 		val result = if (existingVertex == null) {
 			val content = if (givenContent == null) {
-				facebook.pages.id(userId).fields("likes,about,id,name,description_html,website,posts{link,from,id}").xCheck.xResult
+				facebook.pages.id(userId).fields(pageReadFields).xCheck.xResult
 			} else {
 				givenContent
 			}
@@ -80,15 +82,14 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 	}
 
 	override addContentSearchResults(Vertex userNode, String searchStr) {
-		// TODO
+		// TODO perform an actual search within the posts, not just take all recent posts?
 		val page = userNode.getProperty(NODE_CONTENT) as FacebookPage	
 		return page.posts.data.map [resolveOrAddContentNode(it.id, it, userNode)].toList
 	}
 
 	override addUserSearchResults(String searchStr) {
-		// TODO
-//		val users = twitch.channelSearch.q(searchStr).limit(userCount).xCheck.xResult.channels		
-//		return users.map [resolveOrAddUserNode(it.name, it)].toList
+		val facebookPages = facebook.search.page.q(searchStr).limit(userCount).fields(pageReadFields).xCheck.xResult.data
+		return facebookPages.map [resolveOrAddUserNode(it.id, it)].toList
 	}
 
 	override addLinks(Vertex node) {
@@ -102,7 +103,7 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 			}
 		println(linkStrings.join("\n"))
 		val result = newArrayList
-		linkStrings.forEach [
+		linkStrings.filter[it!=null].forEach [
 			val linkTargetNode = searchGraph.resolveOrAddLinkTarget(it)
 			if (linkTargetNode != null) {
 				graph.addEdge(null, node, linkTargetNode, LINK_EDGE)
@@ -121,10 +122,12 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 	}
 
 	override Vertex resolveOrAddLinkTarget(String url) {
-		val channelName = url.match(facebookChannelUrlRegex, "id")		
+		val pageName = url.match(facebookChannelUrlRegex, "id")		
 
-		if (channelName != null) {
-			return resolveOrAddUserNode(channelName, null)			
+		if (pageName != null) {
+			val pages = facebook.search.page.q(pageName).fields(pageReadFields).xCheck.xResult.data
+			val first = pages?.findFirst[it.name.toLowerCase==pageName.toLowerCase]
+			return if (first != null) resolveOrAddUserNode(first.id, first) else null			
 		} else {
 			return null
 		}

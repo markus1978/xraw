@@ -11,8 +11,9 @@ class FacebookPages {
 	String fields
 }
 
-@JSON class FacebookPage {
+@JSON class FacebookPage extends FacebookObject {
 	// fields
+	String id
 	int likes
 	String about
 	String name

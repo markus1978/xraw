@@ -7,7 +7,6 @@ import java.util.List
 	
 }
 
-
 @JSON class FacebookEdge<Type extends FacebookObject> {	
 	List<Type> data
 }
