@@ -134,7 +134,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				val jsonAccessExpr = if (resourceKey == "") {
 					'''xResponse().«jsonAccessMethod»("")'''
 				} else {
-					'''xResponse().«FOR i:0..(resourceKeyFragments.size-2) SEPARATOR "."»getJSONObject("«resourceKeyFragments.get(i)»")«ENDFOR».«jsonAccessMethod»("«resourceKeyFragments.last»")'''
+					'''xResponse().«IF resourceKeyFragments.size > 1»«FOR i:0..(resourceKeyFragments.size-2) SEPARATOR "."»getJSONObject("«resourceKeyFragments.get(i)»")«ENDFOR».«ENDIF»«jsonAccessMethod»("«resourceKeyFragments.last»")'''
 				}
 				if (responseAnnotation.getBooleanValue("isList")) {
 					body = ['''

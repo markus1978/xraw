@@ -9,6 +9,7 @@ import org.scribe.builder.api.TumblrApi
 
 @Directory @Service class Tumblr {
 	Blog blog
+	TumblrTagged tagged
 	
 	override protected createService(XRawHttpServiceConfiguration httpServiceConfig) {
 		return new ScribeOAuth1Service(TumblrApi, httpServiceConfig)
