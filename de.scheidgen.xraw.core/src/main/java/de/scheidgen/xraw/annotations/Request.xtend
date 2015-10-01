@@ -128,9 +128,17 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				visibility = Visibility.PUBLIC
 				addAnnotation(Override.newAnnotationReference)
 				returnType = fullResourceType
+				val jsonAccessMethod = if (responseAnnotation.getBooleanValue("isList")) "getJSONArray" else "getJSONObject"
+				val resourceKey = responseAnnotation.getStringValue("resourceKey")
+				val resourceKeyFragments = resourceKey.split("\\.")
+				val jsonAccessExpr = if (resourceKey == "") {
+					'''xResponse().«jsonAccessMethod»("")'''
+				} else {
+					'''xResponse().«FOR i:0..(resourceKeyFragments.size-2) SEPARATOR "."»getJSONObject("«resourceKeyFragments.get(i)»")«ENDFOR».«jsonAccessMethod»("«resourceKeyFragments.last»")'''
+				}
 				if (responseAnnotation.getBooleanValue("isList")) {
 					body = ['''
-						«toJavaCode(JSONArray.newTypeReference)» jsonArray = xResponse().getJSONArray("«responseAnnotation.getStringValue("resourceKey")»");
+						«toJavaCode(JSONArray.newTypeReference)» jsonArray = «jsonAccessExpr»;
 						«toJavaCode(List.newTypeReference(responseAnnotation.getClassValue("resourceType")))» result = new «toJavaCode(ArrayList.newTypeReference(responseAnnotation.getClassValue("resourceType")))»(jsonArray.length());
 						for (int i = 0; i < jsonArray.length(); i++) {
 							result.add(new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonArray.getJSONObject(i)));
@@ -139,7 +147,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					''']					
 				} else {
 					body = ['''
-						«toJavaCode(JSONObject.newTypeReference)» jsonObject = xResponse().getJSONObject("«responseAnnotation.getStringValue("resourceKey")»");					
+						«toJavaCode(JSONObject.newTypeReference)» jsonObject = «jsonAccessExpr»;
 						return new «toJavaCode(responseAnnotation.getClassValue("resourceType"))»(jsonObject);
 					''']
 				}

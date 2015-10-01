@@ -6,7 +6,10 @@ import de.scheidgen.xraw.script.XRawScript
 class TumblrExample {
 	
 	static def void main(String[] args) {
-		val tumblr = XRawScript::get("data/store.xmi", "markus", Tumblr)
+		val tumblr = XRawScript::get("data/store", "markus", Tumblr)
+		
+		val body = tumblr.blog.info.baseHostname("cubemonstergames.tumblr.com").xResponse.getJSONObject("")
+		println(body.toString(4))
 		
 		val response = tumblr.blog.info.baseHostname("cubemonstergames.tumblr.com").xExecute.xResult
 		println(response.description)
