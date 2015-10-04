@@ -108,7 +108,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 		} 	
 			
 		if (converterAnnotation != null) {
-			return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(converterAnnotation.getClassValue("value"))»().toValue(«sourceExpr».getString(«keyExpr»))'''
+			return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(converterAnnotation.getClassValue("value"))»().toValue(«sourceExpr».get(«keyExpr»).toString())'''
 		} else if (valueTypeRef.primitive || valueTypeRef.wrapper) {
 			val wrapper = valueTypeRef.wrapperIfPrimitive
 			val accessMethodName = switch wrapper {
