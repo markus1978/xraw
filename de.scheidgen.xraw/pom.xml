@@ -11,6 +11,8 @@
 
 	<modules>
 		<module>../de.scheidgen.xraw.util</module>
+		<module>../de.scheidgen.xraw.jsonx</module>
+		<module>../de.scheidgen.xraw.jsonx-test</module>
 		<module>../de.scheidgen.xraw.core</module>
 		<module>../de.scheidgen.xraw.apis</module>
 		<module>../de.scheidgen.xraw.examples</module>

@@ -98,7 +98,7 @@ class TwitterCrow {
 	}
 }
 
-@JSON(mutable=true) class TwitterCrowPotentialFriends {
+@JSON class TwitterCrowPotentialFriends {
 	String file
 	List<TwitterUser> seeds	
 	List<TwitterUser> users

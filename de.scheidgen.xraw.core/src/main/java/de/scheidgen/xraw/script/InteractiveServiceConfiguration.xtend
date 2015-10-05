@@ -108,7 +108,7 @@ class EmfStoreInteractiveServiceConfiguration extends AbstractInteractiveService
 	}
 	
 	override protected save() {
-		store.save
+		store.xSave
 	}
 	
 }

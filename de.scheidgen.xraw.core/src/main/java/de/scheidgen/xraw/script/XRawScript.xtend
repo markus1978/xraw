@@ -2,6 +2,7 @@ package de.scheidgen.xraw.script
 
 import de.scheidgen.xraw.AbstractService
 import java.io.File
+import de.scheidgen.xraw.json.XResource
 
 class XRawScript {
 	
@@ -16,13 +17,13 @@ class XRawScript {
 		
 		val file = new File(if (storeFile.endsWith(".json")) storeFile else storeFile + ".json")
 		val store =	if (file.exists) {
-			XRawStore::load(file.absolutePath)
+			XResource::load(file.absolutePath, XRawStore)
 		} else {
 			val result = new XRawStore
 			result.application = new Application
+			result.xSetURI(file.absolutePath)
 			result
 		}
-		store.file = file.absolutePath
 		
 		val application = store.application
 		
@@ -47,7 +48,7 @@ class XRawScript {
 			serviceCredentials.serviceClass = service.serviceClass
 			profile.services.add(serviceCredentials)
 		}
-		store.save
+		store.xSave
 		
 		val configuration = new EmfStoreInteractiveServiceConfiguration(store, service, serviceCredentials)
 		return get(configuration, serviceClass)

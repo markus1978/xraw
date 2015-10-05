@@ -11,9 +11,9 @@ import de.scheidgen.xraw.apis.twitter.search.Tweets
 import de.scheidgen.xraw.apis.twitter.statuses.Show
 import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
 import de.scheidgen.xraw.http.ScribeOAuth1Service
-import de.scheidgen.xraw.json.AbstractJSONWrapper
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import org.scribe.builder.api.TwitterApi
+import de.scheidgen.xraw.json.XObject
 
 @Directory
 @Service
@@ -36,7 +36,7 @@ class Twitter {
 		Thread.sleep(duration)
 	}
 	
-	public static def <R extends AbstractJSONWrapper> TwitterResponse safeBlockingCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
+	public static def <R extends XObject> TwitterResponse safeBlockingCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
 		var cursor = "-1"
 		var continue = true
 		
@@ -69,7 +69,7 @@ class Twitter {
 	}
 	
 	
-	public static def <R extends AbstractJSONWrapper> TwitterResponse safeCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
+	public static def <R extends XObject> TwitterResponse safeCursor(AbstractRequest<? extends TwitterResponse, R> request, (R)=>void function) {
 		var cursor = "-1"
 		var continue = true
 		

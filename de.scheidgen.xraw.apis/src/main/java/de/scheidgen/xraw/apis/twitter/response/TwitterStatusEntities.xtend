@@ -30,14 +30,14 @@ class TwitterUserUrlEntity {
 class TwitterUrl {
 	String display_url
     String expanded_url
-    int[] indices          
+    List<Integer> indices          
     @WithConverter(UrlConverter) URL url
 }
 
 @JSON
 class TwitterUserMention {
 	@Name("id_str") String id
-    int[] indices
+    List<Integer> indices
 	String name
 	String screen_name
 }
@@ -45,5 +45,5 @@ class TwitterUserMention {
 @JSON
 class TwitterHashtag {
 	String text
-	int[] indices        
+	List<Integer> indices        
 }

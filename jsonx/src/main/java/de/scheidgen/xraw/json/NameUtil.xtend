@@ -3,10 +3,6 @@ package de.scheidgen.xraw.json
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 
-annotation Name {
-	String value
-}
-
 class NameUtil {
 	static def name(extension TransformationContext context, MutableFieldDeclaration field) {
 		val nameAnnotation = field.findAnnotation(typeof(Name).findTypeGlobally)
