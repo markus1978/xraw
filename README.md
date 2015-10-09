@@ -4,7 +4,7 @@ XRaw provides a set of active annotations that simplifies the development of typ
 [Active annotations](http://www.eclipse.org/xtend/documentation/204_activeannotations.html) are an [xTend](http://www.eclipse.org/xtend/index.html) feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
 
 ## JSON example
-The following small xTend file demonstrates the use of XRaw annotations to create a wrapper-types for the JSON data of a library:
+The following small xTend file demonstrates the use of XRaw annotations to create wrapper-types for some typical JSON data:
 ```scala
 @JSON class Library {
   List<Book> books
@@ -19,10 +19,32 @@ The following small xTend file demonstrates the use of XRaw annotations to creat
   @WithConverter(UtcDateConverter) Date publish_date
 }
 ```
-Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs. For example, we can use xTend to find all "old" books:
+Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs.
+```scala
+val library = new Library(new JSONObject('''{
+  books : [
+    {
+      title: "Pride and Prejudice",
+      authors: "Jane Austin",
+      isbn: "96-2345-33123-32"
+      publish_date: "1813-04-12T12:00:00Z"
+    },
+    {
+      title: "SAP business workflow",
+      authors: "Ulrich Mende, Andreas Berthold",
+      
+    }
+  ]
+  adress: "Unter den Linden 6, 1099 Berlin, Germany"
+  count: 2
+}'''))
+```
+
+For example, we can use xTend to find all "old" books:
 ```scala
 val oldBooks = library.books.filter[it.publishDate.year < 1918]
 ```
+
 Since xText compiles to Java, we can also use the wrapper types in Java programs:
 ```java
 public long coutBooksBefore(Library library, int year) {
@@ -51,24 +73,25 @@ userTimelineResult.filter[it.retweetCount > 4].forEach[
 	println(it.text)
 ]	
 
-// Or as a one liner.
-twitter.statuses.userTimeline.trimUser(true).count(100).xResult.filter[it.retweetCount > 4].forEach[println(it.text)]
+// Or as a "one liner".
+twitter.statuses.userTimeline.trimUser(true).count(100).xResult
+    .filter[it.retweetCount > 4].forEach[println(it.text)]
 ```
 This is written in xTend. You could also use Scala, Java or any other JVM/bytecode based language.
 
-## get started
+## Get started
 ```
 git clone git@github.com:markus1978/xraw.git xraw
 cd xraw/de.scheidgen.xraw/
 mvn compile
 ```
 
-Look at the example project.
+Look at the [examples](https://github.com/markus1978/xraw/tree/master/de.scheidgen.xraw.examples/src/main/java/de/scheidgen/xraw/examples).
 
-## status
+## Status
 XRaw is early in development. There is no release yet; XRaw is not available via maven central yet.
 
-## features
+## Features
 ###JSON
 - wrapper for existing JSON data or to create new JSON
 - support for primitive values, arrays, objects
@@ -86,5 +109,5 @@ XRaw is early in development. There is no release yet; XRaw is not available via
 ###MongoDB
 - simple databases wrapper for uni-types collections of JSON data
 
-## contribute
+## Contribute
 I need you to try XRaw, check the existing snippets of API (we have some twitter, facebook, youtube, twitch, tumblr). Tell us what works, what doesn't. What annotations do you need.
