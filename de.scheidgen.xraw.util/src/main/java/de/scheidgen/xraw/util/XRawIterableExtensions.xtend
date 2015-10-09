@@ -209,4 +209,12 @@ class XRawIterableExtensions {
 	static def <E> Iterable<E> unique(Iterable<E> source) {
 		return source.unique[it]		
 	}
+	
+	static def <E> void forEachUntil(Iterable<E> source, (E)=>Boolean predicate) {
+		val it = source.iterator
+		var current = true
+		while (it.hasNext && current) {
+			current = predicate.apply(it.next)
+		}	
+	}
 }

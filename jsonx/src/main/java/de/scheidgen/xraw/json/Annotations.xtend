@@ -3,6 +3,7 @@ package de.scheidgen.xraw.json
 import java.net.URL
 import org.eclipse.xtend.lib.macro.Active
 import java.lang.annotation.Target
+import java.util.Date
 
 annotation Name {
 	String value
@@ -38,6 +39,18 @@ class UrlConverter implements Converter<URL> {
 	
 	override toString(URL value) {
 		value.toString
+	}
+	
+}
+
+class DateConverter implements Converter<Date> {
+	
+	override toValue(String str) {
+		new Date(Long.parseLong(str))
+	}
+	
+	override toString(Date value) {
+		Long.toString(value.time)
 	}
 	
 }

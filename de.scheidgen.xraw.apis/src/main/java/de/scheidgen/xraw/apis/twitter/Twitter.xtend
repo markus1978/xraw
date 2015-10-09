@@ -14,6 +14,7 @@ import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import org.scribe.builder.api.TwitterApi
 import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.apis.twitter.friendships.Create
 
 @Directory
 @Service
@@ -171,6 +172,7 @@ class Followers {
 class Friendships {
 	Lookup lookup
 	Destroy destroy
+	Create create
 }
 
 @Directory

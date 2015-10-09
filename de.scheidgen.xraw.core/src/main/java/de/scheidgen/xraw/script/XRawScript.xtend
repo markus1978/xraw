@@ -1,8 +1,10 @@
 package de.scheidgen.xraw.script
 
 import de.scheidgen.xraw.AbstractService
-import java.io.File
 import de.scheidgen.xraw.json.XResource
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class XRawScript {
 	
@@ -21,7 +23,10 @@ class XRawScript {
 		} else {
 			val result = new XRawStore
 			result.application = new Application
-			result.xSetURI(file.absolutePath)
+			result.xSetSave[
+				Files.write(Paths.get(file.absolutePath), result.xJson.toString(4).getBytes())
+				return null			
+			]
 			result
 		}
 		

@@ -26,6 +26,11 @@
 			<artifactId>blueprints-graph-jung</artifactId>
 			<version>2.6.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.0.4</version>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>de.scheidgen.xraw</groupId>

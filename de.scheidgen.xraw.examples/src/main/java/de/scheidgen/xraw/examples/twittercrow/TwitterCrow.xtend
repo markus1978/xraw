@@ -1,15 +1,18 @@
 package de.scheidgen.xraw.examples.twittercrow
 
+import com.mongodb.BasicDBObject
+import com.mongodb.MongoException
 import de.scheidgen.xraw.apis.twitter.Twitter
-import de.scheidgen.xraw.apis.twitter.TwitterResponse
+import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.json.DateConverter
+import de.scheidgen.xraw.json.Resource
+import de.scheidgen.xraw.json.WithConverter
+import de.scheidgen.xraw.mongodb.Collection
+import de.scheidgen.xraw.mongodb.MongoDB
 import de.scheidgen.xraw.script.XRawScript
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.util.Date
 import java.util.List
-import org.json.JSONObject
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 
@@ -17,17 +20,18 @@ import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 
  */
 class TwitterCrow {
+	val twitter = XRawScript::get("data/store", "markus", Twitter)		
 	val keywords = #["game studio"]
 	
-	def boolean matches(TwitterUser user) {
+	private def boolean matches(TwitterUser user) {
 		keywords.exists[user.description.contains(it)] 
 	}
 	
-	def boolean hasGoodStats(TwitterUser user) {
+	private def boolean hasGoodStats(TwitterUser user) {
 		(user.friendsCount*1.10 > user.followersCount) && user.statusesCount > 100 && user.favouritesCount > 30
 	}
 	
-	def <E> void forEach(Iterable<E> source, (E)=>boolean predicate) {
+	private def <E> void forEach(Iterable<E> source, (E)=>boolean predicate) {
 		var continue = true
 		var it = source.iterator
 		while (continue && it.hasNext) {
@@ -35,61 +39,57 @@ class TwitterCrow {
 		}
 	}
 	
-	def void run() {
-		
-		val twitter = XRawScript::get("data/store", "markus", Twitter)		
-		val me = twitter.users.show.screenName("mscheidgen").xCheck.xResult
-		
-		val users = new TwitterCrowPotentialFriends
-		users.seeds += me
-		users.file = "data/potentialFriends2.json"
-		
-		 Twitter::safeBlockingCursor(twitter.friends.list.screenName(me.screenName).count(200)) [
+	def void collectPotientialFriendsFromFriendsFollowers(TwitterUser source, (TwitterUser,TwitterUser)=>Void add) {		
+		Twitter::safeBlockingCursor(twitter.friends.list.screenName(source.screenName).count(200)) [
 		 	val nextBatch = newArrayList
 		 	nextBatch.addAll(it.users)
 		 	nextBatch.sort[a,b|return Integer.compare(b.followersCount,a.followersCount)]
 		 	
 			nextBatch.forEach[user|
 				if (user.matches) {
-					users.seeds += user
-					println("---")
-					print('''user «user.screenName» with «user.followersCount» as a source of potential friends: ''')
-					val result = Twitter::safeBlockingCursor(twitter.followers.id.screenName(user.screenName)) [						
-						print(it.ids.size + "=>[")
+					val result = Twitter::safeBlockingCursor(twitter.followers.id.screenName(user.screenName)) [					
 						Twitter::safeBlockingForEach(it.ids.split(100), [twitter.users.lookup.userId(it.toList)], [
 							val next = it.xResult
-							print(next.size)
 							next.forEach[
-								if (it.matches && it.hasGoodStats)
-								users.users += it
+								if (it.matches && it.hasGoodStats) add.apply(user,it)
 							]
 						])
-										
-						println("]")
-						println("> could extract " + users.users.size + " so far")
-				
-						users.save	
-					].report				
+					].successful				
 					return result					
 				} else {
 					return true
 				}			
 			]
-		].report
-		
-		println("===")
-		println("Could extract " + users.users.size + " users based on " + me.screenName)
-		
-		users.save		
+		].successful
 	}
 	
-	def report(TwitterResponse response) {
-		if (response.rateLimitExeeded) {
-			println("Rate limit exeeded")
-		} else if (!response.successful) {
-			println("Response not successful")
-		}
-		return response.successful
+	def void run() {
+		val db = new TwitterCrowDB
+		
+		val primarySeed = twitter.users.show.screenName("mscheidgen").xCheck.xResult
+		collectPotientialFriendsFromFriendsFollowers(primarySeed) [secondarySeed,user|
+			println('''add «primarySeed.screenName»->«secondarySeed.screenName»<-«user.screenName»: «user.description»''')
+			
+			val result = new TwitterCrowPotentialFriend
+			result.screenName = user.screenName
+			result.user = user
+			result.foundTime = new Date
+			result.foundWithSeeds += primarySeed
+			result.foundWithSeeds += secondarySeed
+			result.foundWithMethod = "friendsFollowers"
+			result.foundWithKeywords.addAll(keywords)
+			
+			try {
+				db.potentialFriends.add(result)
+			} catch (MongoException e) {
+				if (e.code != 11000) {	// ignore errors due to unique index violation
+					throw e
+				}
+			}
+			return null
+		]
+		
+		MongoDB::client.close
 	}
 	
 	public static def void main(String[] args) {
@@ -98,18 +98,141 @@ class TwitterCrow {
 	}
 }
 
-@JSON class TwitterCrowPotentialFriends {
-	String file
-	List<TwitterUser> seeds	
-	List<TwitterUser> users
-	
-	static def load(String file) {
-		val result = new TwitterCrowPotentialFriends(new JSONObject(Files.readAllLines(Paths.get(file), StandardCharsets.UTF_8).join("\n")))
-		result.file = file
-		return result
+class AbstractRunner {
+	def _(String key, Object value) {
+		return new BasicDBObject(key, value)
 	}
 	
-	def save() {
-		Files.write(Paths.get(file), xJson.toString(4).getBytes());
+	protected val db = new TwitterCrowDB
+	protected val twitter = XRawScript::get("data/store", "markus", Twitter)
+}
+
+class PlanBefriend extends AbstractRunner{
+	static val long A_DAY = 24 * 3600 * 1000
+			
+	
+	var Date newActionTime = null
+	var int actionsInOneDay = 0
+	
+	def run() {
+		newActionTime = db.actions.query[it.find.sort("time"._(-1))]?.first?.time ?: new Date
+		newActionTime = new Date(newActionTime.time + A_DAY)
+		
+		filter.map[db.potentialFriends.get(it)].forEach [potentialFriend |
+			val actionKey = "befriend_" + potentialFriend.user.screenName
+			if (db.actions.get(actionKey) == null) {
+				val lastStatusUpdate = potentialFriend.user.status.createdAt
+				val tmp = new Date(newActionTime.time);
+				tmp.hours = lastStatusUpdate.hours
+				val executionTime = if(tmp.time < newActionTime.time) new Date(tmp.time + 24 * 3600 * 1000) else tmp
+
+				println('''add «actionKey» for «executionTime»''')
+				val newAction = new Befriend => [
+					uuid = actionKey
+					user = potentialFriend.user
+					time = executionTime
+					executed = false
+				]
+				db.actions.add(newAction)
+				
+				if (actionsInOneDay++ >= 5) {
+					actionsInOneDay = 0
+					newActionTime = new Date(newActionTime.time + A_DAY)
+				}
+			}
+		]	
 	}
+	
+	def filter() {
+		val screenNames = db.potentialFriends.find(null,-1).map[it.screenName]
+		val relationShips = twitter.friendships.lookup.screenName(screenNames).xCheck.xResult
+		val interstingScreenNames = relationShips.filter[
+			!connections.contains(TwitterConnections.following) && 
+			!connections.contains(TwitterConnections.following_requested) && 
+			!connections.contains(TwitterConnections.followed_by)
+		].map[it.screenName]
+		
+		return interstingScreenNames.toList
+	}
+	
+	public static def void main(String[] args) {
+		val instance = new PlanBefriend()
+		instance.run()
+	}
+}
+
+class ExecuteActions extends AbstractRunner {
+	val db = new TwitterCrowDB
+	val twitter = XRawScript::get("data/store", "markus", Twitter)
+	
+	var boolean hasExecuted = false
+	def boolean executeNext(Date now) {
+		val lastActionsBeforeNow = db.actions.query[find("time"._("$lt"._(Long::toString(now.time)))).sort("time"._(-1))]
+		hasExecuted = false	 
+		lastActionsBeforeNow.forEachUntil[action|
+			if (action.executed) return false	
+			action.execute(twitter)
+			hasExecuted = true
+			println(now + " executed " + action.uuid)
+			
+			Thread::sleep(3000)
+			return true
+		]
+		
+		return hasExecuted
+	}	
+	
+	def run() {
+		while (true) {
+			val now = new Date
+			executeNext(now)
+			
+			val nextActionFromNow = db.actions.query[it.find("time"._("$gt"._(Long::toString(now.time)))).sort("time"._(1))].first
+			if (nextActionFromNow != null) {
+				val waitFor = (nextActionFromNow.time.time - System::currentTimeMillis) + 5000
+				println("-> wait, next action " + nextActionFromNow.uuid + " in " + (waitFor/1000) + " seconds at " + nextActionFromNow.time)	
+				Thread::sleep(waitFor)
+			} else {
+				return
+			}		
+		} 
+	}	
+	
+	public static def void main(String[] args) {
+		val instance = new ExecuteActions()
+		instance.run()
+	}
+}
+
+class TwitterCrowDB extends MongoDB {
+	new() { super("crow") }
+	public val potentialFriends = new Collection(this, "potential_friends", TwitterCrowPotentialFriend).withUUID("screenName")
+	public val actions = new Collection(this, "actions", Action).withUUID("uuid").withIndex("time", -1)
+}
+
+@Resource abstract class Action {
+	String uuid
+	@WithConverter(DateConverter) Date time
+	boolean executed = false	
+	
+	abstract def void execute(Twitter twitter)	
+}
+
+@Resource class Befriend extends Action {
+	TwitterUser	user
+	
+	override execute(Twitter twitter) {		
+		executed = twitter.friendships.create.screenName(user.screenName).xResponse.successful
+		xSave
+	}
+}
+
+@Resource class TwitterCrowPotentialFriend {
+	String screenName
+	TwitterUser user
+	
+	@WithConverter(DateConverter) Date foundTime
+	String foundWithMethod
+	List<TwitterUser> foundWithSeeds
+	List<String> foundWithKeywords
 }
