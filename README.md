@@ -1,11 +1,11 @@
 # XRaw
-XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper for JSON data, RESTful API calls, and MongoDB interfaces. Providing all necessary features to create social media aware apps and backends.
+XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper for JSON data, RESTful API calls, and MongoDB interfaces. Providing helpful features to create social media aware apps and backends with Java (and xTend).
 
-Active annotations are an xTend feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
+[Active annotations](http://www.eclipse.org/xtend/documentation/204_activeannotations.html) are an [xTend](http://www.eclipse.org/xtend/index.html) feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
 
 ## JSON example
 The following small xTend file demonstrates the use of XRaw annotations to create a wrapper-types for the JSON data of a library:
-```
+```scala
 @JSON class Library {
   List<Book> books
   String adress
@@ -20,11 +20,11 @@ The following small xTend file demonstrates the use of XRaw annotations to creat
 }
 ```
 Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs. For example, we can use xTend to find all "old" books:
-```
+```scala
 val oldBooks = library.books.filter[it.publishDate.year < 1918]
 ```
 Since xText compiles to Java, we can also use the wrapper types in Java programs:
-```
+```java
 public long coutBooksBefore(Library library, int year) {
   return library.getBooks().stream().filter(book->book.getPublishDate().getYear() < year).count();
 }
