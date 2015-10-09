@@ -19,8 +19,9 @@ The following small xTend file demonstrates the use of XRaw annotations to creat
   @WithConverter(UtcDateConverter) Date publish_date
 }
 ```
-Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs.
-```scala
+
+Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs:
+```
 val library = new Library(new JSONObject('''{
   books : [
     {
