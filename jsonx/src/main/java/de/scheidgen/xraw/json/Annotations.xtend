@@ -4,6 +4,7 @@ import java.net.URL
 import org.eclipse.xtend.lib.macro.Active
 import java.lang.annotation.Target
 import java.util.Date
+import java.text.SimpleDateFormat
 
 annotation Name {
 	String value
@@ -51,6 +52,18 @@ class DateConverter implements Converter<Date> {
 	
 	override toString(Date value) {
 		Long.toString(value.time)
+	}
+	
+}
+
+class UtcDateConverter implements Converter<Date> {
+	
+	override toValue(String str) {
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(str)
+	}
+	
+	override toString(Date value) {
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(value)
 	}
 	
 }

@@ -1,92 +1,60 @@
 # XRaw
-Easy development of RESTful API wrapper for Java with xTend.
+XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper for JSON data, RESTful API calls, and MongoDB interfaces. Providing all necessary features to create social media aware apps and backends.
 
-## quick example
-This is a simple "script" written based on a Twitter API wrapper generated with XRaw.
-```scala
-// initialize Twitter API with user auth. Key store for app and user token,secrets
-val twitter = XRawScript::createWithStore("data/store.xmi").serviceWithLogin(Twitter, "markus")
+Active annotations are an xTend feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
 
-// building and sending a search request to Twitter in one line
-val searchResults = twitter.search.tweets.q("Barack Obama").resultType(SearchResultType.popular).send
-
-// easy typesafe result navigation 
-for (status: searchResults.statuses.filter[retweetCount > 20]) {
-    println("# " + status.retweetCount + ":" + status.text)
+## JSON example
+The following small xTend file demonstrates the use of XRaw annotations to create a wrapper-types for the JSON data of a library:
+```
+@JSON class Library {
+  List<Book> books
+  String adress
+  @Name("count") int entries
 }
+
+@JSON class Book {
+  String title
+  String isbn
+  List<String> authors
+  @WithConverter(UtcDateConverter) Date publish_date
+}
+```
+Based on this data description, we can now simply use the class Library to wrap corresponing JSON data into Java POJOs. For example, we can use xTend to find all "old" books:
+```
+val oldBooks = library.books.filter[it.publishDate.year < 1918]
+```
+Since xText compiles to Java, we can also use the wrapper types in Java programs:
+```
+public long coutBooksBefore(Library library, int year) {
+  return library.getBooks().stream().filter(book->book.getPublishDate().getYear() < year).count();
+}
+```
+
+## REST example
+This is a simple "script" written based on a Twitter API wrapper created with XRaw.
+```scala
+// For starters, use XRawScript to interactively create a Twitter instance 
+// with a pre-configured HTTPService that deals with all OAuth related issues.
+val twitter = XRawScript::get("data/store.json", "markus", Twitter)
+
+// REST API endpoints are structured and accessed via fluent interface
+val userTimelineReq = twitter.statuses.userTimeline
+
+// Parameters can also be added fluently.
+userTimelineReq.trimUser(true).count(100)
+
+// xResult will execute the request and wrap the returned JSON data.
+val userTimelineResult = userTimelineReq.xResult
+
+// Use xTend and its iterable extensions to navigate the results.
+userTimelineResult.filter[it.retweetCount > 4].forEach[
+	println(it.text)
+]	
+
+// Or as a one liner.
+twitter.statuses.userTimeline.trimUser(true).count(100).xResult.filter[it.retweetCount > 4].forEach[println(it.text)]
 ```
 This is written in xTend. You could also use Scala, Java or any other JVM/bytecode based language.
-
-## how does it work
-XRaw uses a library of "active" annotations. These allow you to specify the REST API very easily and generates all necessary wrapper Java code for you. You simply write annotated classes with fields that correspond to REST resources and their parameters (@Request), as well as their JSON responses (@Response).
-```scala
-@Request(method=Verb.GET,
-	url="https://api.twitter.com/1.1/search/tweets.json",
-	returnType=TwitterSearchResult)
-class Tweets {
-	/**
-	 * A UTF-8, URL-encoded search query of 500 characters maximum, including
-	 * operators. Queries may additionally be limited by complexity.
-	 */
-	@Required String q
-
-	/**
-	 * Returns tweets by users located within a given radius of the given latitude/
-	 * longitude. The location is preferentially taking from the Geotagging API, but 
-         * will fall back to their Twitter profile. 
-	 */
-	String geocode
-
-	/**
-	 * Restricts tweets to the given language, given by an ISO 639-1 code. Language 
-         * detection is best-effort.
-	 */
-	String lang
-	...
-}
-```
-
-```scala
-@Response
-class TwitterSearchResult {
-	List<TwitterStatus> statuses
-	TwitterSearchMetaData search_metadata
-}
-
-@Response
-class TwitterSearchMetaData {	
-    @Name("since_id_str") String since_id
-    @Name("max_id_str") String max_id
-    @Name("refresh_url") String refresh_url_parameters
-    @Name("next_results") String next_results_url_parameters
-    int count
-    double completed_in
-    String query
-}
-
-@Response
-class TwitterStatus {
-    Object coordinates	
-    boolean favorited = false
-    boolean truncated = false
-    @WithConverter(TwitterDateConverter) Date created_at
-    @Name("id_str") String id
-    Object entities
-    @Name("in_reply_to_user_id_str") String in_reply_to_user_id
-    Object contributors
-    String text
-    int retweet_count
-    @Name("in_reply_to_status_id_str") String in_reply_to_status_id
-    Object geo
-    boolean retweeted = false
-    boolean possibly_sensitive = false
-	Object place
-    TwitterUser user
-    String in_reply_to_screen_name
-    String source
-}
-```
-These API classes have to be written in xTend in order for xTend's active annotations to work. XTend is a language that compiles to Java and its active annotations allow you to manipulate the code generation process. Therefore these annotations allow as to add additional semantics to classes and their fields that realize the wrapper functionality.
 
 ## get started
 ```
@@ -95,3 +63,28 @@ cd xraw/de.scheidgen.xraw/
 mvn compile
 ```
 
+Look at the example project.
+
+## status
+XRaw is early in development. There is no release yet; XRaw is not available via maven central yet.
+
+## features
+###JSON
+- wrapper for existing JSON data or to create new JSON
+- support for primitive values, arrays, objects
+- converter to convert complex type to and from string
+- different key names in JSON and Java to adopt to existing code
+
+###REST
+- wrapper for GET and POST requests
+- with URL and body parameters
+- with parameters encoded in URL path
+- with array and object JSON results
+- customizable HTTP implementation, e.g. to integrate with existing signing and OAuth solutions
+- customizable respone types, e.g. to use API specific data passed through HTTP header, HTTP status codes, etc.
+
+###MongoDB
+- simple databases wrapper for uni-types collections of JSON data
+
+## contribute
+I need you to try XRaw, check the existing snippets of API (we have some twitter, facebook, youtube, twitch, tumblr). Tell us what works, what doesn't. What annotations do you need.
