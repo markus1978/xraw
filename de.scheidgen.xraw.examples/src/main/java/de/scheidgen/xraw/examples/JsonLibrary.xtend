@@ -24,23 +24,23 @@ import org.json.JSONObject
 class LibraryTest {
 	
 	def void main(String[] args) {
-		val library = new Library(new JSONObject('''{
-			books : [
-				{
-					title: "Pride and Prejudice",
-					authors: "Jane Austin",
-					isbn: "96-2345-33123-32"
-					publish_date: "1813-04-12T12:00:00Z"
-				},
-				{
-					title: "SAP business workflow",
-					authors: "Ulrich Mende, Andreas Berthold",
-					
-				}
-			]
-			adress: "Unter den Linden 6, 1099 Berlin, Germany"
-			count: 2
-		}'''))
+val library = new Library(new JSONObject('''{
+	books : [
+		{
+			title: "Pride and Prejudice",
+			authors: "Jane Austin",
+			isbn: "96-2345-33123-32"
+			publish_date: "1813-04-12T12:00:00Z"
+		},
+		{
+			title: "SAP business workflow",
+			authors: "Ulrich Mende, Andreas Berthold",
+			
+		}
+	]
+	adress: "Unter den Linden 6, 1099 Berlin, Germany"
+	count: 2
+}'''))
 		
 		val oldBooks = library.books.filter[it.publishDate.year < 1918]
 	}

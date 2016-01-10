@@ -171,7 +171,7 @@ class ExecuteActions extends AbstractRunner {
 		hasExecuted = false	 
 		lastActionsBeforeNow.forEachUntil[action|
 			if (action.executed) return false	
-			action.execute(twitter)
+			action.execute(twitter) 
 			hasExecuted = true
 			println(now + " executed " + action.uuid)
 			

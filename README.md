@@ -1,4 +1,6 @@
 # XRaw
+If you, as a Java programmer, think that plain JSON is just not type-safe enough, or that Jackson and co are just to heavy and stiff to be compatible with your Scala or xTend coding style, you should read on.
+
 XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper for JSON data, RESTful API calls, and MongoDB interfaces. Providing helpful features to create social media aware apps and backends with Java (and xTend).
 
 [Active annotations](http://www.eclipse.org/xtend/documentation/204_activeannotations.html) are an [xTend](http://www.eclipse.org/xtend/index.html) feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
