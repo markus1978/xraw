@@ -11,8 +11,8 @@
 
 	<modules>
 		<module>../de.scheidgen.xraw.util</module>
-		<module>../de.scheidgen.xraw.jsonx</module>
-		<module>../de.scheidgen.xraw.jsonx-test</module>
+		<module>../jsonx</module>
+		<module>../jsonx-test</module>
 		<module>../de.scheidgen.xraw.core</module>
 		<module>../de.scheidgen.xraw.apis</module>
 		<module>../de.scheidgen.xraw.examples</module>
@@ -55,10 +55,42 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+		          <excludes>
+		            <exclude>**/*._trace</exclude>
+		            <exclude>**/*.xtendbin</exclude>
+		          </excludes>
+		        </configuration>
+			</plugin>
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-jar-plugin</artifactId>
+		        <version>2.6</version>
+		        <configuration>
+		          <excludes>
+		            <exclude>**/*._trace</exclude>
+		            <exclude>**/*.xtendbin</exclude>
+		          </excludes>
+		        </configuration>
+		      </plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>

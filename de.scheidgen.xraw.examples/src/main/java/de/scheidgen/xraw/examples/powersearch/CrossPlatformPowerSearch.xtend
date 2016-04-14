@@ -2,13 +2,10 @@ package de.scheidgen.xraw.examples.powersearch
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
+import de.scheidgen.xraw.util.AddConstructor
 import java.util.List
 
-import static de.scheidgen.xraw.examples.powersearch.CrossPlatformPowerSearchTests.*
-
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-import de.scheidgen.xraw.util.AddConstructor
-import org.junit.Test
 
 interface Platform {	
 	def List<? extends Content> userSearch(String searchStr)

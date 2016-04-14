@@ -22,7 +22,7 @@ annotation Resource {
 	
 }
 
-@Target(METHOD)
+@Target(FIELD)
 annotation WithConverter {
 	Class<? extends Converter<?>> value
 }
