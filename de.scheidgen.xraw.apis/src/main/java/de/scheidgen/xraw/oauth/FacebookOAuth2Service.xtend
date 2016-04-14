@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.apis.facebook
+package de.scheidgen.xraw.oauth
 
 import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.http.UnirestHttpResponse

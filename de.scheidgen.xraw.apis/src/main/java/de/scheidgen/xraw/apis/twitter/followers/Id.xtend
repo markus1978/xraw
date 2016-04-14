@@ -1,10 +1,10 @@
 package de.scheidgen.xraw.apis.twitter.followers
 
+import de.scheidgen.xraw.annotations.OrConstraint
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
-import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
-import de.scheidgen.xraw.annotations.OrConstraint
+import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
 
 /**
  * Returns a cursored collection of user IDs for every user the specified user is following (otherwise known as their “friends”).

@@ -1,8 +1,9 @@
 package de.scheidgen.xraw.examples
 
-import de.scheidgen.xraw.AbstractRequest
-import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.apis.youtube.YouTube
+import de.scheidgen.xraw.core.AbstractRequest
+import de.scheidgen.xraw.core.DefaultResponse
+import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 import de.scheidgen.xraw.script.XRawScript
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.List
@@ -19,7 +20,7 @@ class YouTubeSearchExample {
 		return request
 	}
 	
-	val youtube = XRawScript::get("data/store.json", "markus", YouTube)
+	val youtube = XRawScript::get("data/store.json", "markus", YouTube) [new GoogleOAuth2Service(it)]
 	
 	val String keywordStr
 	val String language

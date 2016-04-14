@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
-import org.json.JSONObject
 
 @EqualsHashCode
 class XObject {

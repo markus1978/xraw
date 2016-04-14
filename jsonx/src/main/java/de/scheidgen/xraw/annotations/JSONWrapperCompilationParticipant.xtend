@@ -1,5 +1,9 @@
-package de.scheidgen.xraw.json
+package de.scheidgen.xraw.annotations
 
+import de.scheidgen.xraw.json.JSONArray
+import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.json.XResource
 import java.util.AbstractList
 import java.util.AbstractMap
 import java.util.AbstractSet
@@ -20,8 +24,6 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeParameterDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import org.json.JSONArray
-import org.json.JSONObject
 
 interface TypeArgumentFactory<T> {
 	def T create(JSONObject json, XObject container)

@@ -1,11 +1,12 @@
 package de.scheidgen.xraw.annotations
 
 import com.mashape.unirest.http.HttpMethod
-import de.scheidgen.xraw.AbstractRequest
-import de.scheidgen.xraw.DefaultResponse
+import de.scheidgen.xraw.core.AbstractRequest
+import de.scheidgen.xraw.core.DefaultResponse
 import de.scheidgen.xraw.http.XRawHttpResponse
 import de.scheidgen.xraw.http.XRawHttpService
-import de.scheidgen.xraw.json.NameUtil
+import de.scheidgen.xraw.json.JSONArray
+import de.scheidgen.xraw.json.JSONObject
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.Collections
@@ -16,8 +17,6 @@ import org.eclipse.xtend.lib.macro.TransformationParticipant
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import org.json.JSONArray
-import org.json.JSONObject
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {

@@ -8,6 +8,7 @@ import java.util.regex.Pattern
 import de.scheidgen.xraw.apis.facebook.Facebook
 import de.scheidgen.xraw.apis.facebook.FacebookPost
 import de.scheidgen.xraw.apis.facebook.FacebookPage
+import de.scheidgen.xraw.oauth.FacebookOAuth2Service
 
 class FacebookSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
@@ -15,7 +16,7 @@ class FacebookSearchGraphContributor implements SearchGraphContributor {
 	
 	val pageReadFields = '''likes,about,id,name,description_html,website,posts.limit(«contentCount»){link,from,id}'''.toString
 	
-	val facebook = XRawScript::get("data/store.json", "markus", Facebook)
+	val facebook = XRawScript::get("data/store.json", "markus", Facebook) [new FacebookOAuth2Service(it)]
 	val platformId = "facebook"
 	val SearchGraph searchGraph
 	val TinkerGraph graph

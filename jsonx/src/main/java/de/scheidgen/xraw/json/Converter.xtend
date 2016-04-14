@@ -1,31 +1,8 @@
 package de.scheidgen.xraw.json
 
 import java.net.URL
-import org.eclipse.xtend.lib.macro.Active
-import java.lang.annotation.Target
-import java.util.Date
 import java.text.SimpleDateFormat
-
-annotation Name {
-	String value
-}
-
-@Active(typeof(JSONWrapperCompilationParticipant))
-@Target(TYPE)
-annotation JSON {
-
-}
-
-@Active(typeof(JSONWrapperCompilationParticipant))
-@Target(TYPE)
-annotation Resource {
-	
-}
-
-@Target(FIELD)
-annotation WithConverter {
-	Class<? extends Converter<?>> value
-}
+import java.util.Date
 
 interface Converter<T> {
 	def T toValue(String str)

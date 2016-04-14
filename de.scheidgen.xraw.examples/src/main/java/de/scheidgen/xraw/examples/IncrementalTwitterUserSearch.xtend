@@ -2,8 +2,10 @@ package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.oauth.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import java.util.ArrayList
+import org.scribe.builder.api.TwitterApi
 
 class IncrementalTwitterUserSearch {
 	static val keyword = "letsplay"
@@ -12,7 +14,7 @@ class IncrementalTwitterUserSearch {
 	]
 	
 	def static void main(String[] args) {
-		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter)
+		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 		
 		val result = new ArrayList<TwitterUser>()
 		

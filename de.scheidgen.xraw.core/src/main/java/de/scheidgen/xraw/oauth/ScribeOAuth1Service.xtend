@@ -1,6 +1,12 @@
-package de.scheidgen.xraw.http
+package de.scheidgen.xraw.oauth
 
+import de.scheidgen.xraw.http.ScribeHttpResponse
+import de.scheidgen.xraw.http.XRawHttpException
+import de.scheidgen.xraw.http.XRawHttpRequest
+import de.scheidgen.xraw.http.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
+import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 import org.scribe.builder.ServiceBuilder
 import org.scribe.builder.api.Api
 import org.scribe.model.SignatureType
@@ -9,9 +15,7 @@ import org.scribe.model.Verifier
 import org.scribe.oauth.OAuthService
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfiguration.*
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
-import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 
 class ScribeOAuth1Service implements XRawHttpService {
 	

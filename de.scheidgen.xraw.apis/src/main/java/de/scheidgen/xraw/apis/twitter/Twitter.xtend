@@ -1,20 +1,17 @@
 package de.scheidgen.xraw.apis.twitter
 
-import de.scheidgen.xraw.AbstractRequest
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
 import de.scheidgen.xraw.apis.twitter.friends.Id
 import de.scheidgen.xraw.apis.twitter.friends.List
+import de.scheidgen.xraw.apis.twitter.friendships.Create
 import de.scheidgen.xraw.apis.twitter.friendships.Destroy
 import de.scheidgen.xraw.apis.twitter.friendships.Lookup
 import de.scheidgen.xraw.apis.twitter.search.Tweets
 import de.scheidgen.xraw.apis.twitter.statuses.Show
 import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
-import de.scheidgen.xraw.http.ScribeOAuth1Service
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
-import org.scribe.builder.api.TwitterApi
+import de.scheidgen.xraw.core.AbstractRequest
 import de.scheidgen.xraw.json.XObject
-import de.scheidgen.xraw.apis.twitter.friendships.Create
 
 @Directory
 @Service
@@ -25,10 +22,6 @@ class Twitter {
 	Friends friends
 	Followers followers
 	Friendships friendships
-	
-	override protected createService(XRawHttpServiceConfiguration httpServiceConfig) {
-		return new ScribeOAuth1Service(TwitterApi, httpServiceConfig)
-	}
 	
 	private static def void waitFor(long utcEpochSeconds) {
 		val duration = (utcEpochSeconds * 1000 - System.currentTimeMillis) + 5000

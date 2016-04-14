@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.script
 
+import de.scheidgen.xraw.annotations.JSON
+import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.json.Converter
-import de.scheidgen.xraw.json.JSON
-import de.scheidgen.xraw.json.Resource
-import de.scheidgen.xraw.json.WithConverter
 import java.util.List
 import java.util.Map
 

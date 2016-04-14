@@ -2,7 +2,9 @@ package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
+import de.scheidgen.xraw.oauth.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
+import org.scribe.builder.api.TwitterApi
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 
@@ -10,7 +12,7 @@ class TwitterAutoUnfollow {
 	
 	def static void main(String[] args) {		
 		val screenName = "mscheidgen"
-		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter)
+		val twitter = XRawScript::get("data/store.xmi", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 		
 		println('''Looking for friends for "«screenName»"''')		
 		val friends = newArrayList

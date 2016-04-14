@@ -2,17 +2,19 @@ package de.scheidgen.xraw.examples.twittercrow
 
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
+import de.scheidgen.xraw.annotations.Resource
+import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 import de.scheidgen.xraw.json.DateConverter
-import de.scheidgen.xraw.json.Resource
-import de.scheidgen.xraw.json.WithConverter
 import de.scheidgen.xraw.mongodb.Collection
 import de.scheidgen.xraw.mongodb.MongoDB
+import de.scheidgen.xraw.oauth.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import java.util.Date
 import java.util.List
+import org.scribe.builder.api.TwitterApi
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 
@@ -20,7 +22,7 @@ import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 
  */
 class TwitterCrow {
-	val twitter = XRawScript::get("data/store", "markus", Twitter)		
+	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]		
 	val keywords = #["game studio"]
 	
 	private def boolean matches(TwitterUser user) {
@@ -104,7 +106,7 @@ class AbstractRunner {
 	}
 	
 	protected val db = new TwitterCrowDB
-	protected val twitter = XRawScript::get("data/store", "markus", Twitter)
+	protected val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 }
 
 class PlanBefriend extends AbstractRunner{
@@ -163,7 +165,7 @@ class PlanBefriend extends AbstractRunner{
 
 class ExecuteActions extends AbstractRunner {
 	val db = new TwitterCrowDB
-	val twitter = XRawScript::get("data/store", "markus", Twitter)
+	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 	
 	var boolean hasExecuted = false
 	def boolean executeNext(Date now) {

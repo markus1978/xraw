@@ -8,12 +8,13 @@ import de.scheidgen.xraw.apis.twitch.TwitchChannel
 import de.scheidgen.xraw.apis.twitch.TwitchVideo
 import de.scheidgen.xraw.script.XRawScript
 import java.util.regex.Pattern
+import de.scheidgen.xraw.oauth.TwitchOAuth2Service
 
 class TwitchSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
 	val contentCount = 3
 	
-	val twitch = XRawScript::get("data/store.json", "markus", Twitch)
+	val twitch = XRawScript::get("data/store.json", "markus", Twitch) [new TwitchOAuth2Service(it)]
 	val platformId = "twitch"
 	val SearchGraph searchGraph
 	val TinkerGraph graph

@@ -1,8 +1,8 @@
-package de.scheidgen.xraw
+package de.scheidgen.xraw.core
 
 import de.scheidgen.xraw.http.XRawHttpResponse
-import org.json.JSONArray
-import org.json.JSONObject
+import de.scheidgen.xraw.json.JSONArray
+import de.scheidgen.xraw.json.JSONObject
 
 class DefaultResponse {
 	val XRawHttpResponse httpResponse

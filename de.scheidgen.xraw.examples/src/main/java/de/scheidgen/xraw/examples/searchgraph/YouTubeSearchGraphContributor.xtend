@@ -10,12 +10,13 @@ import de.scheidgen.xraw.script.XRawScript
 import java.net.URL
 import java.util.regex.Pattern
 import org.jsoup.Jsoup
+import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 
 class YouTubeSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
 	val contentCount = 3
 	
-	val youTube = XRawScript::get("data/store.json", "markus", YouTube)
+	val youTube = XRawScript::get("data/store.json", "markus", YouTube) [new GoogleOAuth2Service(it)]
 	val platformId = "youtube"
 	val SearchGraph searchGraph
 	val TinkerGraph graph

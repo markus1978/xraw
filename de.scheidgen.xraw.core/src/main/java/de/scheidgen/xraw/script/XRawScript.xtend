@@ -1,21 +1,22 @@
 package de.scheidgen.xraw.script
 
-import de.scheidgen.xraw.AbstractService
+import de.scheidgen.xraw.core.AbstractService
 import de.scheidgen.xraw.json.XResource
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import de.scheidgen.xraw.http.XRawHttpService
 
 class XRawScript {
 	
-	static def <S extends AbstractService> S get(XRawHttpServiceConfiguration config, Class<S> serviceClass) {
+	static def <S extends AbstractService> S get(XRawHttpService httpService, Class<S> serviceClass) {
 		val serviceClassConfigurationConstructor = serviceClass.declaredConstructors.findFirst[
-			it.parameters.size == 1 && it.parameters.get(0).type.isAssignableFrom(config.class)
+			it.parameters.size == 1 && it.parameters.get(0).type.isAssignableFrom(httpService.class)
 		]
-		return serviceClassConfigurationConstructor.newInstance(config) as S
+		return serviceClassConfigurationConstructor.newInstance(httpService) as S
 	}
 	
-	static def <S extends AbstractService> S get(String storeFile, String userName, Class<S> serviceClass) {
+	static def <S extends AbstractService> S get(String storeFile, String userName, Class<S> serviceClass, (XRawHttpServiceConfiguration)=>XRawHttpService serviceFactory) {
 		
 		val file = new File(if (storeFile.endsWith(".json")) storeFile else storeFile + ".json")
 		val store =	if (file.exists) {
@@ -56,6 +57,6 @@ class XRawScript {
 		store.xSave
 		
 		val configuration = new EmfStoreInteractiveServiceConfiguration(store, service, serviceCredentials)
-		return get(configuration, serviceClass)
+		return get(serviceFactory.apply(configuration), serviceClass)
 	}
 }

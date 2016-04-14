@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.apis.facebook
 
-import de.scheidgen.xraw.json.JSON
+import de.scheidgen.xraw.annotations.JSON
 import java.util.List
 
 @JSON class FacebookComment extends FacebookObject {

@@ -2,9 +2,8 @@ package de.scheidgen.xraw.apis.youtube
 
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
-import de.scheidgen.xraw.apis.google.GoogleOAuth2Service
+import de.scheidgen.xraw.apis.youtube.search.List
 import de.scheidgen.xraw.json.Converter
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -14,15 +13,11 @@ class YouTube {
 	Search search
 	Channels channels
 	Videos videos
-	
-	override protected createService(XRawHttpServiceConfiguration httpServiceConfig) {
-		return new GoogleOAuth2Service(httpServiceConfig)
-	}
 }
 
 @Directory
 class Search {
-	de.scheidgen.xraw.apis.youtube.search.List list
+	List list
 }
 
 @Directory

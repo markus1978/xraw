@@ -1,4 +1,4 @@
-package de.scheidgen.xraw
+package de.scheidgen.xraw.core
 
 import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.http.XRawHttpRequest

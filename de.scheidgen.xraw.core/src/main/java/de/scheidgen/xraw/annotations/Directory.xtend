@@ -1,6 +1,8 @@
 package de.scheidgen.xraw.annotations
 
-import de.scheidgen.xraw.AbstractService
+import de.scheidgen.xraw.core.AbstractService
+import de.scheidgen.xraw.http.XRawHttpService
+import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.List
@@ -11,8 +13,6 @@ import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
-import de.scheidgen.xraw.http.XRawHttpService
 
 @Active(typeof(DirectoryCompilationParticipant))
 @Target(TYPE)
@@ -37,16 +37,6 @@ class DirectoryCompilationParticipant implements TransformationParticipant<Mutab
 					visibility = Visibility.PUBLIC
 					body = ['''
 						super(service);
-						«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
-							this.«field.simpleName» = new «toJavaCode(field.type)»(_httpService); 
-						«ENDFOR»
-					''']
-				]
-				clazz.addConstructor [
-					addParameter("serviceConfiguration", XRawHttpServiceConfiguration.newTypeReference)
-					visibility = Visibility.PUBLIC
-					body = ['''
-						super(serviceConfiguration);
 						«FOR field: declaredFields.filter[(type.type as ClassDeclaration).findAnnotation(Directory.findTypeGlobally)!=null]»
 							this.«field.simpleName» = new «toJavaCode(field.type)»(_httpService); 
 						«ENDFOR»

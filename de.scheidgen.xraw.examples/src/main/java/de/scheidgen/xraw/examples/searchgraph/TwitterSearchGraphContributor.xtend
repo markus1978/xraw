@@ -6,16 +6,16 @@ import com.tinkerpop.blueprints.impls.tg.TinkerGraph
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.oauth.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import java.util.regex.Pattern
-
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import org.scribe.builder.api.TwitterApi
 
 class TwitterSearchGraphContributor implements SearchGraphContributor {
 	val userCount = 3
 	val contentCount = 3
 	
-	val twitter = XRawScript::get("data/store.json", "markus", Twitter)
+	val twitter = XRawScript::get("data/store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 	val platformId = "twitter"
 	val SearchGraph searchGraph
 	val TinkerGraph graph

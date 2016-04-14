@@ -13,6 +13,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 import org.junit.Test
+import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 
 @AddConstructor
 abstract class SingleAPIPowerSearch<Id, Info> {
@@ -108,7 +109,7 @@ class PowerSearchTests {
 @AddSuperConstructors
 class YouTubePowerSearch extends SingleAPIPowerSearch<String, YouTubeChannels> {
 	
-	val youtube = XRawScript::get("data/store.json", "markus", YouTube)
+	val youtube = XRawScript::get("data/store.json", "markus", YouTube) [new GoogleOAuth2Service(it)]
 	
 	override seed(int count) {
 		return youtube.search.list

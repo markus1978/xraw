@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.apis.youtube.docparser
+package de.scheidgen.xraw.apigenerators.youtube
 
 import java.net.URL
 import java.util.List

@@ -10,8 +10,4 @@ import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 	ChannelVideos channelVideos
 	ChannelSearch channelSearch
 	Video video
-	
-	override protected createService(XRawHttpServiceConfiguration httpServiceConfig) {
-		return new TwitchOAuth2Service(httpServiceConfig)
-	}
 }

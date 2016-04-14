@@ -3,10 +3,10 @@ package de.scheidgen.xraw.apis.youtube.search
 import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
+import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.annotations.XorOrNothingConstraint
 import de.scheidgen.xraw.apis.youtube.YouTubeDateConverter
 import de.scheidgen.xraw.apis.youtube.resources.YouTubeSearchListResponse
-import de.scheidgen.xraw.json.WithConverter
 import java.util.Date
 
 @Request(url="https://www.googleapis.com/youtube/v3/search", response=@Response(resourceType=YouTubeSearchListResponse))

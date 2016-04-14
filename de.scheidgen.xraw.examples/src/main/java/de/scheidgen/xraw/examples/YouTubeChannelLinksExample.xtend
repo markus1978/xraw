@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.examples
 
-import de.scheidgen.xraw.AbstractRequest
-import de.scheidgen.xraw.DefaultResponse
 import de.scheidgen.xraw.apis.youtube.YouTube
+import de.scheidgen.xraw.core.AbstractRequest
+import de.scheidgen.xraw.core.DefaultResponse
 import de.scheidgen.xraw.script.XRawScript
 import de.scheidgen.xraw.util.AddConstructor
 import de.scheidgen.xraw.util.XRawIterateExtensions
@@ -11,6 +11,7 @@ import java.net.URL
 import org.jsoup.Jsoup
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 
 @AddConstructor
 class YouTubeChannelLinksExample {
@@ -23,7 +24,7 @@ class YouTubeChannelLinksExample {
 		return request
 	}
 	
-	val YouTube youtube = XRawScript::get("data/store.json", "markus", YouTube)
+	val YouTube youtube = XRawScript::get("data/store.json", "markus", YouTube) [new GoogleOAuth2Service(it)]
 	
 	val String[] titles
 	val String language 
