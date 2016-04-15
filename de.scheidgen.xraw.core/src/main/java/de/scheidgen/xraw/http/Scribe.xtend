@@ -1,14 +1,17 @@
-package de.scheidgen.xraw.oauth
+package de.scheidgen.xraw.http
 
-import de.scheidgen.xraw.http.ScribeHttpResponse
-import de.scheidgen.xraw.http.XRawHttpException
-import de.scheidgen.xraw.http.XRawHttpRequest
-import de.scheidgen.xraw.http.XRawHttpService
+import de.scheidgen.xraw.core.XRawHttpException
+import de.scheidgen.xraw.core.XRawHttpMethod
+import de.scheidgen.xraw.core.XRawHttpRequest
+import de.scheidgen.xraw.core.XRawHttpResponse
+import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
+import de.scheidgen.xraw.util.AddConstructor
 import org.scribe.builder.ServiceBuilder
 import org.scribe.builder.api.Api
+import org.scribe.model.Response
 import org.scribe.model.SignatureType
 import org.scribe.model.Token
 import org.scribe.model.Verifier
@@ -83,12 +86,35 @@ class ScribeOAuth1Service implements XRawHttpService {
 		}		
 	}
 	
+	override createEmptyRequest(XRawHttpMethod method, String url) {
+		return new UnirestHttpRequest(method, url)
+	}
 	
 	override synchronousRestCall(XRawHttpRequest httpRequest) throws XRawHttpException {
-		val scribeHttpRequest = httpRequest.toScribe
+		val scribeHttpRequest = (httpRequest as UnirestHttpRequest).toScribe
 		httpService.signRequest(accessToken, scribeHttpRequest)
 		val scribeHttpResponse = scribeHttpRequest.send
 		return new ScribeHttpResponse(scribeHttpResponse)
+	}	
+}
+
+@AddConstructor
+class ScribeHttpResponse implements XRawHttpResponse {
+	val Response source
+	
+	override getBody() {
+		return source.body
 	}
 	
+	override getHeaders() {
+		return source.headers
+	}
+	
+	override getStatus() {
+		return source.code
+	}
+	
+	override getStatusText() {
+		return source.message
+	}
 }

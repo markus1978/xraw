@@ -1,10 +1,12 @@
 package de.scheidgen.xraw.oauth
 
 import com.mashape.unirest.http.Unirest
+import de.scheidgen.xraw.core.XRawHttpException
+import de.scheidgen.xraw.core.XRawHttpMethod
+import de.scheidgen.xraw.core.XRawHttpRequest
+import de.scheidgen.xraw.core.XRawHttpService
+import de.scheidgen.xraw.http.UnirestHttpRequest
 import de.scheidgen.xraw.http.UnirestHttpResponse
-import de.scheidgen.xraw.http.XRawHttpException
-import de.scheidgen.xraw.http.XRawHttpRequest
-import de.scheidgen.xraw.http.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
@@ -130,8 +132,12 @@ class GoogleOAuth2Service implements XRawHttpService {
 		}		
 	}
 	
+	override createEmptyRequest(XRawHttpMethod method, String url) {
+		return new UnirestHttpRequest(method, url)
+	}
+	
 	override synchronousRestCall(XRawHttpRequest httpRequest) throws XRawHttpException {
-		val unirestResponse = authenticate(httpRequest).toUnirest.asString
+		val unirestResponse = (authenticate(httpRequest) as UnirestHttpRequest).toUnirest.asString
 		return new UnirestHttpResponse(unirestResponse)
 	}
 	

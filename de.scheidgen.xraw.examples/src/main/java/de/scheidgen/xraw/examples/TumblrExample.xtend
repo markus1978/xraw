@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.apis.tumblr.Tumblr
-import de.scheidgen.xraw.oauth.ScribeOAuth1Service
+import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import org.scribe.builder.api.TumblrApi
 

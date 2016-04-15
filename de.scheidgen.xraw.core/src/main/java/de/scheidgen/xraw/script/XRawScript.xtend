@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.script
 
 import de.scheidgen.xraw.core.AbstractService
+import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.json.XResource
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import de.scheidgen.xraw.http.XRawHttpService
 
 class XRawScript {
 	

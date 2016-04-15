@@ -1,6 +1,5 @@
 package de.scheidgen.xraw.core
 
-import de.scheidgen.xraw.http.XRawHttpResponse
 import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
 

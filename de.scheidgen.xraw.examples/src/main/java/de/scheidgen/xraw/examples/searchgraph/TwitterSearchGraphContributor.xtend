@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.impls.tg.TinkerGraph
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterStatus
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import de.scheidgen.xraw.oauth.ScribeOAuth1Service
+import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import java.util.regex.Pattern
 import org.scribe.builder.api.TwitterApi

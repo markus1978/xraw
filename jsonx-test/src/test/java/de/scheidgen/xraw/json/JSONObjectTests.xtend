@@ -1,8 +1,7 @@
 package de.scheidgen.xraw.json
 
-import org.junit.Test
-import org.json.JSONObject
 import org.junit.Assert
+import org.junit.Test
 
 class JSONObjectTests {
 	

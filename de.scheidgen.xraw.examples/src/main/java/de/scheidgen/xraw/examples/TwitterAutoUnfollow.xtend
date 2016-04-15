@@ -2,7 +2,7 @@ package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
-import de.scheidgen.xraw.oauth.ScribeOAuth1Service
+import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import org.scribe.builder.api.TwitterApi
 

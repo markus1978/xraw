@@ -1,10 +1,5 @@
 package de.scheidgen.xraw.core
 
-import com.mashape.unirest.http.HttpMethod
-import de.scheidgen.xraw.http.XRawHttpRequest
-import de.scheidgen.xraw.http.XRawHttpResponse
-import de.scheidgen.xraw.http.XRawHttpService
-
 abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceType> {
 	
 	private val XRawHttpService service
@@ -12,9 +7,9 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	
 	private var ResponseType response = null
 
-	protected new(XRawHttpService service, HttpMethod method, String url) {
+	protected new(XRawHttpService service, XRawHttpRequest request) {
 		this.service = service;
-		httpRequest = new XRawHttpRequest(method, url)
+		httpRequest = request
 	}
 
 	/**
@@ -65,7 +60,7 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 		return httpRequest.queryString.get(name)
 	}
 	
-	public def xSetMethod(HttpMethod method) {
+	public def xSetMethod(XRawHttpMethod method) {
 		httpRequest.method = method
 	}
 	

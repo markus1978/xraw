@@ -7,10 +7,10 @@ import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.json.DateConverter
 import de.scheidgen.xraw.mongodb.Collection
 import de.scheidgen.xraw.mongodb.MongoDB
-import de.scheidgen.xraw.oauth.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 import java.util.Date
 import java.util.List

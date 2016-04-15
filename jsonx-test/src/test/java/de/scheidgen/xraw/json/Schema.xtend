@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.json
 
+import de.scheidgen.xraw.annotations.JSON
 import java.util.List
 import java.util.Map
 

@@ -3,8 +3,8 @@ package de.scheidgen.xraw.annotations
 import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.core.AbstractRequest
 import de.scheidgen.xraw.core.DefaultResponse
-import de.scheidgen.xraw.http.XRawHttpResponse
-import de.scheidgen.xraw.http.XRawHttpService
+import de.scheidgen.xraw.core.XRawHttpResponse
+import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
 import java.lang.annotation.Target
@@ -17,6 +17,7 @@ import org.eclipse.xtend.lib.macro.TransformationParticipant
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import de.scheidgen.xraw.core.XRawHttpMethod
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -67,7 +68,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 				val url = requestAnnotation.getStringValue("url") 
 				val method = requestAnnotation.getEnumValue("method")
 				body = ['''
-					super(service, «toJavaCode(HttpMethod.newTypeReference)».«method.simpleName», "«url»");
+					super(service, service.createEmptyRequest(«toJavaCode(XRawHttpMethod.newTypeReference)».«method.simpleName», "«url»"));
 					«FOR field:declaredFields.filter[it.initializer != null]»
 						«val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)»
 						«localName»(«field.initializer»);
