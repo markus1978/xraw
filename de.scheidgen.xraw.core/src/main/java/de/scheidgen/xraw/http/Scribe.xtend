@@ -19,6 +19,8 @@ import org.scribe.oauth.OAuthService
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfiguration.*
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
+import de.scheidgen.xraw.server.JsonOrgArray
+import de.scheidgen.xraw.server.JsonOrgObject
 
 class ScribeOAuth1Service implements XRawHttpService {
 	
@@ -101,6 +103,22 @@ class ScribeOAuth1Service implements XRawHttpService {
 @AddConstructor
 class ScribeHttpResponse implements XRawHttpResponse {
 	val Response source
+	
+	override getBodyJSONArray(String key) {
+		if (key == null || key == "") {
+			new JsonOrgArray(body)
+		} else {
+			new JsonOrgObject(body).getJSONArray(key)
+		}
+	}
+	
+	override getBodyJSONObject(String key) {
+		if (key == null || key == "") {
+			new JsonOrgObject(body)
+		} else {
+			new JsonOrgObject(body).getJSONObject(key)
+		}
+	}
 	
 	override getBody() {
 		return source.body

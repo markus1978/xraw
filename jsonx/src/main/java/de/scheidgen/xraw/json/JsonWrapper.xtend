@@ -1,221 +1,95 @@
 package de.scheidgen.xraw.json
 
-import com.google.gwt.json.client.JSONBoolean
-import com.google.gwt.json.client.JSONNumber
-import com.google.gwt.json.client.JSONParser
-import com.google.gwt.json.client.JSONString
-import de.scheidgen.xraw.util.AddConstructor
 import java.util.Collection
 
-@AddConstructor
-class JSONObject {
+interface JSONObject {
+		
+	def boolean isNull(String key)
 	
-	public val com.google.gwt.json.client.JSONObject jsonObject
+	def Object get(String key)
 	
-	new() {
-		jsonObject = new com.google.gwt.json.client.JSONObject
-	}
+	def JSONObject getJSONObject(String key)
 	
-	new(String json) {
-		jsonObject = JSONParser.parseLenient(json).isObject
-	}
+	def JSONArray getJSONArray(String key)
 	
-	def boolean isNull(String key) {
-		return jsonObject.get(key) == null
-	}
+	def String getString(String key)
 	
-	def Object get(String key) {
-		jsonObject.get(key)
-	}
+	def boolean getBoolean(String key)
 	
-	def JSONObject getJSONObject(String key) {
-		new JSONObject(jsonObject.get(key).object)	
-	}
+	def int getInt(String key)
 	
-	def JSONArray getJSONArray(String key) {
-		new JSONArray(jsonObject.get(key).array)
-	}
+	def long getLong(String key) 
 	
-	def String getString(String key) {
-		jsonObject.get(key).string.stringValue
-	}
+	def double getDouble(String key)
 	
-	def boolean getBoolean(String key) {
-		jsonObject.get(key).boolean.booleanValue
-	}
+	def void put(String key, JSONArray value)
 	
-	def int getInt(String key) {
-		jsonObject.get(key).number.doubleValue as int
-	}
+	def void put(String key, JSONObject value)
 	
-	def long getLong(String key) {
-		jsonObject.get(key).number.doubleValue as long
-	}
+	def void put(String key, String value)
 	
-	def double getDouble(String key) {
-		jsonObject.get(key).number.doubleValue as int
-	}
+	def void put(String key, int value)
 	
-	def void put(String key, JSONArray value) {
-		jsonObject.put(key, value.jsonArray)
-	}
+	def void put(String key, long value)
 	
-	def void put(String key, JSONObject value) {
-		jsonObject.put(key, value.jsonObject)
-	}
+	def void put(String key, boolean value) 
 	
-	def void put(String key, String value) {
-		jsonObject.put(key, new JSONString(value))
-	}
+	def void put(String key, double value)
 	
-	def void put(String key, int value) {
-		jsonObject.put(key, new JSONNumber(value))
-	}
+	def void putOnce(String key, Object value)
 	
-	def void put(String key, long value) {
-		jsonObject.put(key, new JSONNumber(value))
-	}
+	def Collection<String> keySet()
 	
-	def void put(String key, boolean value) {
-		jsonObject.put(key, JSONBoolean.getInstance(value))
-	}
+	def int length()
 	
-	def void put(String key, double value) {
-		jsonObject.put(key, new JSONNumber(value))
-	}
+	def Object remove(String key)
 	
-	def void putOnce(String key, Object value) {
-		if (jsonObject.get(key) == null) {
-			switch value {
-				JSONObject: put(key, value)
-				JSONArray: put(key, value)
-				Boolean: put(key, value)
-				String: put(key, value)
-				Integer: put(key, value)
-				Long: put(key, value)
-				Double: put(key, value)
-				default: throw new IllegalArgumentException()
-			}
-		}
-	}
+	def String toString(int indent)
 	
-	def Collection<String> keySet() {
-		jsonObject.keySet
-	}
+	def JSONObject xCreateNewObject()
 	
-	def int length() {
-		jsonObject.size
-	}
-	
-	def Object remove(String key) {
-		throw new IllegalAccessException()
-	}
-	
-	def String toString(int indent) {
-		jsonObject.toString
-	}
+	def JSONArray xCreateNewArray()
 }
 
-@AddConstructor
-class JSONArray {
-	public val com.google.gwt.json.client.JSONArray jsonArray
+interface JSONArray {	
 	
-	new() {
-		jsonArray = new com.google.gwt.json.client.JSONArray
-	}
+	def boolean isNull(int key)
 	
-	new(String json) {
-		jsonArray = JSONParser.parseLenient(json).array
-	}
+	def Object get(int key) 
 	
-	def boolean isNull(int key) {
-		return jsonArray.get(key) == null
-	}
+	def JSONObject getJSONObject(int key)
 	
-	def Object get(int key) {
-		jsonArray.get(key)
-	}
+	def JSONArray getJSONArray(int key)
 	
-	def JSONObject getJSONObject(int key) {
-		new JSONObject(jsonArray.get(key).object)	
-	}
+	def String getString(int key)
 	
-	def JSONArray getJSONArray(int key) {
-		new JSONArray(jsonArray.get(key).array)
-	}
+	def boolean getBoolean(int key)
 	
-	def String getString(int key) {
-		jsonArray.get(key).string.stringValue
-	}
+	def int getInt(int key)
 	
-	def boolean getBoolean(int key) {
-		jsonArray.get(key).boolean.booleanValue
-	}
+	def long getLong(int key) 
 	
-	def int getInt(int key) {
-		jsonArray.get(key).number.doubleValue as int
-	}
+	def double getDouble(int key)
 	
-	def long getLong(int key) {
-		jsonArray.get(key).number.doubleValue as long
-	}
+	def void put(int key, JSONArray value)
 	
-	def double getDouble(int key) {
-		jsonArray.get(key).number.doubleValue as int
-	}
+	def void put(int key, JSONObject value)
 	
-	def void put(int key, JSONArray value) {
-		jsonArray.set(key, value.jsonArray)
-	}
+	def void put(int key, String value) 
 	
-	def void put(int key, JSONObject value) {
-		jsonArray.set(key, value.jsonObject)
-	}
+	def void put(int key, int value) 
 	
-	def void put(int key, String value) {
-		jsonArray.set(key, new JSONString(value))
-	}
+	def void put(int key, long value)
 	
-	def void put(int key, int value) {
-		jsonArray.set(key, new JSONNumber(value))
-	}
+	def void put(int key, boolean value) 
 	
-	def void put(int key, long value) {
-		jsonArray.set(key, new JSONNumber(value))
-	}
+	def void put(int key, double value) 
+		
+	def void putOnce(int key, Object value) 
 	
-	def void put(int key, boolean value) {
-		jsonArray.set(key, JSONBoolean.getInstance(value))
-	}
+	def int length()
 	
-	def void put(int key, double value) {
-		jsonArray.set(key, new JSONNumber(value))
-	}
+	def Object remove(int key) 
 	
-	def void putOnce(int key, Object value) {
-		if (jsonArray.get(key) == null) {
-			switch value {
-				JSONObject: put(key, value)
-				JSONArray: put(key, value)
-				Boolean: put(key, value)
-				String: put(key, value)
-				Integer: put(key, value)
-				Long: put(key, value)
-				Double: put(key, value)
-				default: throw new IllegalArgumentException()
-			}
-		}
-	}
-	
-	def int length() {
-		jsonArray.size
-	}
-	
-	def Object remove(int key) {
-		throw new IllegalAccessException()
-	}
-	
-	def String toString(int indent) {
-		jsonArray.toString
-	}
+	def String toString(int indent)
 }

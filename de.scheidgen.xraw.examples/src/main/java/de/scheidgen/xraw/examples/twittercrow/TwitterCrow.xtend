@@ -17,6 +17,7 @@ import java.util.List
 import org.scribe.builder.api.TwitterApi
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import de.scheidgen.xraw.server.JsonOrgObject
 
 /** 
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 
@@ -72,7 +73,7 @@ class TwitterCrow {
 		collectPotientialFriendsFromFriendsFollowers(primarySeed) [secondarySeed,user|
 			println('''add «primarySeed.screenName»->«secondarySeed.screenName»<-«user.screenName»: «user.description»''')
 			
-			val result = new TwitterCrowPotentialFriend
+			val result = new TwitterCrowPotentialFriend(new JsonOrgObject)
 			result.screenName = user.screenName
 			result.user = user
 			result.foundTime = new Date
@@ -129,7 +130,7 @@ class PlanBefriend extends AbstractRunner{
 				val executionTime = if(tmp.time < newActionTime.time) new Date(tmp.time + 24 * 3600 * 1000) else tmp
 
 				println('''add «actionKey» for «executionTime»''')
-				val newAction = new Befriend => [
+				val newAction = new Befriend(new JsonOrgObject) => [
 					uuid = actionKey
 					user = potentialFriend.user
 					time = executionTime

@@ -2,7 +2,6 @@ package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.annotations.JSON
 import de.scheidgen.xraw.core.DefaultResponse
-import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.util.AddConstructor
 import java.util.ArrayList
 import java.util.List
@@ -41,7 +40,7 @@ class TwitterResponse extends DefaultResponse {
 		} else {
 			val body = getBody()
 			if (body != null) {
-				val errorJsonArray = new JSONObject(body).getJSONArray("errors")
+				val errorJsonArray = getJSONObject(null).getJSONArray("errors")
 				val result = new ArrayList<TwitterError>()
 				for (i: 0..<errorJsonArray.length) {
 					result.add(new TwitterError(errorJsonArray.getJSONObject(i)))

@@ -2,10 +2,11 @@ package de.scheidgen.xraw.script
 
 import de.scheidgen.xraw.core.AbstractService
 import de.scheidgen.xraw.core.XRawHttpService
-import de.scheidgen.xraw.json.XResource
+import de.scheidgen.xraw.server.XResource
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import de.scheidgen.xraw.server.JsonOrgObject
 
 class XRawScript {
 	
@@ -22,8 +23,8 @@ class XRawScript {
 		val store =	if (file.exists) {
 			XResource::load(file.absolutePath, XRawStore)
 		} else {
-			val result = new XRawStore
-			result.application = new Application
+			val result = new XRawStore(new JsonOrgObject)
+			result.application = new Application(new JsonOrgObject)
 			result.xSetSave[
 				Files.write(Paths.get(file.absolutePath), result.xJson.toString(4).getBytes())
 				return null			
@@ -35,14 +36,14 @@ class XRawScript {
 		
 		var profile = application.profiles.findFirst[it.id==userName]
 		if (profile == null) {
-			profile = new Profile
+			profile = new Profile(new JsonOrgObject)
 			profile.id = userName
 			application.profiles.add(profile)
 		}
 		
 		var service = application.services.findFirst[it.serviceClass == serviceClass]
 		if (service == null) {
-			service = new Service
+			service = new Service(new JsonOrgObject)
 			service.serviceClass = serviceClass			
 			application.services.add(service)
 		}
@@ -50,7 +51,7 @@ class XRawScript {
 		
 		var serviceCredentials = profile.services.findFirst[it.serviceClass == serviceVal.serviceClass]
 		if (serviceCredentials == null) {
-			serviceCredentials = new ServiceCredentials
+			serviceCredentials = new ServiceCredentials(new JsonOrgObject)
 			serviceCredentials.serviceClass = service.serviceClass
 			profile.services.add(serviceCredentials)
 		}

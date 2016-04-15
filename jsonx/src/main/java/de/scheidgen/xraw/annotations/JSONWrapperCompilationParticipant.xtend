@@ -3,7 +3,7 @@ package de.scheidgen.xraw.annotations
 import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.json.XObject
-import de.scheidgen.xraw.json.XResource
+import de.scheidgen.xraw.server.XResource
 import java.util.AbstractList
 import java.util.AbstractMap
 import java.util.AbstractSet
@@ -208,7 +208,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			
 			if (clazz.extendedClass == null || clazz.extendedClass == Object.newTypeReference) {
 				if (clazz.findAnnotation(Resource.findTypeGlobally) != null) {
-						clazz.extendedClass = XResource.newTypeReference
+					clazz.extendedClass = XResource.newTypeReference
 				} else {
 					clazz.extendedClass = XObject.newTypeReference					
 				}				
@@ -262,25 +262,6 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				''']
 			]
 			
-			clazz.addConstructor[
-				visibility = Visibility.PUBLIC		
-				for (typeParameter:clazz.typeParameters) {
-					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
-				}	
-				body = ['''
-					«IF clazz.extendedClass.actualTypeArguments.empty»			
-						super();
-					«ELSE»
-						super(
-							«generateTypeArguments(context, clazz.extendedClass)»
-						);
-					«ENDIF»
-					«FOR typeParameter:clazz.typeParameters»
-						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
-					«ENDFOR»
-				''']
-			]
-			
 			for (field : declaredFields) {
 				clazz.addMethod("get" + NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper) [
 					docComment = field.docComment
@@ -292,7 +273,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 							val elementType = toJavaCode(elementTypeRef)
 							'''
 								if (json.isNull("«jsonName»")) {
-									json.put("«jsonName»", new «toJavaCode(JSONArray.newTypeReference)»());
+									json.put("«jsonName»", json.xCreateNewArray());
 									return get«NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper»();									
 								} else {
 									return new «toJavaCode(AbstractList.newTypeReference(field.type.actualTypeArguments))»() {
@@ -337,7 +318,7 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 							val entryType = toJavaCode(entryTypeRef)
 							'''
 								if (json.isNull("«jsonName»")) {
-									json.put("«jsonName»", new «toJavaCode(JSONObject.newTypeReference)»());
+									json.put("«jsonName»", json.xCreateNewObject());
 									return get«NameUtil::snakeCaseToCamelCase(field.simpleName).toFirstUpper»();
 								} else {
 									return new «toJavaCode(AbstractMap.newTypeReference(string,elementTypeRef))»() {

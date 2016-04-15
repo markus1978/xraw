@@ -3,8 +3,8 @@ package de.scheidgen.xraw.examples
 import de.scheidgen.xraw.annotations.JSON
 import de.scheidgen.xraw.annotations.Name
 import de.scheidgen.xraw.annotations.WithConverter
-import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.json.UtcDateConverter
+import de.scheidgen.xraw.server.JsonOrgObject
 import java.util.Date
 import java.util.List
 
@@ -24,7 +24,7 @@ import java.util.List
 class LibraryTest {
 	
 	def void main(String[] args) {
-		val library = new Library(new JSONObject('''{
+		val library = new Library(new JsonOrgObject('''{
 			books : [
 				{
 					title: "Pride and Prejudice",

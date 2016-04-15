@@ -8,7 +8,7 @@ import com.mongodb.client.FindIterable
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.IndexOptions
-import de.scheidgen.xraw.json.XResource
+import de.scheidgen.xraw.server.XResource
 import org.bson.Document
 import org.json.JSONObject
 

@@ -2,6 +2,7 @@ package de.scheidgen.xraw.json
 
 import org.junit.Assert
 import org.junit.Test
+import de.scheidgen.xraw.server.JsonOrgObject
 
 class JSONObjectTests {
 	
@@ -11,7 +12,7 @@ class JSONObjectTests {
 				simpleString: "Hello"
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		
 		Assert.assertEquals("Hello", object.simpleString)
 	}
@@ -22,7 +23,7 @@ class JSONObjectTests {
 				simpleList: ["one","two"]
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		
 		Assert.assertEquals("two", object.simpleList.get(1))
 	}
@@ -36,7 +37,7 @@ class JSONObjectTests {
 				}
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		
 		Assert.assertEquals("this is 2", object.simpleMap.get("two"))
 	}
@@ -47,7 +48,7 @@ class JSONObjectTests {
 				simpleString: "Hello"
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		object.simpleString = "modified"
 		
 		Assert.assertEquals("modified", object.simpleString)
@@ -59,7 +60,7 @@ class JSONObjectTests {
 				simpleList: ["one","two"]
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		object.simpleList.set(1, "TWO")
 		
 		Assert.assertEquals("TWO", object.simpleList.get(1))
@@ -71,7 +72,7 @@ class JSONObjectTests {
 				simpleList: ["one","two"]
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		object.simpleList.add("three")
 		
 		Assert.assertEquals("three", object.simpleList.get(2))
@@ -86,7 +87,7 @@ class JSONObjectTests {
 				}
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		object.simpleMap.put("two", "2")
 		
 		Assert.assertEquals("2", object.simpleMap.get("two"))
@@ -101,7 +102,7 @@ class JSONObjectTests {
 				}
 			}
 		'''
-		val object = new SimpleJSONTestObject(new JSONObject(json))
+		val object = new SimpleJSONTestObject(new JsonOrgObject(json))
 		object.simpleMap.put("three", "3")
 		
 		Assert.assertEquals("3", object.simpleMap.get("three"))

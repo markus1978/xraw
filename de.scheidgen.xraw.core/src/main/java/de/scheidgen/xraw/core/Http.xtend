@@ -5,6 +5,8 @@ import com.google.gwt.http.client.URL
 import de.scheidgen.xraw.util.AddSuperConstructors
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
+import de.scheidgen.xraw.json.JSONArray
+import de.scheidgen.xraw.json.JSONObject
 
 /**
  * XRawScript uses user provided XRawHttpServices to execute REST API calls. 
@@ -37,6 +39,10 @@ abstract class XRawHttpRequest {
  * Simple HTTP response interface. Is a subset of unirest's HttpResponse<String>'s public interface.
  */
 interface XRawHttpResponse {
+	def JSONObject getBodyJSONObject(String key)
+	
+	def JSONArray getBodyJSONArray(String key)
+	
 	def String getBody()
 
 	def Map<String, String> getHeaders()

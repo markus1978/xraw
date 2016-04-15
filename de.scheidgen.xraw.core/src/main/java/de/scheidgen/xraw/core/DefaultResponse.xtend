@@ -27,11 +27,7 @@ class DefaultResponse {
 	
 	public def JSONArray getJSONArray(String key) {
 		if (successful) {
-			if (key == "") {
-				return new JSONArray(httpResponse.body)
-			} else {
-				return new JSONObject(httpResponse.body).getJSONArray(key)
-			}
+			return httpResponse.getBodyJSONArray(key)			
 		} else {
 			return null
 		}
@@ -39,11 +35,7 @@ class DefaultResponse {
 	
 	public def JSONObject getJSONObject(String key) {
 		if (successful) {
-			if (key == "") {
-				return new JSONObject(httpResponse.body)
-			} else {
-				return new JSONObject(httpResponse.body).getJSONObject(key)
-			}
+			return httpResponse.getBodyJSONObject(key)
 		} else {
 			return null
 		}
