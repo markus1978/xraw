@@ -2,9 +2,6 @@ package de.scheidgen.xraw.apis.twitter.response
 
 import de.scheidgen.xraw.annotations.JSON
 import de.scheidgen.xraw.annotations.Name
-import de.scheidgen.xraw.annotations.WithConverter
-import de.scheidgen.xraw.json.UrlConverter
-import java.net.URL
 import java.util.List
 
 @JSON
@@ -31,7 +28,7 @@ class TwitterUrl {
 	String display_url
     String expanded_url
     List<Integer> indices          
-    @WithConverter(UrlConverter) URL url
+    String url
 }
 
 @JSON

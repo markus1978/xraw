@@ -8,6 +8,8 @@ import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
+import de.scheidgen.xraw.server.JsonOrgArray
+import de.scheidgen.xraw.server.JsonOrgObject
 import de.scheidgen.xraw.util.AddConstructor
 import org.scribe.builder.ServiceBuilder
 import org.scribe.builder.api.Api
@@ -19,8 +21,6 @@ import org.scribe.oauth.OAuthService
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfiguration.*
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
-import de.scheidgen.xraw.server.JsonOrgArray
-import de.scheidgen.xraw.server.JsonOrgObject
 
 class ScribeOAuth1Service implements XRawHttpService {
 	
@@ -90,6 +90,10 @@ class ScribeOAuth1Service implements XRawHttpService {
 	
 	override createEmptyRequest(XRawHttpMethod method, String url) {
 		return new UnirestHttpRequest(method, url)
+	}
+	
+	override asynchronousRestCall(XRawHttpRequest request, (XRawHttpResponse)=>void handler) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
 	override synchronousRestCall(XRawHttpRequest httpRequest) throws XRawHttpException {

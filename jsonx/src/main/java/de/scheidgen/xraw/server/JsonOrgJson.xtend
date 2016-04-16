@@ -3,8 +3,10 @@ package de.scheidgen.xraw.server
 import de.scheidgen.xraw.util.AddConstructor
 import org.json.JSONObject
 import de.scheidgen.xraw.json.JSONArray
+import org.eclipse.xtend.lib.annotations.EqualsHashCode
 
 @AddConstructor
+@EqualsHashCode
 class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 	
 	public val JSONObject jsonObject

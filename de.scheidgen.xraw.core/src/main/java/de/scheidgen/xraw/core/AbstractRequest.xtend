@@ -6,6 +6,7 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	private val XRawHttpRequest httpRequest
 	
 	private var ResponseType response = null
+	private var boolean executed = false
 
 	protected new(XRawHttpService service, XRawHttpRequest request) {
 		this.service = service;
@@ -89,10 +90,28 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 		
 		if (response != null) {
 			throw new IllegalStateException("This request was already executed. Either reset it or create a new one.")
-		}
+		} 
 			
 		val httpResponse = service.synchronousRestCall(httpRequest);
 		response = createResponse(httpResponse)
+		executed = true
 		return this;
+	}
+	
+	public def void xAsyncExecute((ResourceType)=>void action) {
+		System.out.print(".");
+		validateConstraints
+		
+		if (executed || response != null) {
+			throw new IllegalStateException("This request was already executed. Either reset it or create a new one.")
+		} else {
+			executed = true
+		}
+					
+		service.asynchronousRestCall(httpRequest) [
+			val response = createResponse(it)
+			this.response = response
+			action.apply(xResult)
+		]
 	}
 }

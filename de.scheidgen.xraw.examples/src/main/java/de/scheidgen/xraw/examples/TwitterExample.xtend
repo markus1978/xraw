@@ -9,7 +9,7 @@ import org.scribe.builder.api.TwitterApi
 class TwitterExample {
 	
 	static def void main(String[] args) {		
-		val twitter = XRawScript::get("data/new", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
+		val twitter = XRawScript::get("data/store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).xResult
 		val firstTweetId = userTimeline.get(0).id

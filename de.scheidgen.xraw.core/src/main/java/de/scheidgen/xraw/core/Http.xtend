@@ -17,6 +17,7 @@ import de.scheidgen.xraw.json.JSONObject
 interface XRawHttpService {
 	def XRawHttpRequest createEmptyRequest(XRawHttpMethod method, String url)
 	def XRawHttpResponse synchronousRestCall(XRawHttpRequest request) throws XRawHttpException
+	def void asynchronousRestCall(XRawHttpRequest request, (XRawHttpResponse)=>void handler)
 }
 
 enum XRawHttpMethod {

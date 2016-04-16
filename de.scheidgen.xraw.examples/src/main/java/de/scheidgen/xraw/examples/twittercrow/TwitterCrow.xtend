@@ -7,17 +7,18 @@ import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.examples.TwitterUtil
 import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.json.DateConverter
 import de.scheidgen.xraw.mongodb.Collection
 import de.scheidgen.xraw.mongodb.MongoDB
 import de.scheidgen.xraw.script.XRawScript
+import de.scheidgen.xraw.server.JsonOrgObject
 import java.util.Date
 import java.util.List
 import org.scribe.builder.api.TwitterApi
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-import de.scheidgen.xraw.server.JsonOrgObject
 
 /** 
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 
@@ -43,15 +44,15 @@ class TwitterCrow {
 	}
 	
 	def void collectPotientialFriendsFromFriendsFollowers(TwitterUser source, (TwitterUser,TwitterUser)=>Void add) {		
-		Twitter::safeBlockingCursor(twitter.friends.list.screenName(source.screenName).count(200)) [
+		TwitterUtil::safeBlockingCursor(twitter.friends.list.screenName(source.screenName).count(200)) [
 		 	val nextBatch = newArrayList
 		 	nextBatch.addAll(it.users)
 		 	nextBatch.sort[a,b|return Integer.compare(b.followersCount,a.followersCount)]
 		 	
 			nextBatch.forEach[user|
 				if (user.matches) {
-					val result = Twitter::safeBlockingCursor(twitter.followers.id.screenName(user.screenName)) [					
-						Twitter::safeBlockingForEach(it.ids.split(100), [twitter.users.lookup.userId(it.toList)], [
+					val result = TwitterUtil::safeBlockingCursor(twitter.followers.id.screenName(user.screenName)) [					
+						TwitterUtil::safeBlockingForEach(it.ids.split(100), [twitter.users.lookup.userId(it.toList)], [
 							val next = it.xResult
 							next.forEach[
 								if (it.matches && it.hasGoodStats) add.apply(user,it)

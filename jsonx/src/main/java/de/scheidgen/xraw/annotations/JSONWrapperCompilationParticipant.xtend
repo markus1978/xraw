@@ -1,6 +1,5 @@
 package de.scheidgen.xraw.annotations
 
-import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.json.XObject
 import de.scheidgen.xraw.server.XResource
@@ -26,7 +25,7 @@ import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 
 interface TypeArgumentFactory<T> {
-	def T create(JSONObject json, XObject container)
+	def T create(JSONObject json)
 }
 
 class JSONWrapperCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -49,9 +48,6 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				case wrapper == Integer.newTypeReference: "(int)"
 				case wrapper == Double.newTypeReference: "(double)"
 				default: ""
-			}
-			if (cast == "") {
-//				tnsCtx.addError(source, "Unsupported primitive type " + valueTypeRef.simpleName + ".")
 			}
 			return '''
 				«sourceExpr».put(«keyExpr», «cast»«valueExpr»);
@@ -78,16 +74,13 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {
 					return '''
 						«sourceExpr».put(«keyExpr», «valueExpr».xJson());
-						«valueExpr».xSetContainer(«classDeclaration.simpleName».this);
 					'''
 				} else {
-//					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
 					return '''
 						throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Object type «valueTypeRef.simpleName» is not a JSON type.");
 					'''		
 				}
 			} else {
-//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
 				return '''
 					throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Unsupported type «valueTypeRef.simpleName».");
 				'''		
@@ -111,9 +104,6 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 				case wrapper == Integer.newTypeReference: "getInt"
 				case wrapper == Double.newTypeReference: "getDouble"
 				default: "get"
-			}
-			if (accessMethodName == "get") {
-//				tnsCtx.addError(source, "Unsupported primitive type " + valueTypeRef.simpleName + ".")
 			}
 
 			if (valueTypeRef.wrapper) {
@@ -157,29 +147,23 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			if (valueType instanceof ClassDeclaration) {
 				if (valueType.findAnnotation(JSON.findTypeGlobally) != null) {					
 					if (valueType.typeParameters.empty) {
-						return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»), «classDeclaration.simpleName».this)'''
+						return '''«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»))'''
 					} else {
 						return '''
-							«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(
-								«sourceExpr».getJSONObject(«keyExpr»), «classDeclaration.simpleName».this,
-								«generateTypeArguments(cmpCtx, tnsCtx, valueTypeRef)»
-							)
+							«sourceExpr».isNull(«keyExpr»)?null:new «toJavaCode(valueTypeRef)»(«sourceExpr».getJSONObject(«keyExpr»), «generateTypeArguments(cmpCtx, tnsCtx, valueTypeRef)»)
 						'''						
 					}
 				} else {
-//					tnsCtx.addError(source, "Object type " + valueTypeRef.simpleName + " is not a JSON type.")
 					return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''		
 				}
 			} else if (valueType instanceof TypeParameterDeclaration) {
 				if (valueType.upperBounds.exists[it.type instanceof ClassDeclaration && (it.type as ClassDeclaration).findAnnotation(JSON.findTypeGlobally) != null]) {
-					return '''«sourceExpr».isNull(«keyExpr»)?null:«valueType.factoryFieldName».create(«sourceExpr».getJSONObject(«keyExpr»), «classDeclaration.simpleName».this)'''
+					return '''«sourceExpr».isNull(«keyExpr»)?null:«valueType.factoryFieldName».create(«sourceExpr».getJSONObject(«keyExpr»))'''
 				} else {
-//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")
 					return '''(«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr») // unsupported type «valueTypeRef.simpleName»'''					
 				}
 				
-			} else {
-//				tnsCtx.addError(source, "Unsupported type " + valueTypeRef.simpleName + ".")			
+			} else {			
 				return '''«toJavaCode(valueTypeRef)»)«sourceExpr».get(«keyExpr»)'''
 			}
 		}
@@ -189,8 +173,8 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 		«FOR typeArgument:typeWithArguments.actualTypeArguments SEPARATOR ","»
 			new «toJavaCode(TypeArgumentFactory.newTypeReference(typeArgument))»() {
 				@Override
-				public «toJavaCode(typeArgument)» create(«toJavaCode(JSONObject.newTypeReference)» json, «toJavaCode(XObject.newTypeReference)» container) {
-					return new «toJavaCode(typeArgument)»(json, container);
+				public «toJavaCode(typeArgument)» create(«toJavaCode(JSONObject.newTypeReference)» json) {
+					return new «toJavaCode(typeArgument)»(json);
 				}
 			}
 		«ENDFOR»
@@ -220,27 +204,6 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 			 		final = true
 			 	]
 			}
-
-			clazz.addConstructor[
-				visibility = Visibility.PUBLIC
-				addParameter("json", newTypeReference(JSONObject))
-				addParameter("container", newTypeReference(XObject))
-				for (typeParameter:clazz.typeParameters) {
-					addParameter(typeParameter.factoryFieldName, TypeArgumentFactory.newTypeReference(typeParameter.newTypeReference))
-				}
-				body = ['''	
-					«IF clazz.extendedClass.actualTypeArguments.empty»			
-						super(json, container);
-					«ELSE»
-						super(json, container,
-							«generateTypeArguments(context, clazz.extendedClass)»
-						);
-					«ENDIF»
-					«FOR typeParameter:clazz.typeParameters»
-						this.«typeParameter.factoryFieldName» = «typeParameter.factoryFieldName»;
-					«ENDFOR»
-				''']
-			]
 			
 			clazz.addConstructor[
 				visibility = Visibility.PUBLIC
@@ -309,9 +272,6 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 								}
 							'''
 						} else if (newTypeReference(Map).isAssignableFrom(field.type)) {
-							if (field.type.actualTypeArguments.get(0) != string) {
-//								addError(field, "Only string keys are allowed for maps.")
-							}
 							val elementTypeRef = field.type.actualTypeArguments.get(1)
 							val elementType = toJavaCode(elementTypeRef)
 							val entryTypeRef = Map.Entry.newTypeReference(string,elementTypeRef)

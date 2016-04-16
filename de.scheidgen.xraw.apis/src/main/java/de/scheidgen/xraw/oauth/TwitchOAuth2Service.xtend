@@ -4,6 +4,7 @@ import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.core.XRawHttpException
 import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
+import de.scheidgen.xraw.core.XRawHttpResponse
 import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.http.UnirestHttpRequest
 import de.scheidgen.xraw.http.UnirestHttpResponse
@@ -86,6 +87,10 @@ class TwitchOAuth2Service implements XRawHttpService {
 			}
 			return result
 		}		
+	}
+	
+	override asynchronousRestCall(XRawHttpRequest request, (XRawHttpResponse)=>void handler) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
 	override createEmptyRequest(XRawHttpMethod method, String url) {

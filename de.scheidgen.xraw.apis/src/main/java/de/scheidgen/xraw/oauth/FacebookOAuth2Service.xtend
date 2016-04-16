@@ -2,7 +2,9 @@ package de.scheidgen.xraw.oauth
 
 import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.core.XRawHttpException
+import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
+import de.scheidgen.xraw.core.XRawHttpResponse
 import de.scheidgen.xraw.core.XRawHttpService
 import de.scheidgen.xraw.http.UnirestHttpRequest
 import de.scheidgen.xraw.http.UnirestHttpResponse
@@ -13,7 +15,6 @@ import de.scheidgen.xraw.util.AddConstructor
 import org.json.JSONException
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
-import de.scheidgen.xraw.core.XRawHttpMethod
 
 /*
  * TODO expire dates of access tokens, getting a new token
@@ -88,7 +89,11 @@ class FacebookOAuth2Service implements XRawHttpService {
 			return result
 		}		
 	}
-	
+
+	override asynchronousRestCall(XRawHttpRequest request, (XRawHttpResponse)=>void handler) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+
 	override createEmptyRequest(XRawHttpMethod method, String url) {
 		return new UnirestHttpRequest(method, url)
 	}

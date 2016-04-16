@@ -5,8 +5,10 @@ import com.google.gwt.json.client.JSONNumber
 import com.google.gwt.json.client.JSONParser
 import com.google.gwt.json.client.JSONString
 import de.scheidgen.xraw.util.AddConstructor
+import org.eclipse.xtend.lib.annotations.EqualsHashCode
 
 @AddConstructor
+@EqualsHashCode
 class GwtJsonObject implements JSONObject {
 	
 	public val com.google.gwt.json.client.JSONObject jsonObject
@@ -93,7 +95,7 @@ class GwtJsonObject implements JSONObject {
 				Integer: put(key, value)
 				Long: put(key, value)
 				Double: put(key, value)
-				default: throw new IllegalArgumentException()
+				default: throw new UnsupportedOperationException
 			}
 		}
 	}
@@ -107,7 +109,7 @@ class GwtJsonObject implements JSONObject {
 	}
 	
 	override remove(String key) {
-		throw new IllegalAccessException()
+		throw new UnsupportedOperationException
 	}
 	
 	override toString(int indent) {
@@ -210,7 +212,7 @@ class GwtJsonArray implements JSONArray {
 				Integer: put(key, value)
 				Long: put(key, value)
 				Double: put(key, value)
-				default: throw new IllegalArgumentException()
+				default: throw new UnsupportedOperationException
 			}
 		}
 	}
@@ -220,7 +222,7 @@ class GwtJsonArray implements JSONArray {
 	}
 	
 	override remove(int key) {
-		throw new IllegalAccessException()
+		throw new UnsupportedOperationException
 	}
 	
 	override toString(int indent) {
