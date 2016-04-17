@@ -17,7 +17,7 @@ class XRawScript {
 		return serviceClassConfigurationConstructor.newInstance(httpService) as S
 	}
 	
-	static def <S extends AbstractService> S get(String storeFile, String userName, Class<S> serviceClass, (XRawHttpServiceConfiguration)=>XRawHttpService serviceFactory) {
+	static def <S extends AbstractService> XRawHttpServiceConfiguration getConfiguration(String storeFile, String userName, Class<S> serviceClass) {
 		
 		val file = new File(if (storeFile.endsWith(".json")) storeFile else storeFile + ".json")
 		val store =	if (file.exists) {
@@ -57,7 +57,11 @@ class XRawScript {
 		}
 		store.xSave
 		
-		val configuration = new EmfStoreInteractiveServiceConfiguration(store, service, serviceCredentials)
+		return new EmfStoreInteractiveServiceConfiguration(store, service, serviceCredentials)		
+	}
+	
+	static def <S extends AbstractService> S get(String storeFile, String userName, Class<S> serviceClass, (XRawHttpServiceConfiguration)=>XRawHttpService serviceFactory) {		
+		val configuration = getConfiguration(storeFile, userName, serviceClass)
 		return get(serviceFactory.apply(configuration), serviceClass)
 	}
 }
