@@ -38,7 +38,7 @@ class GwtJsonObject implements JSONObject {
 	}
 	
 	override getString(String key) {
-		jsonObject.get(key).string.stringValue
+		jsonObject.get(key)?.string?.stringValue
 	}
 	
 	override getBoolean(String key) {
