@@ -19,7 +19,7 @@ class TwitterExample {
 		
 		val searchResults = twitter.search.tweets.q("Obama").resultType(SearchResultType.popular)
 		for (status: searchResults.xResult.statuses) {
-			println("# " + status.retweetCount + ":" + status.text)
+			println("# " + status.retweetCount + ":" + status.text + " at " + status.createdAt)
 		}
 
 		println(searchResults.xResponse.rateLimitRemaining)
