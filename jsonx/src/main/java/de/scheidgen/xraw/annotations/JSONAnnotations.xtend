@@ -1,8 +1,10 @@
 package de.scheidgen.xraw.annotations
 
+import de.scheidgen.xraw.json.Converter
 import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.json.XObject
 import de.scheidgen.xraw.server.XResource
+import java.lang.annotation.Target
 import java.util.AbstractList
 import java.util.AbstractMap
 import java.util.AbstractSet
@@ -11,6 +13,7 @@ import java.util.Iterator
 import java.util.List
 import java.util.Map
 import java.util.Set
+import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
@@ -23,6 +26,27 @@ import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeParameterDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+
+annotation Name {
+	String value
+}
+
+@Active(JSONWrapperCompilationParticipant)
+@Target(TYPE)
+annotation JSON {
+
+}
+
+@Active(JSONWrapperCompilationParticipant)
+@Target(TYPE)
+annotation Resource {
+	
+}
+
+@Target(FIELD)
+annotation WithConverter {
+	Class<? extends Converter<?>> value
+}
 
 interface TypeArgumentFactory<T> {
 	def T create(JSONObject json)
