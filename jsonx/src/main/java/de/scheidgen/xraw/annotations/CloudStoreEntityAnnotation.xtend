@@ -33,6 +33,9 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 		val allFields = annotatedClass.declaredFields
 		
 		val entityTypeRef = newTypeReference("com.google.appengine.api.datastore.Entity")
+		val keyFactoryTypeRef = newTypeReference("com.google.appengine.api.datastore.KeyFactory")
+		val keyTypeRef = newTypeReference("com.google.appengine.api.datastore.Key")
+		
 		entityClass.addField("entity") [
 			type = entityTypeRef
 			visibility = Visibility.PRIVATE
@@ -92,6 +95,27 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 			'''
 		]
 		
+		entityClass.addMethod("key") [
+			visibility = Visibility.PUBLIC
+			static = true
+			addParameter("key", String.newTypeReference)
+			returnType = keyTypeRef
+			body = ['''
+				return «toJavaCode(keyFactoryTypeRef)».createKey("«annotatedClass.simpleName»", key);
+			''']
+		]
+		
+		entityClass.addMethod("key") [
+			visibility = Visibility.PUBLIC
+			static = true
+			addParameter("parent", keyTypeRef)
+			addParameter("key", String.newTypeReference)			
+			returnType = keyTypeRef
+			body = ['''
+				return «toJavaCode(keyFactoryTypeRef)».createKey(parent, "«annotatedClass.simpleName»", key);
+			''']
+		]
+			
 		val beanClassName = JavaBeanAnnotationClassProcessor.createdClassName(annotatedClass)
 		val beanClass = context.findClass(beanClassName)
 		if (beanClass != null) {
@@ -112,11 +136,7 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 				static = true
 				visibility = Visibility.PUBLIC
 				body = ['''
-					«toJavaCode(beanClass.newTypeReference)» bean = new «toJavaCode(beanClass.newTypeReference)»();
-					«FOR field:allFields»
-						bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»((«toJavaCode(field.type)»)entity.getProperty("«field.simpleName»"));
-					«ENDFOR»
-					return bean; 
+					return create(entity).toBean();	
 				''']
 			]		
 		}
