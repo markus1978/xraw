@@ -11,6 +11,8 @@ import de.scheidgen.xraw.apis.twitter.friendships.Lookup
 import de.scheidgen.xraw.apis.twitter.search.Tweets
 import de.scheidgen.xraw.apis.twitter.statuses.Show
 import de.scheidgen.xraw.apis.twitter.statuses.UserTimeline
+import de.scheidgen.xraw.apis.twitter.friendships.Outgoing
+import de.scheidgen.xraw.apis.twitter.friendships.Incoming
 
 @Directory
 @Service
@@ -54,6 +56,8 @@ class Followers {
 
 @Directory
 class Friendships {
+	Outgoing outgoing
+	Incoming incoming
 	Lookup lookup
 	Destroy destroy
 	Create create

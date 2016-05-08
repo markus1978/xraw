@@ -5,6 +5,7 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	private val XRawHttpService service
 	private val XRawHttpRequest httpRequest
 	
+	private var (ResponseType)=>void onError = null
 	private var ResponseType response = null
 	private var boolean executed = false
 
@@ -80,12 +81,16 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	public def boolean xIsExecuted() {
 		return response != null;
 	}
+	
+	public def xOnError((ResponseType)=>void onError) {
+		this.onError = onError	
+		return this
+	}
 
 	/**
 	 * Executes the request.
 	 */
 	public def AbstractRequest<ResponseType, ResourceType> xExecute() {
-		System.out.print(".");
 		validateConstraints
 		
 		if (response != null) {
@@ -98,8 +103,11 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 		return this;
 	}
 	
-	public def void xAsyncExecute((ResourceType)=>void action) {
-		System.out.print(".");
+	public def void xAsyncResult((ResourceType)=>void action) {
+		xAsyncExecute[action.apply(xResult)]
+	}
+	
+	public def void xAsyncExecute((ResponseType)=>void action) {
 		validateConstraints
 		
 		if (executed || response != null) {
@@ -111,7 +119,13 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 		service.asynchronousRestCall(httpRequest) [
 			val response = createResponse(it)
 			this.response = response
-			action.apply(xResult)
+			if (response.successful) {
+				action.apply(response)	
+			} else {
+				if (onError != null) {
+					onError.apply(response)
+				}
+			}			
 		]
 	}
 }
