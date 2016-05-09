@@ -204,4 +204,12 @@ class JsonOrgArray implements JSONArray {
 	override toString(int indent) {
 		jsonArray.toString(indent)
 	}
+	
+	override xCreateNewArray() {
+		new JsonOrgArray
+	}
+	
+	override xCreateNewObject() {
+		new JsonOrgObject
+	}
 }

@@ -5,6 +5,7 @@ import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 import java.util.List
+import de.scheidgen.xraw.annotations.TestMockupRequest
 
 /**
  * Returns fully-hydrated user objects for up to 100 users per request, as specified by comma-separated
@@ -32,6 +33,7 @@ import java.util.List
  * </ul>		
  */
 @Request(url="https://api.twitter.com/1.1/users/lookup.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUser, isList=true))
+@TestMockupRequest
 class Lookup {
 	/**
 	 * A comma separated list of screen names, up to 100 are allowed in a single request. You are strongly encouraged to use a POST for larger (up to 100 screen names) requests.

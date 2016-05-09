@@ -92,4 +92,8 @@ interface JSONArray {
 	def Object remove(int key) 
 	
 	def String toString(int indent)
+	
+	def JSONObject xCreateNewObject()
+	
+	def JSONArray xCreateNewArray()
 }

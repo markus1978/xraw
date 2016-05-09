@@ -36,7 +36,10 @@ class AddConstructorCompilationParticipant implements TransformationParticipant<
 			}
 			
 			// add a parameter for each uninitialized final declared field
-			val finalUninitializedFields = clazz.declaredFields.filter[final && initializer == null]
+			val finalUninitializedFields = clazz.declaredFields.filter[final && initializer == null].filter[
+				// filter for Inject annotations
+				!it.annotations.exists[it.annotationTypeDeclaration.simpleName == "Inject"]
+			]
 			for(field:finalUninitializedFields) {
 				addParameter(field.simpleName, field.type)					
 			}	

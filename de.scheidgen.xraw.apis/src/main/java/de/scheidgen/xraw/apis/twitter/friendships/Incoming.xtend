@@ -4,6 +4,7 @@ import de.scheidgen.xraw.annotations.Request
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
+import de.scheidgen.xraw.annotations.TestMockupRequest
 
 /** 
  * Returns a collection of numeric IDs for every user who has a pending request to 
@@ -18,6 +19,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterIdCursor
  */
 
 @Request(url="https://api.twitter.com/1.1/friendships/incoming.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterIdCursor))
+@TestMockupRequest
 class Incoming {
 	/** 
 	 * Causes the list of connections to be broken into pages of no more than 5000 IDs

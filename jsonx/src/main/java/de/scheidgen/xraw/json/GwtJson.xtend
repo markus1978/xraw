@@ -228,4 +228,12 @@ class GwtJsonArray implements JSONArray {
 	override toString(int indent) {
 		jsonArray.toString
 	}
+	
+	override xCreateNewArray() {
+		new GwtJsonArray
+	}
+	
+	override xCreateNewObject() {
+		new GwtJsonObject
+	}
 }

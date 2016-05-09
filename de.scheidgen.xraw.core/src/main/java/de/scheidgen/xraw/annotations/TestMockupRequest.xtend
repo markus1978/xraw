@@ -102,12 +102,12 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 							} else {
 								String[] values = valueStr.split(",");
 								for(String value: values) {
-									result.add(«generateToString(it, context, field.type.actualTypeArguments.get(0), "value")»);
+									result.add(«generateToString(it, context, field.type.actualTypeArguments.get(0), "valueStr")»);
 								}
 							}
 							return result;
 						«ELSE»
-							return «generateToString(it, context, field.type, "value")»;
+							return «generateToString(it, context, field.type, "valueStr")»;
 						«ENDIF»							
 					«ENDIF»
 				'''] 
