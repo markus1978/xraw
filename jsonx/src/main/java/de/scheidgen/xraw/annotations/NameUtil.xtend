@@ -1,10 +1,10 @@
 package de.scheidgen.xraw.annotations
 
 import org.eclipse.xtend.lib.macro.TransformationContext
-import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
+import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 
 class NameUtil {
-	static def name(extension TransformationContext context, MutableFieldDeclaration field) {
+	static def name(extension TransformationContext context, FieldDeclaration field) {
 		val nameAnnotation = field.findAnnotation(typeof(Name).findTypeGlobally)
 		return if (nameAnnotation == null) field.simpleName else nameAnnotation.getStringValue('value') 
 	}
