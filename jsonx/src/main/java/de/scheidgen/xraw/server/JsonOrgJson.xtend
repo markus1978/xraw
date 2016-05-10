@@ -111,6 +111,10 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 		new JsonOrgObject
 	}
 	
+	override toString() {
+		jsonObject.toString(4)
+	}
+	
 }
 
 @AddConstructor
@@ -211,5 +215,9 @@ class JsonOrgArray implements JSONArray {
 	
 	override xCreateNewObject() {
 		new JsonOrgObject
+	}
+	
+	override toString() {
+		jsonArray.toString(4)
 	}
 }

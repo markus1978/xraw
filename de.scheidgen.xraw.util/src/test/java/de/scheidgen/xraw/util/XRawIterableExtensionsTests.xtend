@@ -16,6 +16,15 @@ class XRawIterableExtensionsTests {
 	}
 	
 	@Test
+	public def void overSizeSplitTest() {
+		val splits = (0..49).split(100)
+		assertSame(1, splits.size)
+		for(split: splits) {
+			assertSame(50, split.size)
+		}
+	}
+	
+	@Test
 	public def void emptySplitTest() {
 		val splits = newArrayList().split(10)
 		assertSame(1, splits.size)
