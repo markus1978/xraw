@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.annotations
 
-import com.mashape.unirest.http.HttpMethod
 import de.scheidgen.xraw.core.AbstractTestMockupRequest
+import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
 import java.util.ArrayList
 import java.util.List
@@ -17,7 +17,6 @@ import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.core.XRawHttpMethod
 
 /**
  * Generates a abstract test mockup that can be extended by clients to easily write API mockups for tests.
@@ -102,7 +101,7 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 							} else {
 								String[] values = valueStr.split(",");
 								for(String value: values) {
-									result.add(«generateToString(it, context, field.type.actualTypeArguments.get(0), "valueStr")»);
+									result.add(«generateToString(it, context, field.type.actualTypeArguments.get(0), "value")»);
 								}
 							}
 							return result;
