@@ -4,7 +4,7 @@ import com.google.gwt.json.client.JSONBoolean
 import com.google.gwt.json.client.JSONNumber
 import com.google.gwt.json.client.JSONParser
 import com.google.gwt.json.client.JSONString
-import de.scheidgen.xraw.util.AddConstructor
+import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 
 @AddConstructor

@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.twitter
 
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.annotations.JSON
 import de.scheidgen.xraw.core.DefaultResponse
-import de.scheidgen.xraw.util.AddConstructor
 import java.util.ArrayList
 import java.util.List
 

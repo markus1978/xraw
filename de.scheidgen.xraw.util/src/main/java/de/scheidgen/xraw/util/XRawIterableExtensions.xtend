@@ -5,6 +5,7 @@ import com.google.common.collect.FluentIterable
 import java.util.ArrayList
 import java.util.Iterator
 import org.eclipse.xtext.xbase.lib.Functions.Function1
+import com.google.common.annotations.GwtIncompatible
 
 class XRawIterableExtensions {
 	private static class Result<T> implements Iterator<T> {		
@@ -139,6 +140,7 @@ class XRawIterableExtensions {
 		]
 	}
 	
+	@GwtIncompatible(value="reflection")
 	static def <E, T extends E> typeSelect(Iterable<E> source, Class<T> type) {
 		return source.select[type.isAssignableFrom(it.class)].collect[it as T]		
 	}

@@ -36,7 +36,7 @@ abstract class AbstractTestMockupHttpResponse implements XRawHttpResponse {
 				bodyObject.put(key, createNewJsonArray)
 				jsonBody = bodyObject
 			}
-			return (jsonBody as JSONObject).getJSONArray(key)			
+			return (jsonBody as JSONObject).getJSONArray(key)	
 		} else {
 			if (jsonBody == null) {
 				jsonBody = createNewJsonArray

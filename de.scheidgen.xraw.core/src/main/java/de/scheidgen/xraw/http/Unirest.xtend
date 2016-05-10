@@ -3,12 +3,12 @@ package de.scheidgen.xraw.http
 import com.mashape.unirest.http.HttpMethod
 import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.request.HttpRequest
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
 import de.scheidgen.xraw.core.XRawHttpResponse
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
-import de.scheidgen.xraw.util.AddConstructor
 import org.scribe.model.OAuthRequest
 import org.scribe.model.Verb
 

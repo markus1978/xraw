@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.http
 
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.core.XRawHttpException
 import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
@@ -10,7 +11,6 @@ import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
-import de.scheidgen.xraw.util.AddConstructor
 import org.scribe.builder.ServiceBuilder
 import org.scribe.builder.api.Api
 import org.scribe.model.Response

@@ -1,6 +1,7 @@
 package de.scheidgen.xraw.oauth
 
 import com.mashape.unirest.http.Unirest
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.core.XRawHttpException
 import de.scheidgen.xraw.core.XRawHttpMethod
 import de.scheidgen.xraw.core.XRawHttpRequest
@@ -11,7 +12,6 @@ import de.scheidgen.xraw.http.UnirestHttpResponse
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
-import de.scheidgen.xraw.util.AddConstructor
 import org.json.JSONException
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*

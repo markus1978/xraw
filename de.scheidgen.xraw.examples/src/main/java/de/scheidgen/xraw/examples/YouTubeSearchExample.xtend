@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.examples
 
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.apis.youtube.YouTube
 import de.scheidgen.xraw.core.AbstractRequest
 import de.scheidgen.xraw.core.DefaultResponse
 import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 import de.scheidgen.xraw.script.XRawScript
-import de.scheidgen.xraw.util.AddConstructor
 import java.util.List
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*

@@ -1,9 +1,9 @@
 package de.scheidgen.xraw.server
 
-import de.scheidgen.xraw.util.AddConstructor
-import org.json.JSONObject
+import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.json.JSONArray
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import org.json.JSONObject
 
 @AddConstructor
 @EqualsHashCode

@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.json
 
-import de.scheidgen.xraw.util.AddConstructor
+import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 
 @AddConstructor

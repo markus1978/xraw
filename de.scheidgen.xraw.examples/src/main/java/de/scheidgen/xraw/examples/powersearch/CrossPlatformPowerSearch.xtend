@@ -2,7 +2,7 @@ package de.scheidgen.xraw.examples.powersearch
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
-import de.scheidgen.xraw.util.AddConstructor
+import de.scheidgen.xraw.annotations.AddConstructor
 import java.util.List
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*

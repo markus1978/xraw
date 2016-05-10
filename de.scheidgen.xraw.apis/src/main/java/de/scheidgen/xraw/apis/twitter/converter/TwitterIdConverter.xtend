@@ -9,7 +9,7 @@ class TwitterIdConverter implements Converter<String> {
 	}
 	
 	override toString(String value) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+		return value
 	}
 
 }

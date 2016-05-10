@@ -1,19 +1,19 @@
 package de.scheidgen.xraw.examples.powersearch
 
+import de.scheidgen.xraw.annotations.AddConstructor
+import de.scheidgen.xraw.annotations.AddSuperConstructors
 import de.scheidgen.xraw.apis.youtube.YouTube
 import de.scheidgen.xraw.apis.youtube.resources.YouTubeChannels
+import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 import de.scheidgen.xraw.script.XRawScript
-import de.scheidgen.xraw.util.AddConstructor
-import de.scheidgen.xraw.util.AddSuperConstructors
 import de.scheidgen.xraw.util.XRawIterateExtensions
 import java.util.Collection
 import java.util.List
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.junit.Test
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
-import org.junit.Test
-import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 
 @AddConstructor
 abstract class SingleAPIPowerSearch<Id, Info> {

@@ -2,11 +2,11 @@ package de.scheidgen.xraw.core
 
 import com.google.gwt.http.client.RequestBuilder
 import com.google.gwt.http.client.URL
-import de.scheidgen.xraw.util.AddSuperConstructors
-import java.util.Map
-import org.eclipse.xtend.lib.annotations.Accessors
+import de.scheidgen.xraw.annotations.AddSuperConstructors
 import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
+import java.util.Map
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * XRawScript uses user provided XRawHttpServices to execute REST API calls. 

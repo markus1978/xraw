@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.util
+package de.scheidgen.xraw.annotations
 
 import java.util.List
 import org.eclipse.xtend.lib.macro.Active

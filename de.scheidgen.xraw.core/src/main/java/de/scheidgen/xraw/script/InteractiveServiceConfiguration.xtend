@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.script
 
-import de.scheidgen.xraw.util.AddConstructor
+import de.scheidgen.xraw.annotations.AddConstructor
 import java.util.Scanner
 
 enum XRawHttpServiceConfigurationScope {
