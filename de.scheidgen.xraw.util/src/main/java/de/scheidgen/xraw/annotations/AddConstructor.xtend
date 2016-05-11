@@ -1,14 +1,15 @@
 package de.scheidgen.xraw.annotations
 
+import java.lang.annotation.Annotation
+import java.lang.annotation.Target
 import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
-import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
-import org.eclipse.xtend.lib.macro.declaration.Visibility
-import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.declaration.ConstructorDeclaration
+import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
+import org.eclipse.xtend.lib.macro.declaration.Visibility
 
 @Active(typeof(AddConstructorCompilationParticipant))
 @Target(TYPE)
@@ -19,7 +20,8 @@ import org.eclipse.xtend.lib.macro.declaration.ConstructorDeclaration
  * is PUBLIC (i.e. the visibility of the default constructor).
  */
 annotation AddConstructor {
-	Visibility value = Visibility.PUBLIC
+	Class<? extends Annotation>[] value = #[]
+	Visibility visibility = Visibility.PUBLIC	
 }
 
 class AddConstructorCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
@@ -33,6 +35,10 @@ class AddConstructorCompilationParticipant implements TransformationParticipant<
 				visibility = superConstructor.visibility
 			} else {
 				visibility = Visibility.valueOf(clazz.findAnnotation(AddConstructor.findTypeGlobally).getEnumValue("value").simpleName)
+			}
+			
+			for(annotation:clazz.findAnnotation(AddConstructor.findTypeGlobally).getClassArrayValue("value")) {
+				addAnnotation(newAnnotationReference(annotation.type))
 			}
 			
 			// add a parameter for each uninitialized final declared field
