@@ -83,7 +83,8 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 				docComment = field.docComment
 				addParameter("httpRequest", XRawHttpRequest.newTypeReference)
 				val remoteName = NameUtil::name(context, field)
-				val url = requestAnnotation.getStringValue("url") 
+				val url = requestAnnotation.getStringValue("url")
+				val isListType = List.newTypeReference.isAssignableFrom(field.type) 
 				body = ['''
 					«val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)»
 					«IF (urlReplaceAnnotation != null)»						
@@ -92,9 +93,11 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 						String pattern = quotedUrl.replace("%%%", "(\\p{Alnum}+)");
 						String strValue = «toJavaCode(Pattern.newTypeReference)».compile(pattern).matcher(httpRequest.getUrl()).group(1);
 						return «generateToString(it, context, field.type, "strValue")»;
+					«ELSEIF (field.findAnnotation(Multi.findTypeGlobally) != null && isListType)»
+						
 					«ELSE»
 						String valueStr = (String)httpRequest.getQueryString().get("«remoteName»");
-						«IF List.newTypeReference.isAssignableFrom(field.type)»
+						«IF isListType»
 							«toJavaCode(ArrayList.newTypeReference(field.type.actualTypeArguments.get(0)))» result = new «toJavaCode(ArrayList.newTypeReference(field.type.actualTypeArguments.get(0)))»();
 							if (valueStr == null) {
 								return result;

@@ -45,6 +45,12 @@ annotation Response {
 @Target(TYPE) annotation XorOrNothingConstraint { String[] value }
 @Target(FIELD) annotation UrlReplace { String value }
 
+/**
+ * Allows for list parameters to create queries with multiple parameter of same name for each elements.
+ * Although, this it not supported by Xraws XrawHttpRequest implementation, which only supports unique parameter names yet.
+ */
+@Target(FIELD) annotation Multi {}
+
 class RequestCompilationParticipant implements TransformationParticipant<MutableClassDeclaration> {
 
 	override doTransform(List<? extends MutableClassDeclaration> annotatedTargetElements,
@@ -179,6 +185,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					docComment = field.docComment
 					returnType = clazz.newTypeReference
 					val remoteName = NameUtil::name(context, field)
+					val isListType = List.newTypeReference.isAssignableFrom(field.type)
 					body = ['''
 						if (xIsExecuted()) {
 							throw new «toJavaCode(IllegalStateException.newTypeReference)»("This request was already executed. Its parameters cannot be changed anymore.");
@@ -186,11 +193,15 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 						«val urlReplaceAnnotation = field.findAnnotation(UrlReplace.findTypeGlobally)»
 						«IF (urlReplaceAnnotation != null)»					
 							String url = xGetUrl().replace("«urlReplaceAnnotation.getStringValue("value")»", «toJavaCode(string)».valueOf(«localName»));
-							xSetUrl(url);
-							return this; 
+							xSetUrl(url);							
+						«ELSEIF (field.findAnnotation(Multi.findTypeGlobally) != null && isListType)»
+							for («toJavaCode(field.type.actualTypeArguments.get(0))» value: «localName») {
+								String valueStr = «toJavaCode(string)».valueOf(value);
+								xPutQueryStringParameter("«remoteName»", valueStr);
+							}
 						«ELSE»
 							String valueStr = null;
-							«IF List.newTypeReference.isAssignableFrom(field.type)»
+							«IF isListType»
 								valueStr = "";
 								boolean first = true;
 								for («toJavaCode(field.type.actualTypeArguments.get(0))» value: «localName») {
@@ -202,11 +213,11 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 									valueStr += «toJavaCode(string)».valueOf(value);
 								}
 							«ELSE»
-								valueStr = «toJavaCode(string)».valueOf(«localName»);								
+								valueStr = «toJavaCode(string)».valueOf(«localName»);
 							«ENDIF»
 							xPutQueryStringParameter("«remoteName»", valueStr);
-							return this;
 						«ENDIF»
+						return this;
 					'''] 
 				]								
 			}

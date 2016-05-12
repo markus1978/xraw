@@ -36,10 +36,23 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 		val keyFactoryTypeRef = newTypeReference("com.google.appengine.api.datastore.KeyFactory")
 		val keyTypeRef = newTypeReference("com.google.appengine.api.datastore.Key")
 		
+		entityClass.addField("kind") [
+			visibility = Visibility.PRIVATE	
+			static = true
+			type = string
+			initializer = '''"«annotatedClass.simpleName»"'''
+		]
+		
+		entityClass.addMethod("getKind") [
+			static = true
+			visibility = Visibility.PUBLIC
+			returnType = string
+			body = '''return kind;'''
+		]
+		
 		entityClass.addField("entity") [
 			type = entityTypeRef
-			visibility = Visibility.PRIVATE
-			static = true			
+			visibility = Visibility.PRIVATE			
 		]
 		
 		entityClass.addConstructor[
@@ -101,7 +114,7 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 			addParameter("key", String.newTypeReference)
 			returnType = keyTypeRef
 			body = ['''
-				return «toJavaCode(keyFactoryTypeRef)».createKey("«annotatedClass.simpleName»", key);
+				return «toJavaCode(keyFactoryTypeRef)».createKey(kind, key);
 			''']
 		]
 		
@@ -112,7 +125,7 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 			addParameter("key", String.newTypeReference)			
 			returnType = keyTypeRef
 			body = ['''
-				return «toJavaCode(keyFactoryTypeRef)».createKey(parent, "«annotatedClass.simpleName»", key);
+				return «toJavaCode(keyFactoryTypeRef)».createKey(parent, kind, key);
 			''']
 		]
 			
