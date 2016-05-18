@@ -59,6 +59,9 @@ class AddConstructorCompilationParticipant implements TransformationParticipant<
 				«FOR field : finalUninitializedFields»
 					this.«field.simpleName» = «field.simpleName»;
 				«ENDFOR»
+				«IF clazz.declaredMethods.findFirst[simpleName == "onNew" && parameters.empty] != null»
+					onNew();
+				«ENDIF»
 			''']
 		]
 	}
