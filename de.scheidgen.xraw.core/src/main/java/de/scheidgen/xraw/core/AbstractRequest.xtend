@@ -2,6 +2,12 @@ package de.scheidgen.xraw.core
 
 import de.scheidgen.xraw.util.Async.Promise
 import de.scheidgen.xraw.util.Async
+import de.scheidgen.xraw.annotations.AddSuperConstructors
+
+@AddSuperConstructors
+class XrawRestException extends RuntimeException {
+	
+}
 
 abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceType> {
 	
@@ -133,10 +139,10 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	}
 	
 	public def Promise<ResourceType> xPromiseResult() {
-		Async.promise[p|xOnError[p.reject].xAsyncResult[p.resolve(it)]]
+		Async.promise[p|xOnError[p.reject(response.error)].xAsyncResult[p.resolve(it)]]
 	}
 	
 	public def Promise<ResponseType> xPromiseResponse() {
-		Async.promise[p|xOnError[p.reject].xAsyncExecute[p.resolve(it)]]
+		Async.promise[p|xOnError[p.reject(response.error)].xAsyncExecute[p.resolve(it)]]
 	}
 }

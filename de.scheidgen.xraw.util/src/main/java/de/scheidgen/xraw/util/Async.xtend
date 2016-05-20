@@ -26,6 +26,10 @@ class Async {
 		})
 	}
 	
+	public static def <T> Promise<T> truePromise(T value) {
+		promise[it.resolve(value)]
+	}
+	
 	public static def <T> Promise<T> promise((Promise<T>)=>void keep) {
 		new Promise<T>() {			
 			override protected run() {
@@ -68,16 +72,13 @@ class Async {
 		
 		new(Iterable<Promise<?>> promises) {
 			this.promises = promises
-		}
-		
-		def onNew() {
 			promises.forEach[then[applyJoin]]
-		}
+		}		
 		
 		private def applyJoin() {
 			if (promises.forall[state != Promise.State.running]) {
 				if (promises.exists[state == Promise.State.rejected]) {
-					defered.reject
+					defered.reject(promises.findFirst[cause != null]?.cause)
 				} else {
 					defered.resolve(join(promises.map[value]))	
 				}				
@@ -156,7 +157,8 @@ class Async {
 	abstract static class Promise<T> {
 		enum State { resolved, rejected, running}
 		
-		@Accessors(PUBLIC_GETTER) private var T value = null		
+		@Accessors(PUBLIC_GETTER) private var T value = null
+		@Accessors(PUBLIC_GETTER) private var Throwable cause = null	
 		@Accessors(PUBLIC_GETTER) private var state = State.running
 		
 		val List<(Promise<T>)=>void> actions = newArrayList
@@ -169,8 +171,9 @@ class Async {
 			apply
 		}
 		
-		synchronized def void reject() {
+		synchronized def void reject(Throwable cause) {
 			state = State.rejected
+			this.cause = cause
 			apply
 		}
 		
@@ -199,12 +202,12 @@ class Async {
 			val defer = Async.defer	
 			this.then[oldPromise|
 				if (oldPromise.state == State.rejected) {
-					defer.reject
+					defer.reject(oldPromise.cause)
 				} else if (oldPromise.state == State.resolved) {
 					val basePromise = action.apply(oldPromise.value)
 					basePromise.then[
 						if (basePromise.state == State.rejected) {
-							defer.reject
+							defer.reject(basePromise.cause)
 						} else if (basePromise.state == State.resolved) {
 							defer.resolve(basePromise.value)		
 						} else {
@@ -219,11 +222,11 @@ class Async {
 			defer.promise
 		}
 		
-		def <R> Promise<R> thenPromise((T)=>R action) {
+		def <R> Promise<R> furtherPromise((T)=>R action) {
 			val defer = Async.defer	
 			this.then[oldPromise|
 				if (oldPromise.state == State.rejected) {
-					defer.reject
+					defer.reject(oldPromise.cause)
 				} else if (oldPromise.state == State.resolved) {
 					defer.resolve(action.apply(oldPromise.value))
 				} else {
@@ -238,8 +241,8 @@ class Async {
 			this			
 		} 
 		
-		def Promise<T> onReject(()=>void action) {
-			then[if (state == State.rejected) action.apply]
+		def Promise<T> onReject((Throwable)=>void action) {
+			then[if (state == State.rejected) action.apply(cause)]
 			this
 		}
 		
@@ -259,8 +262,8 @@ class Async {
 			promise.resolve(result)
 		}
 		
-		def void reject() {
-			promise.reject
+		def void reject(Throwable cause) {
+			promise.reject(cause)
 		}
 	}
 	

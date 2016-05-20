@@ -13,6 +13,12 @@ class DefaultResponse {
 		return httpResponse.status == 200
 	}
 	
+	public def getError() {
+		if (!isSuccessful) {
+			return new XrawRestException('''Unsuccessful REST request, response code is «httpResponse.status»: «httpResponse.statusText»''')
+		}
+	}
+	
 	public def getHeaders() {
 		return httpResponse.headers
 	}
