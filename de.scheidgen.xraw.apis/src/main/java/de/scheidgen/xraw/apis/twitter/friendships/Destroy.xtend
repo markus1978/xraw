@@ -8,6 +8,7 @@ import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 
 import static extension com.mashape.unirest.http.HttpMethod.*
+import de.scheidgen.xraw.annotations.TestMockupRequest
 
 /**
  * Allows the authenticating user to unfollow the user specified in the ID parameter.
@@ -22,6 +23,7 @@ import static extension com.mashape.unirest.http.HttpMethod.*
  */
 @Request(url="https://api.twitter.com/1.1/friendships/destroy.json", method=HttpMethod.POST, response=@Response(resourceType=TwitterUser, responseType=TwitterResponse))
 @OrConstraint("screen_name", "user_id")
+@TestMockupRequest
 class Destroy {
 	/**
 	 * The screen name of the user for whom to unfollow.
