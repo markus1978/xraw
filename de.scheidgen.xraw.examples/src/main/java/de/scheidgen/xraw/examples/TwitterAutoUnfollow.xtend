@@ -23,7 +23,7 @@ class TwitterAutoUnfollow {
 		
 		println('''Retrieving friendships and looking for false friends''')
 		val friendships = newArrayList
-		response = TwitterUtil::safeForEach(friends.split(100),[twitter.friendships.lookup.userId(it)], [
+		response = TwitterUtil::safeForEach(friends.split(100),[twitter.friendships.lookup.userId(it.toList)], [
 			friendships.addAll(it.xResult)
 		])
 		if (!response.successful) {

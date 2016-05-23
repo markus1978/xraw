@@ -149,7 +149,7 @@ class PlanBefriend extends AbstractRunner{
 	
 	def filter() {
 		val screenNames = db.potentialFriends.find(null,-1).map[it.screenName]
-		val relationShips = twitter.friendships.lookup.screenName(screenNames).xCheck.xResult
+		val relationShips = twitter.friendships.lookup.screenName(screenNames.toList).xCheck.xResult
 		val interstingScreenNames = relationShips.filter[
 			!connections.contains(TwitterConnections.following) && 
 			!connections.contains(TwitterConnections.following_requested) && 
