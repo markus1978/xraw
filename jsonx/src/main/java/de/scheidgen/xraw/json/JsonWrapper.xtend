@@ -49,6 +49,8 @@ interface JSONObject {
 	def JSONObject xCreateNewObject()
 	
 	def JSONArray xCreateNewArray()
+	
+	def Object xNative()
 }
 
 interface JSONArray {	
@@ -96,4 +98,6 @@ interface JSONArray {
 	def JSONObject xCreateNewObject()
 	
 	def JSONArray xCreateNewArray()
+	
+	def Object xNative()
 }

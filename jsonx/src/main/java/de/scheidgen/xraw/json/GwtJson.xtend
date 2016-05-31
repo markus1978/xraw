@@ -124,6 +124,10 @@ class GwtJsonObject implements JSONObject {
 		new GwtJsonObject
 	}
 	
+	override xNative() {
+		return jsonObject;
+	}
+	
 }
 
 @AddConstructor
@@ -236,4 +240,9 @@ class GwtJsonArray implements JSONArray {
 	override xCreateNewObject() {
 		new GwtJsonObject
 	}
+	
+	override xNative() {
+		return jsonArray
+	}
+	
 }
