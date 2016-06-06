@@ -58,7 +58,7 @@ class Async {
 		}.promise
 	}
 	
-	public static def <T> Promise<T> join(Iterable<Promise<?>> promises, (Iterable<?>)=>T join) {
+	public static def <T> Promise<T> joinAll(Iterable<Promise<?>> promises, (Iterable<?>)=>T join) {
 		return new StarJoin<T>(promises) {			
 			override protected join(Iterable<?> values) {
 				join.apply(values)
