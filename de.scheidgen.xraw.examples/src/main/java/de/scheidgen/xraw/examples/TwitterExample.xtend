@@ -1,15 +1,15 @@
 package de.scheidgen.xraw.examples
 
+import com.github.scribejava.apis.TwitterApi
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.search.SearchResultType
 import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
-import org.scribe.builder.api.TwitterApi
 
 class TwitterExample {
 	
 	static def void main(String[] args) {		
-		val twitter = XRawScript::get("data/store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
+		val twitter = XRawScript::get("data/store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).xResult
 		val firstTweetId = userTimeline.get(0).id

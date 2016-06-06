@@ -1,5 +1,6 @@
 package de.scheidgen.xraw.examples.twittercrow
 
+import com.github.scribejava.apis.TwitterApi
 import com.mongodb.BasicDBObject
 import com.mongodb.MongoException
 import de.scheidgen.xraw.annotations.Resource
@@ -16,7 +17,6 @@ import de.scheidgen.xraw.script.XRawScript
 import de.scheidgen.xraw.server.JsonOrgObject
 import java.util.Date
 import java.util.List
-import org.scribe.builder.api.TwitterApi
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
 
@@ -24,7 +24,7 @@ import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 
  */
 class TwitterCrow {
-	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]		
+	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]		
 	val keywords = #["game studio"]
 	
 	private def boolean matches(TwitterUser user) {
@@ -108,7 +108,7 @@ class AbstractRunner {
 	}
 	
 	protected val db = new TwitterCrowDB
-	protected val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
+	protected val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]
 }
 
 class PlanBefriend extends AbstractRunner{
@@ -167,7 +167,7 @@ class PlanBefriend extends AbstractRunner{
 
 class ExecuteActions extends AbstractRunner {
 	val db = new TwitterCrowDB
-	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi, it)]
+	val twitter = XRawScript::get("data/store", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]
 	
 	var boolean hasExecuted = false
 	def boolean executeNext(Date now) {

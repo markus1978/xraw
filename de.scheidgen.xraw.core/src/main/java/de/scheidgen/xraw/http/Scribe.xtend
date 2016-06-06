@@ -1,5 +1,11 @@
 package de.scheidgen.xraw.http
 
+import com.github.scribejava.core.builder.ServiceBuilder
+import com.github.scribejava.core.builder.api.BaseApi
+import com.github.scribejava.core.model.OAuth1AccessToken
+import com.github.scribejava.core.model.Response
+import com.github.scribejava.core.model.SignatureType
+import com.github.scribejava.core.oauth.OAuth10aService
 import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.core.XRawHttpException
 import de.scheidgen.xraw.core.XRawHttpMethod
@@ -11,23 +17,16 @@ import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
-import org.scribe.builder.ServiceBuilder
-import org.scribe.builder.api.Api
-import org.scribe.model.Response
-import org.scribe.model.SignatureType
-import org.scribe.model.Token
-import org.scribe.model.Verifier
-import org.scribe.oauth.OAuthService
 
 import static de.scheidgen.xraw.script.XRawHttpServiceConfiguration.*
 import static de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope.*
 
 class ScribeOAuth1Service implements XRawHttpService {
 	
-	val OAuthService httpService
-	val Token accessToken
+	val OAuth10aService httpService
+	val OAuth1AccessToken accessToken
 	
-	new(Class<? extends Api> apiClass, XRawHttpServiceConfiguration httpServiceConfiguration) {
+	new(BaseApi<? extends OAuth10aService> api, XRawHttpServiceConfiguration httpServiceConfiguration) {
 		
 		val String apiKey = httpServiceConfiguration.getInteractive(true, API, apiKey, "We need your API key:")
 		val String apiSecret = httpServiceConfiguration.getInteractive(true, API, apiSecret, "We need your API secret:")
@@ -40,7 +39,7 @@ class ScribeOAuth1Service implements XRawHttpService {
 			SignatureType.valueOf(signatureTypeStr)			
 		}		
 		
-		val serviceBuilder = new ServiceBuilder().provider(apiClass)
+		val serviceBuilder = new ServiceBuilder()
 			.apiKey(apiKey)
 			.apiSecret(apiSecret)
 		if (callbackURL != null && callbackURL != "") {
@@ -53,7 +52,7 @@ class ScribeOAuth1Service implements XRawHttpService {
 			serviceBuilder.signatureType(signatureType)
 		}
 		
-		httpService =  serviceBuilder.build
+		httpService =  serviceBuilder.build(api)
 		
 		var userToken = httpServiceConfiguration.get(USER, userToken) as String
 		var userSecret = httpServiceConfiguration.get(USER, userSecret) as String
@@ -62,9 +61,9 @@ class ScribeOAuth1Service implements XRawHttpService {
 				val requestToken = httpService.requestToken
 				val authorizationUrl = httpService.getAuthorizationUrl(requestToken)
 				val verifier = httpServiceConfiguration.aquireInteractively("Go to the following URL and approve your app:\n" + authorizationUrl)
-				accessToken = httpService.getAccessToken(requestToken, new Verifier(verifier))
+				accessToken = httpService.getAccessToken(requestToken, verifier)
 				userToken = accessToken.token
-				userSecret = accessToken.secret
+				userSecret = accessToken.tokenSecret
 				httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userToken, userToken)
 				httpServiceConfiguration.set(USER, XRawHttpServiceConfiguration::userSecret, userSecret)									
 			} else {
@@ -72,7 +71,7 @@ class ScribeOAuth1Service implements XRawHttpService {
 				throw new IllegalArgumentException("Configuration does not contain any user credentials.")
 			}
 		} else {
-			accessToken = new Token(userToken, userSecret)
+			accessToken = new OAuth1AccessToken(userToken, userSecret)
 		}
 	}
 	
@@ -97,7 +96,7 @@ class ScribeOAuth1Service implements XRawHttpService {
 	}
 	
 	override synchronousRestCall(XRawHttpRequest httpRequest) throws XRawHttpException {
-		val scribeHttpRequest = (httpRequest as UnirestHttpRequest).toScribe
+		val scribeHttpRequest = (httpRequest as UnirestHttpRequest).toScribe(httpService)
 		httpService.signRequest(accessToken, scribeHttpRequest)
 		val scribeHttpResponse = scribeHttpRequest.send
 		return new ScribeHttpResponse(scribeHttpResponse)

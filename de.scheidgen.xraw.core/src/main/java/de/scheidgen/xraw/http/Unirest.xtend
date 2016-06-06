@@ -1,5 +1,7 @@
 package de.scheidgen.xraw.http
 
+import com.github.scribejava.core.model.OAuthRequest
+import com.github.scribejava.core.model.Verb
 import com.mashape.unirest.http.HttpMethod
 import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.request.HttpRequest
@@ -9,8 +11,7 @@ import de.scheidgen.xraw.core.XRawHttpRequest
 import de.scheidgen.xraw.core.XRawHttpResponse
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
-import org.scribe.model.OAuthRequest
-import org.scribe.model.Verb
+import com.github.scribejava.core.oauth.OAuthService
 
 class UnirestHttpRequest extends XRawHttpRequest {	
 	
@@ -48,8 +49,8 @@ class UnirestHttpRequest extends XRawHttpRequest {
 	/**
 	 * Convenience method. @return A new equivalent scribe OAuthRequest object.
 	 */
-	def toScribe() {
-		val result = new OAuthRequest(method.toVerb, url)
+	def toScribe(OAuthService service) {
+		val result = new OAuthRequest(method.toVerb, url, service)
 		headers.forEach[key,value|result.addHeader(key,value)]
 		queryString.forEach[key,value|result.addQuerystringParameter(key, value.toString)]
 		return result;
