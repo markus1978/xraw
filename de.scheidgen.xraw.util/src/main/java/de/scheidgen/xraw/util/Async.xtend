@@ -69,14 +69,16 @@ class Async {
 	static abstract class StarJoin<T> {
 		val Iterable<Promise<?>> promises
 		val Defered<T> defered = Async.defer
+		var applied = false
 		
 		new(Iterable<Promise<?>> promises) {
 			this.promises = promises
-			promises.forEach[then[applyJoin]]
+			promises.forEach[then[applyJoin]] // thats not right ...
 		}		
 		
 		private def applyJoin() {
-			if (promises.forall[state != Promise.State.running]) {
+			if (promises.forall[state != Promise.State.running] && !applied) {
+				applied = true
 				if (promises.exists[state == Promise.State.rejected]) {
 					defered.reject(promises.findFirst[cause != null]?.cause)
 				} else {
@@ -190,8 +192,11 @@ class Async {
 		 * Given callback is executed once the promise is resolved or rejected.
 		 */
 		synchronized def void then((Promise<T>)=>void action) {
-			actions += action
-			apply			
+			if (state != State.running) {
+				action.apply(this)
+			} else {
+				actions += action	
+			}			
 		}
 		
 		/**
