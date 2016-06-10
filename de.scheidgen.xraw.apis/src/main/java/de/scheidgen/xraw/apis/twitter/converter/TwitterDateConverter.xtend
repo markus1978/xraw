@@ -16,7 +16,7 @@ class TwitterDateConverter implements Converter<Date> {
 	}
 	
 	override String toString(Date value) {
-			// Twitter put week day (EEE) in front of data, GWT formatter throws exception when parsing days. Omitting week day.
+		// Twitter put week day (EEE) in front of data, GWT formatter throws exception when parsing days. Omitting week day.
 		val pattern = "MMM dd HH:mm:ss ZZZZ yyyy" 
 		val info = new DefaultDateTimeFormatInfo()
 		val format = new DateTimeFormat(pattern, info) {}	
