@@ -3,16 +3,23 @@ package de.scheidgen.xraw.util
 import com.google.gwt.core.client.GWT
 import com.google.gwt.core.client.RunAsyncCallback
 import de.scheidgen.xraw.util.Async.Promise
-import de.scheidgen.xraw.util.Async.StarJoin
-import de.scheidgen.xraw.util.Async.ThreeJoin
-import de.scheidgen.xraw.util.Async.TwoJoin
+import java.util.Collection
 import java.util.List
 import java.util.logging.Logger
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class Async {
 
-	static val log = Logger.getLogger(Async.name)
+	private static val log = Logger.getLogger(Async.name)	
+	private static val Collection<Promise<?>> running = newHashSet
+		
+	public static def afterAll(()=>void callback) {
+		Async.join(running.toList.toArray(#[])).then[callback.apply]
+	}
+	
+	public static def rejectAll(Throwable reason) {
+		running.toList.forEach[it.reject(reason)]
+	}
 	
 	public static def void run(()=>void action) {
 		GWT.runAsync(new RunAsyncCallback {			
@@ -26,7 +33,7 @@ class Async {
 		})
 	}
 	
-	public static def <T> Promise<T> truePromise(T value) {
+	public static def <T> Promise<T> directPromise(T value) {
 		promise[it.resolve(value)]
 	}
 	
@@ -42,120 +49,34 @@ class Async {
 		new Defered<T>()	
 	}
 	
-	public static def <T,R,S> Promise<T> join(Promise<R> one, Promise<S> two, (R,S)=>T join) {
-		return new TwoJoin<T,R,S>(one, two) {		
-			override protected join(R one, S two) {
-				join.apply(one, two)
-			}			
-		}.promise
+	public static def Promise<Void> join(Promise<?>... promises) {
+		return new Join(newArrayList(promises)).promise
 	}
 	
-	public static def <T,Q,R,S> Promise<T> join(Promise<Q> zero, Promise<R> one, Promise<S> two, (Q,R,S)=>T join) {
-		return new ThreeJoin<T,Q,R,S>(zero, one, two) {		
-			override protected join(Q zero, R one, S two) {
-				join.apply(zero, one, two)
-			}			
-		}.promise
-	}
-	
-	public static def <T> Promise<T> joinAll(Iterable<Promise<?>> promises, (Iterable<?>)=>T join) {
-		return new StarJoin<T>(promises) {			
-			override protected join(Iterable<?> values) {
-				join.apply(values)
-			}			
-		}.promise
-	}
-	
-	static abstract class StarJoin<T> {
+	static class Join {
 		val Iterable<Promise<?>> promises
-		val Defered<T> defered = Async.defer
-		var applied = false
+		val Defered<Void> defered = Async.defer
 		
 		new(Iterable<Promise<?>> promises) {
 			this.promises = promises
-			promises.forEach[then[applyJoin]] // thats not right ...
+			promises.forEach[then[applyJoin]]
 		}		
 		
 		private def applyJoin() {
-			if (promises.forall[state != Promise.State.running] && !applied) {
-				applied = true
+			if (promises.forall[state != Promise.State.running]) {
 				if (promises.exists[state == Promise.State.rejected]) {
 					defered.reject(promises.findFirst[cause != null]?.cause)
 				} else {
-					defered.resolve(join(promises.map[value]))	
+					defered.resolve(null)	
 				}				
 			}
 		}
 		
-		public def Promise<T> promise() {			
+		public def Promise<Void> promise() {			
 			defered.promise
 		}
-		
-		abstract protected def T join(Iterable<?> values)
 	}
-	
-	static abstract class TwoJoin<T,R,S> extends StarJoin<T> {			
-		new(Promise<R> one, Promise<S> two) {
-			super(#[one, two])
-		}
-		
-		override protected join(Iterable<?> values) {
-			val iterator = values.iterator
-			join(iterator.next as R, iterator.next as S)
-		}
-		
-		abstract protected def T join(R one, S two)
-	}
-	
-	static abstract class ThreeJoin<T,Q,R,S> extends StarJoin<T> {			
-		new(Promise<Q> zero, Promise<R> one, Promise<S> two) {
-			super(#[zero, one, two])
-		}
-		
-		override protected join(Iterable<?> values) {
-			val iterator = values.iterator
-			join(iterator.next as Q, iterator.next as R, iterator.next as S)
-		}
-		
-		abstract protected def T join(Q zero, R one, S two)
-	}
-	
-	/**
-	 * Capsulates a data object that will be available later. Clients
-	 * that need this data can register callbacks that will be executed
-	 * once the data is available.
-	 */
-	static abstract class AsyncData<T> {
-		var T data = null
-		val List<(T)=>void> afterActions = newArrayList
 
-		private new() {
-			aquire[
-				this.data = it
-				for (action : afterActions) {
-					action.apply(data)
-				}
-			]
-		}
-		
-		abstract protected def void aquire((T)=>void result);
-
-		private def available() {
-			return data != null
-		}
-
-		/** 
-		 * The given callback is executed as soon as the data is available.
-		 */
-		def void use((T)=>void action) {
-			if (available) {
-				action.apply(data)
-			} else {
-				afterActions += action
-			}
-		}
-	}
-	
 	abstract static class Promise<T> {
 		enum State { resolved, rejected, running}
 		
@@ -165,27 +86,38 @@ class Async {
 		
 		val List<(Promise<T>)=>void> actions = newArrayList
 		
-		private new() { run }
+		private new() { 
+			running += this
+			run
+		}
 		
 		synchronized def void resolve(T result) {
-			value = result
-			state = State.resolved
-			apply
+			if (state == State.running) {
+				value = result
+				state = State.resolved
+				apply
+				running -= this			
+			} else {
+				log.warning("Promise that was no longer running, was resolved (it was probably terminated by rejectAll)")
+			}
 		}
 		
 		synchronized def void reject(Throwable cause) {
-			state = State.rejected
-			this.cause = cause
-			apply
+			if (state == State.running) {
+				state = State.rejected
+				this.cause = cause
+				apply
+				running -= this	
+			} else {
+				log.warning("Promise that was no longer running, was resolved (it was probably terminated by rejectAll)")
+			}
 		}
 		
 		private def apply() {
-			if (state != State.running) {
-				for (action: actions) {
-					action.apply(this)
-				}
-				actions.clear
+			for (action: actions) {
+				action.apply(this)
 			}
+			actions.clear
 		}
 		
 		/**
@@ -270,56 +202,6 @@ class Async {
 		def void reject(Throwable cause) {
 			promise.reject(cause)
 		}
-	}
-	
-	abstract static class AsyncIterator<T,P> {
-	
-		abstract protected def Promise<P> nextPage(P currentPage)
-		abstract protected def Iterable<T> items(P page)
-		
-		var List<T> data = newArrayList
-		var P currentPage = null
-		
-		public def Promise<Iterable<T>> promise(int ammount) {
-			Async.promise[promise|
-				fillData(ammount).then[
-					if (data.size < ammount) {
-						val result = data
-						data = newArrayList
-						promise.resolve(result)
-					} else {
-						val result = data.subList(0, ammount)
-						data = data.subList(ammount, data.size).toList
-						promise.resolve(result)					
-					}
-				]				
-			]
-		}	
-		
-		private def Promise<Void> fillData(int ammount) {
-			val defered = Async.defer			
-			if (data.size >= ammount) {
-				defered.resolve(null)
-			} else {
-				nextPage(currentPage).then[
-					if (state == Promise.State.rejected) {
-						defered.resolve(null)
-					} else {
-						val values = value.items
-						if (values.empty) {
-							defered.resolve(null)
-						} else {
-							currentPage = value
-							data.addAll(values)
-							fillData(ammount).then[
-								defered.resolve(null)
-							]							
-						}	
-					}
-				]
-			}
-			defered.promise
-		}	
 	}
 }
 
