@@ -1,20 +1,24 @@
 package de.scheidgen.xraw.annotations
 
+import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.AbstractClassProcessor
+import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.RegisterGlobalsContext
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
+import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
-import org.eclipse.xtend.lib.macro.declaration.Visibility
-import org.eclipse.xtend.lib.macro.Active
-import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
+import org.eclipse.xtend.lib.macro.declaration.Visibility
 
 @Active(CloudStoreEntityAnnotationClassProcessor)
 @Target(TYPE)
 annotation CloudStoreEntity {
 	
 }
+
+@Target(TYPE)
+annotation Embedded {}
 
 class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 	
@@ -32,7 +36,14 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 		val entityClass = context.findClass(annotatedClass.createdClassName)
 		val allFields = annotatedClass.declaredFields
 		
-		val entityTypeRef = newTypeReference("com.google.appengine.api.datastore.Entity")
+		val embedded = annotatedClass.findAnnotation(Embedded.findTypeGlobally) != null
+		
+		val embeddedEntityTypeRef = newTypeReference("com.google.appengine.api.datastore.EmbeddedEntity")
+		val entityTypeRef = if (embedded) {
+			embeddedEntityTypeRef
+		} else {
+			newTypeReference("com.google.appengine.api.datastore.Entity")		
+		} 
 		val keyFactoryTypeRef = newTypeReference("com.google.appengine.api.datastore.KeyFactory")
 		val keyTypeRef = newTypeReference("com.google.appengine.api.datastore.Key")
 		
@@ -75,28 +86,36 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 		
 		for(field: allFields) {
 			val camelCaseFieldName = NameUtil.snakeCaseToCamelCase(field.simpleName)
+			val fieldType = entityFieldType(context, field)
 			entityClass.addMethod("get" + camelCaseFieldName.toFirstUpper) [
 				visibility = Visibility.PUBLIC
-				returnType = field.type
-				
+				returnType = entityFieldType(context, field)
 				body = ['''
 					Object value = this.entity.getProperty("«field.simpleName»");
-					«IF field.type.primitive»
+					«IF fieldType.primitive»
 						if (value == null) {
-							return «defaultExpr(context, field.type)»;
+							return «defaultExpr(context, fieldType)»;
 						} else {
-							return («toJavaCode(field.type)»)value;
+							return («toJavaCode(fieldType)»)value;
 						}
 					«ELSE»
-						return («toJavaCode(field.type)»)value;
+						«IF (isEntityField(context, field))»
+							return «toJavaCode(newTypeReference(createdClassName(field.type.type as ClassDeclaration)))».create((«toJavaCode(embeddedEntityTypeRef)»)value);
+						«ELSE»
+							return («toJavaCode(fieldType)»)value;
+						«ENDIF»
 					«ENDIF»
 				''']
 			]
 			entityClass.addMethod("set" + camelCaseFieldName.toFirstUpper) [
 				visibility = Visibility.PUBLIC
-				addParameter("value", field.type) 
+				addParameter("value", fieldType) 
 				body = '''
-					entity.setProperty("«field.simpleName»", value);
+					«IF (isEntityField(context, field))»
+						entity.setProperty("«field.simpleName»", value.xEntity());
+					«ELSE»
+						entity.setProperty("«field.simpleName»", value);
+					«ENDIF»
 				'''				
 			]			
 		}
@@ -138,7 +157,7 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 				body = ['''
 					«toJavaCode(beanClass.newTypeReference)» bean = new «toJavaCode(beanClass.newTypeReference)»();
 					«FOR field:allFields»
-						bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»());
+						bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(«valueAccess(context, field)»);
 					«ENDFOR»
 					return bean; 
 				''']
@@ -155,6 +174,14 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 		}
 	}
 	
+	private static def valueAccess(extension TransformationContext context, FieldDeclaration field) {
+		if (isEntityField(context, field)) {
+			'''this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»().toBean()'''
+		} else {
+			'''this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»()'''		
+		}
+	}
+	
 	def String defaultExpr(extension TransformationContext context, TypeReference type) {
 		val wrapper = type.wrapperIfPrimitive 
 		switch wrapper {
@@ -164,5 +191,22 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 			case wrapper == Double.newTypeReference: "0.0"
 			default: "null"
 		}
+	}
+	
+	private static def boolean isEntityField(extension TransformationContext context, FieldDeclaration field) {
+		val type = field.type.type
+		if (type instanceof ClassDeclaration) {
+			if (type.findAnnotation(CloudStoreEntity.findTypeGlobally) != null) {
+				return true
+			}			
+		}
+		return false
+	}
+	
+	private def TypeReference entityFieldType(extension TransformationContext context, FieldDeclaration field) {		
+		if (isEntityField(context, field)) {
+			return newTypeReference(createdClassName(field.type.type as ClassDeclaration))
+		}
+		return field.type
 	}
 }

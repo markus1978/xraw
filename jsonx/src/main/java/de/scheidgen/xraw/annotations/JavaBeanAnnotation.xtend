@@ -9,6 +9,7 @@ import org.eclipse.xtend.lib.macro.declaration.Visibility
 import org.eclipse.xtend.lib.macro.Active
 import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
+import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 
 @Active(JavaBeanAnnotationClassProcessor)
 @Target(TYPE)
@@ -39,24 +40,25 @@ class JavaBeanAnnotationClassProcessor extends AbstractClassProcessor {
 		for(field: annotatedClass.declaredFields) {
 			val hidden = field.findAnnotation(Hidden.findTypeGlobally) != null
 			val camelCaseFieldName = NameUtil.snakeCaseToCamelCase(field.simpleName)
+			val fieldType = beanFieldType(context, field)
 			if (!hidden) {
 				beanClass.addField(camelCaseFieldName) [
-					type = field.type
+					type = fieldType
 					visibility = Visibility.PRIVATE
 				]			
 			}
 			beanClass.addMethod("get" + camelCaseFieldName.toFirstUpper) [				
 				visibility = Visibility.PUBLIC
-				returnType = field.type
+				returnType = fieldType
 				body = if (hidden) '''
-						return «defaultExpr(context, field.type)»;
+						return «defaultExpr(context, fieldType)»;
 				''' else '''
 					return this.«camelCaseFieldName»;
 				'''					
 			]
 			beanClass.addMethod("set" + camelCaseFieldName.toFirstUpper) [
 				visibility = Visibility.PUBLIC
-				addParameter("value", field.type) 
+				addParameter("value", fieldType) 
 				body = if (hidden) '''
 					// hidden
 				''' else '''
@@ -75,5 +77,15 @@ class JavaBeanAnnotationClassProcessor extends AbstractClassProcessor {
 			case wrapper == Double.newTypeReference: "0.0"
 			default: "null"
 		}
+	}
+	
+	private def TypeReference beanFieldType(extension TransformationContext context, MutableFieldDeclaration field) {
+		val type = field.type.type
+		if (type instanceof ClassDeclaration) {
+			if (type.findAnnotation(JavaBean.findTypeGlobally) != null) {
+				return newTypeReference(createdClassName(type))
+			}
+		}
+		return field.type
 	}
 }

@@ -183,6 +183,14 @@ class Async {
 			this
 		}
 		
+		def boolean isResolved() {
+			return state == State.resolved
+		}
+		
+		def boolean isRejected() {
+			return state == State.rejected
+		}
+		
 		protected abstract def void run()
 	}
 	
