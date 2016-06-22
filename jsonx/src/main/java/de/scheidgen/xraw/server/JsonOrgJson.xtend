@@ -119,6 +119,9 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 		return jsonObject
 	}
 	
+	override xCopy() {
+		return new JsonOrgObject(jsonObject.toString)
+	}
 }
 
 @AddConstructor

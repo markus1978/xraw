@@ -10,6 +10,8 @@ import org.eclipse.xtend.lib.macro.Active
 import java.lang.annotation.Target
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
+import java.util.List
+import java.util.ArrayList
 
 @Active(JavaBeanAnnotationClassProcessor)
 @Target(TYPE)
@@ -45,6 +47,13 @@ class JavaBeanAnnotationClassProcessor extends AbstractClassProcessor {
 				beanClass.addField(camelCaseFieldName) [
 					type = fieldType
 					visibility = Visibility.PRIVATE
+					initializer = [
+						if (newTypeReference(List).isAssignableFrom(fieldType)) {
+							'''new «toJavaCode(ArrayList.newTypeReference(fieldType.actualTypeArguments.get(0)))»()'''
+						} else {
+							defaultExpr(context, fieldType)
+						}
+					]
 				]			
 			}
 			beanClass.addMethod("get" + camelCaseFieldName.toFirstUpper) [				
@@ -61,9 +70,20 @@ class JavaBeanAnnotationClassProcessor extends AbstractClassProcessor {
 				addParameter("value", fieldType) 
 				body = if (hidden) '''
 					// hidden
-				''' else '''
-					this.«camelCaseFieldName» = value;
-				'''				
+				''' else {
+					if (newTypeReference(List).isAssignableFrom(fieldType)) {
+						'''
+							this.«camelCaseFieldName».clear();
+							if (value != null) {
+								this.«camelCaseFieldName».addAll(value);
+							}
+						'''
+					} else {
+						'''
+							this.«camelCaseFieldName» = value;
+						'''
+					}					
+				}				
 			]			
 		}	
 	}

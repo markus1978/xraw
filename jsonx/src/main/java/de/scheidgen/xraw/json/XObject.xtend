@@ -19,5 +19,4 @@ class XObject {
 	public def xJson() {
 		return json
 	}
-
 }

@@ -128,6 +128,10 @@ class GwtJsonObject implements JSONObject {
 		return jsonObject;
 	}
 	
+	override xCopy() {
+		return new GwtJsonObject(jsonObject.toString)
+	}
+	
 }
 
 @AddConstructor

@@ -51,6 +51,8 @@ interface JSONObject {
 	def JSONArray xCreateNewArray()
 	
 	def Object xNative()
+	
+	def JSONObject xCopy()
 }
 
 interface JSONArray {	
