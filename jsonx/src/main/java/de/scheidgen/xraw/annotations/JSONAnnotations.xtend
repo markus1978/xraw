@@ -4,6 +4,7 @@ import de.scheidgen.xraw.json.Converter
 import de.scheidgen.xraw.json.JSONObject
 import de.scheidgen.xraw.json.XObject
 import de.scheidgen.xraw.server.XResource
+import java.lang.annotation.Annotation
 import java.lang.annotation.Target
 import java.util.AbstractList
 import java.util.AbstractMap
@@ -16,6 +17,7 @@ import java.util.Set
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
+import org.eclipse.xtend.lib.macro.declaration.AnnotationReference
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.Element
@@ -34,7 +36,7 @@ annotation Name {
 @Active(JSONWrapperCompilationParticipant)
 @Target(TYPE)
 annotation JSON {
-
+	Class<? extends Annotation>[] value = #[]
 }
 
 @Active(JSONWrapperCompilationParticipant)
@@ -213,6 +215,14 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 		for (clazz : annotatedTargetElements) {
 			val declaredFields = new ArrayList<MutableFieldDeclaration>
 			declaredFields.addAll(clazz.declaredFields)
+			
+			val jsonAnnotation = clazz.findAnnotation(JSON.findTypeGlobally)
+			if (jsonAnnotation != null) {
+				val annotations = (jsonAnnotation).getValue("value") as TypeReference[]
+				for (annotation:annotations) {
+					clazz.addAnnotation(newAnnotationReference(annotation.type))
+				}				
+			}
 			
 			if (clazz.extendedClass == null || clazz.extendedClass == Object.newTypeReference) {
 				if (clazz.findAnnotation(Resource.findTypeGlobally) != null) {
