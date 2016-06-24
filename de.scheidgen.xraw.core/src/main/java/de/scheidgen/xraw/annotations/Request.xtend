@@ -18,6 +18,9 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.Visibility
 import de.scheidgen.xraw.core.XRawHttpMethod
+import org.eclipse.xtend.lib.macro.declaration.TypeReference
+import de.scheidgen.xraw.json.XObject
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {
@@ -41,6 +44,7 @@ annotation Response {
 
 // TODO some form of "constraint language"
 @Target(FIELD) annotation Required {}
+@Target(FIELD) annotation Body {}
 @Target(TYPE) annotation OrConstraint { String[] value }
 @Target(TYPE) annotation XorOrNothingConstraint { String[] value }
 @Target(FIELD) annotation UrlReplace { String value }
@@ -186,6 +190,7 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 					returnType = clazz.newTypeReference
 					val remoteName = NameUtil::name(context, field)
 					val isListType = List.newTypeReference.isAssignableFrom(field.type)
+					val isBody = field.findAnnotation(Body.findTypeGlobally) != null
 					body = ['''
 						if (xIsExecuted()) {
 							throw new «toJavaCode(IllegalStateException.newTypeReference)»("This request was already executed. Its parameters cannot be changed anymore.");
@@ -210,12 +215,16 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 									} else {
 										valueStr += ", ";
 									}
-									valueStr += «toJavaCode(string)».valueOf(value);
+									valueStr += «generateToString(it, context, field.type, "value")»;
 								}
 							«ELSE»
-								valueStr = «toJavaCode(string)».valueOf(«localName»);
+								valueStr = «generateToString(it, context, field.type, localName)»;
 							«ENDIF»
-							xPutQueryStringParameter("«remoteName»", valueStr);
+							«IF isBody»
+								xPutBody(valueStr);
+							«ELSE»
+								xPutQueryStringParameter("«remoteName»", valueStr);
+							«ENDIF»							
 						«ENDIF»
 						return this;
 					'''] 
@@ -234,6 +243,14 @@ class RequestCompilationParticipant implements TransformationParticipant<Mutable
 			for (field: declaredFields) {
 				field.remove
 			}
+		}
+	}
+	
+	def generateToString(extension CompilationContext cc, extension TransformationContext tc, TypeReference type, String valueAccessStr) {
+		if (XObject.newTypeReference.isAssignableFrom(type)) {
+			'''«valueAccessStr».xJson().xNative().toString()'''
+		} else {
+			'''«toJavaCode(string)».valueOf(«valueAccessStr»)'''
 		}
 	}
 

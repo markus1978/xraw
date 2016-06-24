@@ -1,5 +1,7 @@
 package de.scheidgen.xraw.annotations
 
+import com.google.gwt.core.client.GWT
+import de.scheidgen.xraw.json.InitNativeJSTypes
 import java.lang.annotation.Target
 import jsinterop.annotations.JsOverlay
 import jsinterop.annotations.JsType
@@ -12,10 +14,6 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import org.eclipse.xtend.lib.macro.CodeGenerationContext
-import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
-import com.google.gwt.core.client.GWT
-import de.scheidgen.xraw.json.InitNativeJSTypes
 
 @Active(JavaScriptAnnotationClassProcessor)
 @Target(TYPE)

@@ -17,6 +17,7 @@ import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import de.scheidgen.xraw.json.XObject
 
 /**
  * Generates a abstract test mockup that can be extended by clients to easily write API mockups for tests.
@@ -124,6 +125,8 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 			return '''«toJavaCode(type)».valueOf(«stringValueRef»)'''
 		} else if (type == String.newTypeReference) {
 			return '''«stringValueRef»'''
+		} else if (XObject.newTypeReference.isAssignableFrom(type)) {
+			throw new IllegalArgumentException('''Parameter type «type» is not supported.''')
 		} else {
 			throw new IllegalArgumentException('''Parameter type «type» is not supported.''')
 		}

@@ -3,6 +3,7 @@ package de.scheidgen.xraw.core
 import de.scheidgen.xraw.util.Async.Promise
 import de.scheidgen.xraw.util.Async
 import de.scheidgen.xraw.annotations.AddSuperConstructors
+import de.scheidgen.xraw.json.XObject
 
 @AddSuperConstructors
 class XrawRestException extends RuntimeException {
@@ -59,6 +60,14 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 	protected abstract def void validateConstraints()
 	protected abstract def ResponseType createResponse(XRawHttpResponse httpResponse)
 	
+	public def xPutBody(String value) {
+		httpRequest.body = value
+	}
+	
+	public def xPutBody(XObject object) {
+		xPutBody(object.xJson.xNative.toString)
+	}
+	 
 	public def xPutQueryStringParameter(String name, String value) {
 		httpRequest.queryString.put(name, value)
 	}

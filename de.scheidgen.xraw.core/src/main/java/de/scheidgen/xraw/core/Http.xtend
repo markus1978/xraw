@@ -29,6 +29,7 @@ abstract class XRawHttpRequest {
 	@Accessors(PUBLIC_GETTER, PROTECTED_SETTER) val Map<String,String> headers = newHashMap
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER) var String url = null
 	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER) var XRawHttpMethod method = XRawHttpMethod.GET
+	@Accessors(PUBLIC_GETTER, PUBLIC_SETTER) var String body
 	
 	protected new(XRawHttpMethod method, String url) {
 		this.method = method
@@ -82,6 +83,9 @@ class GwtHttpRequest extends XRawHttpRequest {
 		val result = new RequestBuilder(method.toGwt, url)
 		for (parameter:headers.entrySet) {
 			result.setHeader(parameter.key, parameter.value)
+		}
+		if (body != null) {
+			result.requestData = body
 		}
 		return result
 	}

@@ -66,7 +66,11 @@ class GwtJsonObject implements JSONObject {
 	}
 	
 	override put(String key, String value) {
-		jsonObject.put(key, new JSONString(value))
+		if (value == null) {
+			jsonObject.put(key, null)
+		} else {
+			jsonObject.put(key, new JSONString(value))			
+		}
 	}
 	
 	override put(String key, int value) {

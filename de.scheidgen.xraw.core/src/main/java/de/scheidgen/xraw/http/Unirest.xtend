@@ -12,6 +12,7 @@ import de.scheidgen.xraw.core.XRawHttpResponse
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
 import com.github.scribejava.core.oauth.OAuthService
+import com.mashape.unirest.request.HttpRequestWithBody
 
 class UnirestHttpRequest extends XRawHttpRequest {	
 	
@@ -27,9 +28,13 @@ class UnirestHttpRequest extends XRawHttpRequest {
 	 * Convenience method. @return A new equivalent unirest HttpRequest object.
 	 */
 	def toUnirest() {
-		val result = new HttpRequest(method.toUnirest, url)
+		val result = if (body != null) {
+			new HttpRequestWithBody(method.toUnirest, url)
+		} else {
+			new HttpRequest(method.toUnirest, url)
+		}
 		result.queryString(queryString)
-		result.headers(headers)
+		result.headers(headers)	
 		return result
 	}
 	
@@ -53,6 +58,9 @@ class UnirestHttpRequest extends XRawHttpRequest {
 		val result = new OAuthRequest(method.toVerb, url, service)
 		headers.forEach[key,value|result.addHeader(key,value)]
 		queryString.forEach[key,value|result.addQuerystringParameter(key, value.toString)]
+		if (body != null) {
+			result.bodyContents		
+		}
 		return result;
 	}
 }
