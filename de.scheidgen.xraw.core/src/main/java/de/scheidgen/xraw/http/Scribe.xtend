@@ -137,5 +137,5 @@ class ScribeHttpResponse implements XRawHttpResponse {
 	
 	override getStatusText() {
 		return source.message
-	}
+	}		
 }

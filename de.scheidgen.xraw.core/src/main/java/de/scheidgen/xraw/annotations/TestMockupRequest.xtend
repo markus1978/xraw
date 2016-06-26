@@ -80,7 +80,7 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 			val localName = NameUtil::snakeCaseToCamelCase(field.simpleName)
 			clazz.addMethod(localName) [
 				visibility = Visibility.PUBLIC
-				returnType = field.type
+				returnType = mockupType(context, field.type)
 				docComment = field.docComment
 				addParameter("httpRequest", XRawHttpRequest.newTypeReference)
 				val remoteName = NameUtil::name(context, field)
@@ -118,6 +118,14 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 		}
 	}
 	
+	def TypeReference mockupType(extension TransformationContext ctx, TypeReference type) {
+		if (XObject.newTypeReference.isAssignableFrom(type)) {
+			string // we use the string (json) representation of the values
+		} else {
+			return type
+		}
+	}
+	
 	def generateToString(extension CompilationContext compCtx, extension TransformationContext ctx, TypeReference type, String stringValueRef) {
 		if (type.primitive) {
 			return '''«toJavaCode(type.wrapperIfPrimitive)».valueOf(«stringValueRef»)'''
@@ -126,7 +134,7 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 		} else if (type == String.newTypeReference) {
 			return '''«stringValueRef»'''
 		} else if (XObject.newTypeReference.isAssignableFrom(type)) {
-			throw new IllegalArgumentException('''Parameter type «type» is not supported.''')
+			return '''«stringValueRef»''' // we use the string (json) representation of the values
 		} else {
 			throw new IllegalArgumentException('''Parameter type «type» is not supported.''')
 		}
