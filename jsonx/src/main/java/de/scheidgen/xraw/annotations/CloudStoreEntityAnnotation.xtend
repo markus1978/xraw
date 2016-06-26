@@ -100,7 +100,11 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 						}
 					«ELSE»
 						«IF (isEntityField(context, field))»
-							return «toJavaCode(newTypeReference(createdClassName(field.type.type as ClassDeclaration)))».create((«toJavaCode(embeddedEntityTypeRef)»)value);
+							if (value == null) {
+								return null;
+							} else {
+								return «toJavaCode(newTypeReference(createdClassName(field.type.type as ClassDeclaration)))».create((«toJavaCode(embeddedEntityTypeRef)»)value);
+							}
 						«ELSE»
 							return («toJavaCode(fieldType)»)value;
 						«ENDIF»
@@ -157,7 +161,16 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 				body = ['''
 					«toJavaCode(beanClass.newTypeReference)» bean = new «toJavaCode(beanClass.newTypeReference)»();
 					«FOR field:allFields»
-						bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(«valueAccess(context, field)»);
+						«IF isEntityField(context, field)»
+							{
+								«toJavaCode(entityFieldType(context, field))» entity = this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»();
+								if (entity != null) {
+									bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(entity.toBean());
+								}
+							}
+						«ELSE»
+							bean.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»());							
+						«ENDIF»
 					«ENDFOR»
 					return bean; 
 				''']
@@ -171,14 +184,6 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 					return create(entity).toBean();	
 				''']
 			]		
-		}
-	}
-	
-	private static def valueAccess(extension TransformationContext context, FieldDeclaration field) {
-		if (isEntityField(context, field)) {
-			'''this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»().toBean()'''
-		} else {
-			'''this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»()'''		
 		}
 	}
 	
