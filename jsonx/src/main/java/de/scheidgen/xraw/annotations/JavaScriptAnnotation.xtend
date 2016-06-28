@@ -1,7 +1,6 @@
 package de.scheidgen.xraw.annotations
 
 import com.google.gwt.core.client.GWT
-import de.scheidgen.xraw.json.InitNativeJSTypes
 import java.lang.annotation.Target
 import jsinterop.annotations.JsOverlay
 import jsinterop.annotations.JsType
@@ -14,6 +13,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import de.scheidgen.xraw.json.NativeJavascriptUtils
 
 @Active(JavaScriptAnnotationClassProcessor)
 @Target(TYPE)
@@ -90,7 +90,7 @@ class JavaScriptAnnotationClassProcessor extends AbstractClassProcessor {
 			returnType = jsClass.newTypeReference
 			body = ['''
 				if («toJavaCode(GWT.newTypeReference)».isScript()) {
-					«toJavaCode(InitNativeJSTypes.newTypeReference())».init(new String[] {«annotatedClass.createdClassName.split("\\.").map['''"«it»"'''.toString].join(", ")»});
+					«toJavaCode(NativeJavascriptUtils.newTypeReference())».init(new String[] {«annotatedClass.createdClassName.split("\\.").map['''"«it»"'''.toString].join(", ")»});
 				}
 				return new «toJavaCode(jsClass.newTypeReference)»();
 			''']

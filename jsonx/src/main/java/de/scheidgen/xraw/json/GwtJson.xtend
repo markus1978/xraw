@@ -6,6 +6,7 @@ import com.google.gwt.json.client.JSONParser
 import com.google.gwt.json.client.JSONString
 import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import jsinterop.annotations.JsMethod
 
 @AddConstructor
 @EqualsHashCode
@@ -136,6 +137,10 @@ class GwtJsonObject implements JSONObject {
 		return new GwtJsonObject(jsonObject.toString)
 	}
 	
+	@JsMethod
+	override xJavaScript() {
+		NativeJavascriptUtils.unwrap(jsonObject)
+	}	
 }
 
 @AddConstructor

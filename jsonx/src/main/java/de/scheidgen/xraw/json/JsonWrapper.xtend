@@ -1,6 +1,7 @@
 package de.scheidgen.xraw.json
 
 import java.util.Collection
+import com.google.gwt.core.client.JavaScriptObject
 
 interface JSONObject {
 		
@@ -53,6 +54,8 @@ interface JSONObject {
 	def Object xNative()
 	
 	def JSONObject xCopy()
+	
+	def JavaScriptObject xJavaScript()
 }
 
 interface JSONArray {	

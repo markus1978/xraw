@@ -1,7 +1,9 @@
 package de.scheidgen.xraw.annotations
 
+import com.google.gwt.core.client.JavaScriptObject
 import de.scheidgen.xraw.json.Converter
 import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.json.NativeJavascriptUtils
 import de.scheidgen.xraw.json.XObject
 import de.scheidgen.xraw.server.XResource
 import java.lang.annotation.Annotation
@@ -17,7 +19,6 @@ import java.util.Set
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
-import org.eclipse.xtend.lib.macro.declaration.AnnotationReference
 import org.eclipse.xtend.lib.macro.declaration.ClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.Element
@@ -413,6 +414,22 @@ class JSONWrapperCompilationParticipant implements TransformationParticipant<Mut
 					return json.toString();
 				''']
 			]
+			
+			if (!clazz.abstract) {
+				clazz.addMethod("xFromJavaScript") [
+					static = true
+					visibility = Visibility.PUBLIC
+					returnType = clazz.newTypeReference
+					addParameter("javaScriptObject", JavaScriptObject.newTypeReference())
+					body = ['''
+						«IF clazz.typeParameters.empty»
+							return new «toJavaCode(clazz.newTypeReference())»(«toJavaCode(NativeJavascriptUtils.newTypeReference())».wrap(javaScriptObject));
+						«ELSE»
+							throw new «toJavaCode(UnsupportedOperationException.newTypeReference)»("Not supported for generic types.");
+						«ENDIF»
+					''']
+				]			
+			}
 			
 			for(field: declaredFields) {
 				field.remove

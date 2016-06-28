@@ -2,6 +2,7 @@ package de.scheidgen.xraw.json
 
 import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import jsinterop.annotations.JsMethod
 
 @AddConstructor
 @EqualsHashCode
@@ -18,5 +19,10 @@ class XObject {
 	
 	public def xJson() {
 		return json
+	}
+	
+	@JsMethod
+	public def xJavaScript() {
+		return json.xJavaScript
 	}
 }

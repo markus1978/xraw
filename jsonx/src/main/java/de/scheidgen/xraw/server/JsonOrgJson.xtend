@@ -122,6 +122,11 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 	override xCopy() {
 		return new JsonOrgObject(jsonObject.toString)
 	}
+	
+	override xJavaScript() {
+		throw new UnsupportedOperationException("This is not a Javascript based JSON representation.")
+	}
+	
 }
 
 @AddConstructor
