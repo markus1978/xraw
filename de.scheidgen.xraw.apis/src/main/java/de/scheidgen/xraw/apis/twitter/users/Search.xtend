@@ -5,6 +5,7 @@ import de.scheidgen.xraw.annotations.Required
 import de.scheidgen.xraw.annotations.Response
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
+import de.scheidgen.xraw.annotations.TestMockupRequest
 
 /**
  * Provides a simple, relevance-based search interface to public user accounts on Twitter. Try querying by topical interest, full name, company name, location, or other criteria. Exact match searches are not supported.
@@ -17,6 +18,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterUser
  * <li>Requests / 15-min window (user auth): 180</li> 
  * </ul>
  */
+@TestMockupRequest
 @Request(url="https://api.twitter.com/1.1/users/search.json", response=@Response(responseType=TwitterResponse, resourceType=TwitterUser, isList=true))
 class Search {
 	/**
