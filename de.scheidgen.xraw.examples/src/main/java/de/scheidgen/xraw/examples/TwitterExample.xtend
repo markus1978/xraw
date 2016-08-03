@@ -9,7 +9,7 @@ import de.scheidgen.xraw.script.XRawScript
 class TwitterExample {
 	
 	static def void main(String[] args) {		
-		val twitter = XRawScript::get("data/store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]
+		val twitter = XRawScript::get("data/modsoft-store.json", "markus", Twitter) [new ScribeOAuth1Service(TwitterApi.instance, it)]
 		
 		val userTimeline = twitter.statuses.userTimeline.count(100).xResult
 		val firstTweetId = userTimeline.get(0).id

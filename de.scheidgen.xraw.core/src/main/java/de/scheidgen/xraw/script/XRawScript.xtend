@@ -12,7 +12,7 @@ class XRawScript {
 	
 	static def <S extends AbstractService> S get(XRawHttpService httpService, Class<S> serviceClass) {
 		val serviceClassConfigurationConstructor = serviceClass.declaredConstructors.findFirst[
-			it.parameters.size == 1 && it.parameters.get(0).type.isAssignableFrom(httpService.class)
+			it.parameterTypes.size == 1 && it.parameterTypes.get(0).isAssignableFrom(httpService.class)
 		]
 		return serviceClassConfigurationConstructor.newInstance(httpService) as S
 	}

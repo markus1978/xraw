@@ -5,7 +5,6 @@ import com.google.common.collect.FluentIterable
 import de.scheidgen.xraw.util.XRawIterateExtensions.Result
 import java.util.ArrayList
 import java.util.Iterator
-import java.util.concurrent.CompletableFuture
 
 class XRawIterateExtensions {
 	private static class Result<T> implements Iterator<T> {		
@@ -75,14 +74,16 @@ class XRawIterateExtensions {
 	}
 	
 	private static def <E,T> Iterable<T> concurrentIterate(Iterable<E> source, Functions.Function2<E, Result<T>, Void> function) {
-		val result = new Result<T>
-		val futures = source.map[value|
-			return CompletableFuture::runAsync[
-				function.apply(value, result)
-			]
-		]
-		CompletableFuture::allOf(futures.toList.toArray(#{})).join				
-		return result.elements				
+		// TODO implement with Async
+//		val result = new Result<T>
+//		val futures = source.map[value|
+//			return CompletableFuture::runAsync[
+//				function.apply(value, result)
+//			]
+//		]
+//		CompletableFuture::allOf(futures.toList.toArray(#{})).join				
+//		return result.elements
+		return null;				
 	}
 	
 	public static def standard() {
