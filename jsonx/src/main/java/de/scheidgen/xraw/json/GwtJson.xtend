@@ -43,19 +43,43 @@ class GwtJsonObject implements JSONObject {
 	}
 	
 	override getBoolean(String key) {
-		jsonObject.get(key).boolean.booleanValue
+		val value = jsonObject.get(key)
+		val bool = value.boolean
+		if (bool != null) {
+			bool.boolean.booleanValue
+		} else {
+			Boolean.parseBoolean(value.string.stringValue)
+		}
 	}
 	
 	override getInt(String key) {
-		jsonObject.get(key).number.doubleValue as int
+		val value = jsonObject.get(key)
+		val number = value.number
+		if (number != null) {
+			number.doubleValue as int
+		} else {
+			Integer.parseInt(value.string.stringValue)
+		}
 	}
 	
 	override getLong(String key) {
-		jsonObject.get(key).number.doubleValue as long
+		val value = jsonObject.get(key)
+		val number = value.number
+		if (number != null) {
+			number.doubleValue as long
+		} else {
+			Long.parseLong(value.string.stringValue)
+		}
 	}
 	
 	override getDouble(String key) {
-		jsonObject.get(key).number.doubleValue as int
+		val value = jsonObject.get(key)
+		val number = value.number
+		if (number != null) {
+			number.doubleValue as int
+		} else {
+			Double.parseDouble(value.string.stringValue)
+		}
 	}
 	
 	override put(String key, JSONArray value) {
