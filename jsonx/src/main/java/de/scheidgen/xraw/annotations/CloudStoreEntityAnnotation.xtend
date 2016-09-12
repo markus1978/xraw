@@ -96,7 +96,15 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 						if (value == null) {
 							return «defaultExpr(context, fieldType)»;
 						} else {
-							return («toJavaCode(fieldType)»)value;
+							«IF fieldType.wrapperIfPrimitive == Integer.newTypeReference»
+								if (value instanceof Long) {
+									return  («toJavaCode(fieldType)»)new Integer((int)((Long)value).longValue());
+								} else {
+									return («toJavaCode(fieldType)»)value;
+								}
+							«ELSE»
+								return («toJavaCode(fieldType)»)value;
+							«ENDIF»							
 						}
 					«ELSE»
 						«IF (isEntityField(context, field))»
