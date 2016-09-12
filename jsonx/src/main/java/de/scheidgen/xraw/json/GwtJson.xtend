@@ -76,7 +76,7 @@ class GwtJsonObject implements JSONObject {
 		val value = jsonObject.get(key)
 		val number = value.number
 		if (number != null) {
-			number.doubleValue as int
+			number.doubleValue as double
 		} else {
 			Double.parseDouble(value.string.stringValue)
 		}
