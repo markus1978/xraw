@@ -138,7 +138,9 @@ abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceTyp
 			val response = createResponse(it)
 			this.response = response
 			if (response.successful) {
-				action.apply(response)	
+				if (action != null) {
+					action.apply(response)
+				}	
 			} else {
 				if (onError != null) {
 					onError.apply(response)
