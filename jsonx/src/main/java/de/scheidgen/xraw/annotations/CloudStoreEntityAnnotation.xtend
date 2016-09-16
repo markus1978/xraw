@@ -10,6 +10,7 @@ import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
+import de.scheidgen.xraw.server.JsonOrgObject
 
 @Active(CloudStoreEntityAnnotationClassProcessor)
 @Target(TYPE)
@@ -190,6 +191,40 @@ class CloudStoreEntityAnnotationClassProcessor extends AbstractClassProcessor {
 				visibility = Visibility.PUBLIC
 				body = ['''
 					return create(entity).toBean();	
+				''']
+			]	
+		}
+		
+		val jsonClassName = annotatedClass.qualifiedName
+		val jsonClass = context.findClass(jsonClassName)		
+		if (jsonClass.findAnnotation(JSON.findTypeGlobally) != null) {
+			entityClass.addMethod("toJSON") [
+				returnType = jsonClass.newTypeReference
+				visibility = Visibility.PUBLIC
+				body = ['''
+					«toJavaCode(jsonClass.newTypeReference)» json = new «toJavaCode(jsonClass.newTypeReference)»(new «toJavaCode(JsonOrgObject.newTypeReference)»());
+					«FOR field:allFields»
+						«IF isEntityField(context, field)»
+							{
+								«toJavaCode(entityFieldType(context, field))» entity = this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»();
+								if (entity != null) {
+									json.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(entity.toJSON());
+								}
+							}
+						«ELSE»
+							json.set«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»(this.get«NameUtil.snakeCaseToCamelCase(field.simpleName).toFirstUpper»());							
+						«ENDIF»
+					«ENDFOR»
+					return json; 
+				''']
+			]
+			entityClass.addMethod("toJSON") [
+				returnType = jsonClass.newTypeReference
+				addParameter("entity", entityTypeRef)
+				static = true
+				visibility = Visibility.PUBLIC
+				body = ['''
+					return create(entity).toJSON();	
 				''']
 			]		
 		}
