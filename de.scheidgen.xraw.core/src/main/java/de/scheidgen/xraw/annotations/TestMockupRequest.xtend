@@ -97,7 +97,11 @@ class TestMockupRequestCompilationParticipant extends AbstractClassProcessor {
 					«ELSEIF (field.findAnnotation(Multi.findTypeGlobally) != null && isListType)»
 						
 					«ELSE»
-						String valueStr = (String)httpRequest.getQueryString().get("«remoteName»");
+						«IF field.findAnnotation(Body.findTypeGlobally) != null»
+							String valueStr = (String)httpRequest.getBody();
+						«ELSE»
+							String valueStr = (String)httpRequest.getQueryString().get("«remoteName»");
+						«ENDIF»						
 						«IF isListType»
 							«toJavaCode(ArrayList.newTypeReference(field.type.actualTypeArguments.get(0)))» result = new «toJavaCode(ArrayList.newTypeReference(field.type.actualTypeArguments.get(0)))»();
 							if (valueStr == null) {

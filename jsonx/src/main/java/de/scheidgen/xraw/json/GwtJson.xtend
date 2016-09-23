@@ -153,6 +153,10 @@ class GwtJsonObject implements JSONObject {
 		new GwtJsonObject
 	}
 	
+	override xCreateNewObject(String json) {
+		new GwtJsonObject(json)
+	}
+	
 	override xNative() {
 		return jsonObject;
 	}

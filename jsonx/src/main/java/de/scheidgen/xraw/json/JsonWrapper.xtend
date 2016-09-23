@@ -49,6 +49,8 @@ interface JSONObject {
 	
 	def JSONObject xCreateNewObject()
 	
+	def JSONObject xCreateNewObject(String json)
+	
 	def JSONArray xCreateNewArray()
 	
 	def Object xNative()
