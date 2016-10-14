@@ -24,6 +24,7 @@ class Twitter {
 	Followers followers
 	Friendships friendships
 	Account account
+	DirectMessages direct_messages
 }
 
 @Directory
@@ -61,6 +62,7 @@ class Friendships {
 	Lookup lookup
 	Destroy destroy
 	Create create
+	de.scheidgen.xraw.apis.twitter.friendships.Show show
 }
 
 @Directory
@@ -68,4 +70,12 @@ class Users {
 	de.scheidgen.xraw.apis.twitter.users.Search search
 	de.scheidgen.xraw.apis.twitter.users.Lookup lookup
 	de.scheidgen.xraw.apis.twitter.users.Show show
+}
+
+@Directory
+class DirectMessages {
+	de.scheidgen.xraw.apis.twitter.direct_messages.Sent sent
+	de.scheidgen.xraw.apis.twitter.direct_messages.Show show
+	de.scheidgen.xraw.apis.twitter.direct_messages.New new_
+	de.scheidgen.xraw.apis.twitter.direct_messages.Destroy destroy
 }

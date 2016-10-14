@@ -8,7 +8,6 @@ import de.scheidgen.xraw.annotations.WithConverter
 import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
-import de.scheidgen.xraw.examples.TwitterUtil
 import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.json.DateConverter
 import de.scheidgen.xraw.mongodb.Collection
@@ -19,6 +18,7 @@ import java.util.Date
 import java.util.List
 
 import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import de.scheidgen.xraw.apis.twitter.TwitterUtil
 
 /** 
  * Identifies potential friends, based on keywords, languages, follower/friend ratio, and social authority (i.e. retweet/favourite ratios). 

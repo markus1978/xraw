@@ -37,7 +37,7 @@ class List {
 	String cursor
 
 	/**
-	 * Specifies the number of IDs attempt retrieval of, up to a maximum of 5,000 per distinct request. The value of count is best thought of as a limit to the number of results to return. When using the count parameter with this method, it is wise to use a consistent count value across all requests to the same user’s collection. Usage of this parameter is encouraged in environments where all 5,000 IDs constitutes too large of a response. 
+	 * The number of users to return per page, up to a maximum of 200. Defaults to 20. 
 	 */
 	int count
 	 

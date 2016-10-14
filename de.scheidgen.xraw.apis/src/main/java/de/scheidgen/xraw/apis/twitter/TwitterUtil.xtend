@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.examples
+package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
 import de.scheidgen.xraw.core.AbstractRequest
