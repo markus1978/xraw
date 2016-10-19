@@ -1,4 +1,7 @@
+.DS_Store
 bin/
+target/
+out/
 **/*.xtendbin
 **/*.class
 **/*._trace
