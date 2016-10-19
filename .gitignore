@@ -3,6 +3,7 @@ bin/
 target/
 out/
 xtend-gen/
+.idea/
 **/*.xtendbin
 **/*.class
 **/*._trace
