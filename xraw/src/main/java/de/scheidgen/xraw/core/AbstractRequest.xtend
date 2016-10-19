@@ -2,12 +2,12 @@ package de.scheidgen.xraw.core
 
 import de.scheidgen.xraw.util.Async.Promise
 import de.scheidgen.xraw.util.Async
-import de.scheidgen.xraw.annotations.AddSuperConstructors
 import de.scheidgen.xraw.json.XObject
 
-@AddSuperConstructors
 class XrawRestException extends RuntimeException {
-	
+	new(String msg) {
+		super(msg)
+	}
 }
 
 abstract class AbstractRequest<ResponseType extends DefaultResponse, ResourceType> {

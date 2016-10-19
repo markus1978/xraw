@@ -1,14 +1,16 @@
 package de.scheidgen.xraw.json
 
-import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import jsinterop.annotations.JsMethod
 
-@AddConstructor
 @EqualsHashCode
 class XObject {
 	protected val JSONObject json
-	
+
+	new(JSONObject json) {
+		this.json = json
+	}
+
 	public def xGetString(String key) {
 		if (json.isNull(key)) {
 			return null;

@@ -1,11 +1,9 @@
 package de.scheidgen.xraw.server
 
-import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.json.JSONArray
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.json.JSONObject
 
-@AddConstructor
 @EqualsHashCode
 class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 	
@@ -17,6 +15,10 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 	
 	new(String json) {
 		jsonObject = new JSONObject(json)
+	}
+
+	new(JSONObject jsonObject) {
+		this.jsonObject = jsonObject
 	}
 	
 	override isNull(String key) {
@@ -133,7 +135,6 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 	
 }
 
-@AddConstructor
 class JsonOrgArray implements JSONArray {
 	public val org.json.JSONArray jsonArray
 	
@@ -143,6 +144,10 @@ class JsonOrgArray implements JSONArray {
 	
 	new(String json) {
 		jsonArray = new org.json.JSONArray(json)
+	}
+
+	new(org.json.JSONArray jsonArray) {
+		this.jsonArray = jsonArray
 	}
 	
 	override isNull(int key) {

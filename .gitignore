@@ -2,6 +2,7 @@
 bin/
 target/
 out/
+xtend-gen/
 **/*.xtendbin
 **/*.class
 **/*._trace

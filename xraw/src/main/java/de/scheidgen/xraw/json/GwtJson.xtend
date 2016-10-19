@@ -4,11 +4,9 @@ import com.google.gwt.json.client.JSONBoolean
 import com.google.gwt.json.client.JSONNumber
 import com.google.gwt.json.client.JSONParser
 import com.google.gwt.json.client.JSONString
-import de.scheidgen.xraw.annotations.AddConstructor
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import jsinterop.annotations.JsMethod
 
-@AddConstructor
 @EqualsHashCode
 class GwtJsonObject implements JSONObject {
 	
@@ -20,6 +18,10 @@ class GwtJsonObject implements JSONObject {
 	
 	new(String json) {
 		jsonObject = JSONParser.parseLenient(json).isObject
+	}
+
+	new (com.google.gwt.json.client.JSONObject jsonObject) {
+		this.jsonObject = jsonObject
 	}
 	
 	override isNull(String key) {
@@ -171,7 +173,6 @@ class GwtJsonObject implements JSONObject {
 	}	
 }
 
-@AddConstructor
 class GwtJsonArray implements JSONArray {
 	public val com.google.gwt.json.client.JSONArray jsonArray
 	
@@ -181,6 +182,10 @@ class GwtJsonArray implements JSONArray {
 	
 	new(String json) {
 		jsonArray = JSONParser.parseLenient(json).array
+	}
+
+	new(com.google.gwt.json.client.JSONArray jsonArray) {
+		this.jsonArray = jsonArray
 	}
 	
 	override isNull(int key) {

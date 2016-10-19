@@ -2,7 +2,6 @@ package de.scheidgen.xraw.core
 
 import com.google.gwt.http.client.RequestBuilder
 import com.google.gwt.http.client.URL
-import de.scheidgen.xraw.annotations.AddSuperConstructors
 import de.scheidgen.xraw.json.JSONArray
 import de.scheidgen.xraw.json.JSONObject
 import java.util.Map
@@ -54,9 +53,14 @@ interface XRawHttpResponse {
 	def String getStatusText()
 }
 
-@AddSuperConstructors
 class XRawHttpException extends Exception {
+	new(String msg) {
+		super(msg)
+	}
 
+	new(String msg, Exception cause) {
+		super(msg, cause)
+	}
 }
 
 
