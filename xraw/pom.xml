@@ -5,7 +5,32 @@
 	<groupId>de.scheidgen</groupId>
 	<artifactId>xraw</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
+
 	<name>XRAW core</name>
+	<description>Easy development of RESTful API wrapper for Java with xTend.</description>
+	<url>https://github.com/markus1978/xraw</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Markus Scheidgen</name>
+			<email>markus.scheidgen@gmaiil.com</email>
+			<organizationUrl>http://markus-scheidgen.de</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/markus1978/xraw.git</connection>
+		<developerConnection>scm:git:ssh://github.com:markus1978/xraw.git</developerConnection>
+		<url>http://github.com/markus1978/xraw</url>
+	</scm>
+
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xtend.version>2.8.1</xtend.version>

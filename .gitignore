@@ -3,8 +3,12 @@ bin/
 target/
 out/
 xtend-gen/
-.idea/
 **/*.xtendbin
 **/*.class
 **/*._trace
 **/*.xmi
+**/*.iws
+.idea/dataSources.ids
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/xtextAutoBuilderState.xml

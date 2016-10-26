@@ -1,42 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
-    <facet type="gwt" name="GWT">
-      <configuration>
-        <setting name="compilerMaxHeapSize" value="1024" />
-        <setting name="gwtScriptOutputStyle" value="DETAILED" />
-        <setting name="gwtSdkUrl" value="file://" />
-        <packaging>
-          <module name="de.scheidgen.xraw.Core" enabled="false" />
-          <module name="de.scheidgen.xraw.Jsonx" enabled="false" />
-          <module name="de.scheidgen.xraw.Util" enabled="false" />
-        </packaging>
-      </configuration>
-    </facet>
     <facet type="org.eclipse.xtend.core.Xtend" name="Xtend">
       <configuration>
+        <option name="activated" value="true" />
         <option name="createDirectory" value="true" />
         <option name="deleteGenerated" value="true" />
-        <option name="generateGeneratedAnnotation" value="true" />
         <option name="generateSuppressWarnings" value="true" />
         <option name="generatedAnnotationComment" value="" />
         <option name="hideLocalSyntheticVariables" value="true" />
-        <option name="outputDirectory" value="$MODULE_DIR$/src/main/xtend-gen" />
+        <option name="outputDirectory" value="target/xtend-gen/main" />
         <option name="overwriteExisting" value="true" />
         <option name="targetJavaVersion" value="Module default" />
-        <option name="testOutputDirectory" value="$MODULE_DIR$/src/test/xtend-gen" />
+        <option name="testOutputDirectory" value="target/xtend-gen/test" />
       </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/main/xtend-gen" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/src/test/xtend-gen" isTestSource="true" generated="true" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <sourceFolder url="file://$MODULE_DIR$/target/xtend-gen/main" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/target/xtend-gen/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target/generated-sources" />
+      <excludeFolder url="file://$MODULE_DIR$/target/generated-test-sources" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-status" />
+      <excludeFolder url="file://$MODULE_DIR$/target/xtend" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
