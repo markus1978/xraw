@@ -121,11 +121,9 @@ class XLogBasedStore {
 		data.entrySet.filter[key.startsWith(clazz.canonicalName + "_")].map[value as T].toList
 	}
 	
-	def <T> T get(Class<? extends XObject> clazz, String typeId, String objectId) {
-		throw new RuntimeException("Not implemented yet")
+	def <T> T get(Class<? extends XObject> clazz, String objectId) {
+		val id = id(clazz.canonicalName, objectId)
+		return data.get(id) as T
 	}
 	
-	def <T> T get(String typeId, String objectId) {
-		throw new RuntimeException("Not implemented yet")	
-	}
 }
