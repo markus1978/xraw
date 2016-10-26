@@ -1,6 +1,6 @@
-package de.scheidgen.xraw.util
+package de.scheidgen.xraw.client.util
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 import org.junit.Test
 import static org.junit.Assert.*
 

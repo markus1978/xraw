@@ -6,9 +6,9 @@ import com.mashape.unirest.http.HttpMethod
 import com.mashape.unirest.http.HttpResponse
 import com.mashape.unirest.request.HttpRequest
 import de.scheidgen.xraw.annotations.AddConstructor
-import de.scheidgen.xraw.core.XRawHttpMethod
-import de.scheidgen.xraw.core.XRawHttpRequest
-import de.scheidgen.xraw.core.XRawHttpResponse
+import de.scheidgen.xraw.client.core.XRawHttpMethod
+import de.scheidgen.xraw.client.core.XRawHttpRequest
+import de.scheidgen.xraw.client.core.XRawHttpResponse
 import de.scheidgen.xraw.server.JsonOrgArray
 import de.scheidgen.xraw.server.JsonOrgObject
 import com.github.scribejava.core.oauth.OAuthService

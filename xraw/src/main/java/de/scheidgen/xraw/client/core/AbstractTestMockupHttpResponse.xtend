@@ -1,7 +1,7 @@
-package de.scheidgen.xraw.core
+package de.scheidgen.xraw.client.core
 
-import de.scheidgen.xraw.json.JSONArray
-import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.client.json.JSONArray
+import de.scheidgen.xraw.client.json.JSONObject
 import java.util.Map
 
 abstract class AbstractTestMockupHttpResponse implements XRawHttpResponse {

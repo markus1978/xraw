@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.util
+package de.scheidgen.xraw.client.util
 
 import com.google.common.collect.AbstractIterator
 import com.google.common.collect.FluentIterable

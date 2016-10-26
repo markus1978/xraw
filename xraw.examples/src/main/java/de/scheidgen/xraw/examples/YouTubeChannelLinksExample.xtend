@@ -2,16 +2,16 @@ package de.scheidgen.xraw.examples
 
 import de.scheidgen.xraw.annotations.AddConstructor
 import de.scheidgen.xraw.apis.youtube.YouTube
-import de.scheidgen.xraw.core.AbstractRequest
-import de.scheidgen.xraw.core.DefaultResponse
+import de.scheidgen.xraw.client.core.AbstractRequest
+import de.scheidgen.xraw.client.core.DefaultResponse
 import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 import de.scheidgen.xraw.script.XRawScript
-import de.scheidgen.xraw.util.XRawIterateExtensions
+import de.scheidgen.xraw.client.util.XRawIterateExtensions
 import java.net.HttpURLConnection
 import java.net.URL
 import org.jsoup.Jsoup
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 
 @AddConstructor
 class YouTubeChannelLinksExample {

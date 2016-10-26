@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.apis.twitter.converter
 
 import com.google.gwt.i18n.shared.DateTimeFormat
-import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.client.json.Converter
 import java.util.Date
 import com.google.gwt.i18n.shared.DefaultDateTimeFormatInfo
 

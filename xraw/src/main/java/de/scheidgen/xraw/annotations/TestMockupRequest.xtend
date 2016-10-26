@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.annotations
 
-import de.scheidgen.xraw.core.AbstractTestMockupRequest
-import de.scheidgen.xraw.core.XRawHttpMethod
-import de.scheidgen.xraw.core.XRawHttpRequest
+import de.scheidgen.xraw.client.core.AbstractTestMockupRequest
+import de.scheidgen.xraw.client.core.XRawHttpMethod
+import de.scheidgen.xraw.client.core.XRawHttpRequest
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
@@ -17,7 +17,7 @@ import org.eclipse.xtend.lib.macro.declaration.FieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.json.XObject
 
 /**
  * Generates a abstract test mockup that can be extended by clients to easily write API mockups for tests.

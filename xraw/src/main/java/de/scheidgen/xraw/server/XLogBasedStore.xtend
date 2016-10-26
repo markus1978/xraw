@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.server
 
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.json.XObject
 import java.io.PrintStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -9,7 +9,7 @@ import java.util.Map
 import java.io.FileOutputStream
 import java.io.File
 import java.util.regex.Pattern
-import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.client.json.JSONObject
 
 class XLogBasedStore {	
 	val debug = true

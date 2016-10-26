@@ -6,7 +6,7 @@ import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.http.ScribeOAuth1Service
 import de.scheidgen.xraw.script.XRawScript
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 import de.scheidgen.xraw.apis.twitter.TwitterUtil
 
 class TwitterAutoUnfollow {

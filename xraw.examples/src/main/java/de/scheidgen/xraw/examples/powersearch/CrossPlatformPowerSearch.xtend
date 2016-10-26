@@ -5,7 +5,7 @@ import com.google.common.collect.Multimap
 import de.scheidgen.xraw.annotations.AddConstructor
 import java.util.List
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 
 interface Platform {	
 	def List<? extends Content> userSearch(String searchStr)

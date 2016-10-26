@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.script
 
-import de.scheidgen.xraw.core.AbstractService
-import de.scheidgen.xraw.core.XRawHttpService
+import de.scheidgen.xraw.client.core.AbstractService
+import de.scheidgen.xraw.client.core.XRawHttpService
 import de.scheidgen.xraw.server.JsonOrgObject
 import de.scheidgen.xraw.server.XResource
 import java.io.File

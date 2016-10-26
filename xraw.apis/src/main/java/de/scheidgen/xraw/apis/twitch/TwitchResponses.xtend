@@ -3,7 +3,7 @@ package de.scheidgen.xraw.apis.twitch
 import de.scheidgen.xraw.annotations.JSON
 import de.scheidgen.xraw.annotations.Name
 import de.scheidgen.xraw.annotations.WithConverter
-import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.client.json.Converter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.List

@@ -1,9 +1,9 @@
-package de.scheidgen.xraw.core
+package de.scheidgen.xraw.client.core
 
 import com.google.gwt.http.client.RequestBuilder
 import com.google.gwt.http.client.URL
-import de.scheidgen.xraw.json.JSONArray
-import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.client.json.JSONArray
+import de.scheidgen.xraw.client.json.JSONObject
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 

@@ -1,8 +1,8 @@
-package de.scheidgen.xraw.util
+package de.scheidgen.xraw.client.util
 
 import com.google.gwt.core.client.GWT
 import com.google.gwt.core.client.RunAsyncCallback
-import de.scheidgen.xraw.util.Async.Promise
+import de.scheidgen.xraw.client.util.Async.Promise
 import java.util.Collection
 import java.util.List
 import java.util.logging.Logger

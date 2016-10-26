@@ -3,7 +3,7 @@ package de.scheidgen.xraw.apis.youtube
 import de.scheidgen.xraw.annotations.Directory
 import de.scheidgen.xraw.annotations.Service
 import de.scheidgen.xraw.apis.youtube.search.List
-import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.client.json.Converter
 import java.text.SimpleDateFormat
 import java.util.Date
 

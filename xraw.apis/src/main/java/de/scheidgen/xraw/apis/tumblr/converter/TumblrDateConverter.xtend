@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.apis.tumblr.converter
 
-import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.client.json.Converter
 import java.util.Date
 
 class TumblrDateConverter implements Converter<Date> {

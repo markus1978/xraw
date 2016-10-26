@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.core
+package de.scheidgen.xraw.client.core
 
 abstract class AbstractTestMockupRequest<Result> {	
 		

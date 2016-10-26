@@ -1,8 +1,8 @@
 package de.scheidgen.xraw.apis.twitter
 
 import de.scheidgen.xraw.apis.twitter.TwitterResponse
-import de.scheidgen.xraw.core.AbstractRequest
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.core.AbstractRequest
+import de.scheidgen.xraw.client.json.XObject
 
 class TwitterUtil {
 	

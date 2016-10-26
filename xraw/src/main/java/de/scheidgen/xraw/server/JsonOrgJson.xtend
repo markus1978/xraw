@@ -1,11 +1,11 @@
 package de.scheidgen.xraw.server
 
-import de.scheidgen.xraw.json.JSONArray
+import de.scheidgen.xraw.client.json.JSONArray
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.json.JSONObject
 
 @EqualsHashCode
-class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
+class JsonOrgObject implements de.scheidgen.xraw.client.json.JSONObject {
 	
 	public val JSONObject jsonObject
 	
@@ -61,7 +61,7 @@ class JsonOrgObject implements de.scheidgen.xraw.json.JSONObject {
 		jsonObject.put(key, (value as JsonOrgArray).jsonArray)
 	}
 	
-	override put(String key, de.scheidgen.xraw.json.JSONObject value) {
+	override put(String key, de.scheidgen.xraw.client.json.JSONObject value) {
 		jsonObject.put(key, (value as JsonOrgObject).jsonObject)
 	}
 	
@@ -190,7 +190,7 @@ class JsonOrgArray implements JSONArray {
 		jsonArray.put(key, (value as JsonOrgArray).jsonArray)
 	}
 	
-	override put(int key, de.scheidgen.xraw.json.JSONObject value) {
+	override put(int key, de.scheidgen.xraw.client.json.JSONObject value) {
 		jsonArray.put(key, (value as JsonOrgObject).jsonObject)
 	}
 	

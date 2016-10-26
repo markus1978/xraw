@@ -1,8 +1,8 @@
-package de.scheidgen.xraw.core
+package de.scheidgen.xraw.client.core
 
-import de.scheidgen.xraw.util.Async.Promise
-import de.scheidgen.xraw.util.Async
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.util.Async.Promise
+import de.scheidgen.xraw.client.util.Async
+import de.scheidgen.xraw.client.json.XObject
 
 class XrawRestException extends RuntimeException {
 	new(String msg) {

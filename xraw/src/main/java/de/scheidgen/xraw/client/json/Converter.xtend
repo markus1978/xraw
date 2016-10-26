@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.json
+package de.scheidgen.xraw.client.json
 
 import com.google.gwt.i18n.shared.DateTimeFormat
 import com.google.gwt.i18n.shared.DefaultDateTimeFormatInfo

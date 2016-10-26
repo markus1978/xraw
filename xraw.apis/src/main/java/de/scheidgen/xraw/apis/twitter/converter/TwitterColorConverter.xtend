@@ -1,6 +1,6 @@
 package de.scheidgen.xraw.apis.twitter.converter
 
-import de.scheidgen.xraw.json.Converter
+import de.scheidgen.xraw.client.json.Converter
 
 class TwitterColor {
 	public val int r

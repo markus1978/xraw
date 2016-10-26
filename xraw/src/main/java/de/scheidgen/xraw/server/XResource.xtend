@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.server
 
-import de.scheidgen.xraw.json.JSONObject
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.json.JSONObject
+import de.scheidgen.xraw.client.json.XObject
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths

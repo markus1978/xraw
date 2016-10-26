@@ -7,11 +7,11 @@ import com.github.scribejava.core.model.Response
 import com.github.scribejava.core.model.SignatureType
 import com.github.scribejava.core.oauth.OAuth10aService
 import de.scheidgen.xraw.annotations.AddConstructor
-import de.scheidgen.xraw.core.XRawHttpException
-import de.scheidgen.xraw.core.XRawHttpMethod
-import de.scheidgen.xraw.core.XRawHttpRequest
-import de.scheidgen.xraw.core.XRawHttpResponse
-import de.scheidgen.xraw.core.XRawHttpService
+import de.scheidgen.xraw.client.core.XRawHttpException
+import de.scheidgen.xraw.client.core.XRawHttpMethod
+import de.scheidgen.xraw.client.core.XRawHttpRequest
+import de.scheidgen.xraw.client.core.XRawHttpResponse
+import de.scheidgen.xraw.client.core.XRawHttpService
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope

@@ -9,7 +9,7 @@ import de.scheidgen.xraw.apis.twitter.Twitter
 import de.scheidgen.xraw.apis.twitter.response.TwitterConnections
 import de.scheidgen.xraw.apis.twitter.response.TwitterUser
 import de.scheidgen.xraw.http.ScribeOAuth1Service
-import de.scheidgen.xraw.json.DateConverter
+import de.scheidgen.xraw.client.json.DateConverter
 import de.scheidgen.xraw.mongodb.Collection
 import de.scheidgen.xraw.mongodb.MongoDB
 import de.scheidgen.xraw.script.XRawScript
@@ -17,7 +17,7 @@ import de.scheidgen.xraw.server.JsonOrgObject
 import java.util.Date
 import java.util.List
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 import de.scheidgen.xraw.apis.twitter.TwitterUtil
 
 /** 

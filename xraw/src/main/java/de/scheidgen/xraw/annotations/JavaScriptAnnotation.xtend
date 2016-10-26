@@ -13,7 +13,7 @@ import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
 import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.json.NativeJavascriptUtils
+import de.scheidgen.xraw.client.json.NativeJavascriptUtils
 
 @Active(JavaScriptAnnotationClassProcessor)
 @Target(TYPE)

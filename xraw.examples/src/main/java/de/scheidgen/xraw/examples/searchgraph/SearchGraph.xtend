@@ -16,7 +16,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 import static extension de.scheidgen.xraw.examples.searchgraph.SearchGraphContributor.*
 import de.scheidgen.xraw.apis.facebook.Facebook
 

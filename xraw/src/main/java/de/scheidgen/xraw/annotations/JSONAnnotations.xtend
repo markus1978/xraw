@@ -1,10 +1,10 @@
 package de.scheidgen.xraw.annotations
 
 import com.google.gwt.core.client.JavaScriptObject
-import de.scheidgen.xraw.json.Converter
-import de.scheidgen.xraw.json.JSONObject
-import de.scheidgen.xraw.json.NativeJavascriptUtils
-import de.scheidgen.xraw.json.XObject
+import de.scheidgen.xraw.client.json.Converter
+import de.scheidgen.xraw.client.json.JSONObject
+import de.scheidgen.xraw.client.json.NativeJavascriptUtils
+import de.scheidgen.xraw.client.json.XObject
 import de.scheidgen.xraw.server.XResource
 import java.lang.annotation.Annotation
 import java.lang.annotation.Target

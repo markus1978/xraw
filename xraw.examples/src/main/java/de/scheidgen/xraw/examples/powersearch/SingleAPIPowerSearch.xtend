@@ -6,14 +6,14 @@ import de.scheidgen.xraw.apis.youtube.YouTube
 import de.scheidgen.xraw.apis.youtube.resources.YouTubeChannels
 import de.scheidgen.xraw.oauth.GoogleOAuth2Service
 import de.scheidgen.xraw.script.XRawScript
-import de.scheidgen.xraw.util.XRawIterateExtensions
+import de.scheidgen.xraw.client.util.XRawIterateExtensions
 import java.util.Collection
 import java.util.List
 import java.util.Map
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.junit.Test
 
-import static extension de.scheidgen.xraw.util.XRawIterableExtensions.*
+import static extension de.scheidgen.xraw.client.util.XRawIterableExtensions.*
 
 @AddConstructor
 abstract class SingleAPIPowerSearch<Id, Info> {

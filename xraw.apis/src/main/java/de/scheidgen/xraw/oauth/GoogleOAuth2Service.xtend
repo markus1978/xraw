@@ -2,16 +2,16 @@ package de.scheidgen.xraw.oauth
 
 import com.mashape.unirest.http.Unirest
 import de.scheidgen.xraw.annotations.AddConstructor
-import de.scheidgen.xraw.core.XRawHttpException
-import de.scheidgen.xraw.core.XRawHttpMethod
-import de.scheidgen.xraw.core.XRawHttpRequest
-import de.scheidgen.xraw.core.XRawHttpResponse
-import de.scheidgen.xraw.core.XRawHttpService
+import de.scheidgen.xraw.client.core.XRawHttpException
+import de.scheidgen.xraw.client.core.XRawHttpMethod
+import de.scheidgen.xraw.client.core.XRawHttpRequest
+import de.scheidgen.xraw.client.core.XRawHttpResponse
 import de.scheidgen.xraw.http.UnirestHttpRequest
 import de.scheidgen.xraw.http.UnirestHttpResponse
 import de.scheidgen.xraw.script.InteractiveServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfiguration
 import de.scheidgen.xraw.script.XRawHttpServiceConfigurationScope
+import de.scheidgen.xraw.client.core.XRawHttpService
 import java.util.Date
 import org.json.JSONException
 

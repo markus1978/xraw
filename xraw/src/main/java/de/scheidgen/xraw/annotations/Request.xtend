@@ -1,12 +1,9 @@
 package de.scheidgen.xraw.annotations
 
 import com.mashape.unirest.http.HttpMethod
-import de.scheidgen.xraw.core.AbstractRequest
-import de.scheidgen.xraw.core.DefaultResponse
-import de.scheidgen.xraw.core.XRawHttpResponse
-import de.scheidgen.xraw.core.XRawHttpService
-import de.scheidgen.xraw.json.JSONArray
-import de.scheidgen.xraw.json.JSONObject
+import de.scheidgen.xraw.client.json.JSONArray
+import de.scheidgen.xraw.client.json.JSONObject
+import de.scheidgen.xraw.client.json.XObject
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.Collections
@@ -14,13 +11,16 @@ import java.util.List
 import org.eclipse.xtend.lib.macro.Active
 import org.eclipse.xtend.lib.macro.TransformationContext
 import org.eclipse.xtend.lib.macro.TransformationParticipant
+import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
 import org.eclipse.xtend.lib.macro.declaration.MutableClassDeclaration
 import org.eclipse.xtend.lib.macro.declaration.MutableFieldDeclaration
-import org.eclipse.xtend.lib.macro.declaration.Visibility
-import de.scheidgen.xraw.core.XRawHttpMethod
 import org.eclipse.xtend.lib.macro.declaration.TypeReference
-import de.scheidgen.xraw.json.XObject
-import org.eclipse.xtend.lib.macro.declaration.CompilationStrategy.CompilationContext
+import org.eclipse.xtend.lib.macro.declaration.Visibility
+import de.scheidgen.xraw.client.core.DefaultResponse
+import de.scheidgen.xraw.client.core.AbstractRequest
+import de.scheidgen.xraw.client.core.XRawHttpService
+import de.scheidgen.xraw.client.core.XRawHttpMethod
+import de.scheidgen.xraw.client.core.XRawHttpResponse
 
 @Active(typeof(RequestCompilationParticipant))
 annotation Request {

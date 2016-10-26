@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.json
+package de.scheidgen.xraw.client.json
 
 import com.google.gwt.json.client.JSONBoolean
 import com.google.gwt.json.client.JSONNumber

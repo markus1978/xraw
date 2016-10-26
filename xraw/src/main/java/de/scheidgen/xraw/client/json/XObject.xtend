@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.json
+package de.scheidgen.xraw.client.json
 
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import jsinterop.annotations.JsMethod

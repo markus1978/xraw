@@ -11,7 +11,7 @@ class TwitterSearchResult {
 }
 
 @JSON
-class TwitterSearchMetaData {	
+class TwitterSearchMetaData {
     @Name("since_id_str") String since_id
     @Name("max_id_str") String max_id
     @Name("refresh_url") String refresh_url_parameters

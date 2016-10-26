@@ -1,7 +1,7 @@
 package de.scheidgen.xraw.annotations
 
-import de.scheidgen.xraw.core.AbstractService
-import de.scheidgen.xraw.core.XRawHttpService
+import de.scheidgen.xraw.client.core.AbstractService
+import de.scheidgen.xraw.client.core.XRawHttpService
 import java.lang.annotation.Target
 import java.util.ArrayList
 import java.util.List

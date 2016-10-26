@@ -1,4 +1,4 @@
-package de.scheidgen.xraw.json
+package de.scheidgen.xraw.client.json
 
 import java.util.Collection
 import com.google.gwt.core.client.JavaScriptObject
