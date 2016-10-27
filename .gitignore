@@ -1,5 +1,14 @@
+.DS_Store
 bin/
+target/
+out/
+xtend-gen/
 **/*.xtendbin
 **/*.class
 **/*._trace
 **/*.xmi
+**/*.iws
+.idea/dataSources.ids
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/xtextAutoBuilderState.xml

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/xraw/xraw.iml" filepath="$PROJECT_DIR$/xraw/xraw.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xraw.apis/xraw.apis.iml" filepath="$PROJECT_DIR$/xraw.apis/xraw.apis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xraw.examples/xraw.examples.iml" filepath="$PROJECT_DIR$/xraw.examples/xraw.examples.iml" />
+    </modules>
+  </component>
+</project>

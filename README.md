@@ -1,12 +1,12 @@
 # XRaw
-If you, as a Java programmer, think that plain JSON is just not type-safe enough, or that Jackson and co are just to heavy and stiff to be compatible with your Scala or xTend coding style, you should read on.
+If you, as a Java programmer, think that plain JSON is just not type-safe enough, or that Jackson and co are just to heavy and stiff to be compatible with your Scala or Xtend coding style, you should read on.
 
-XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper for JSON data, RESTful API calls, and MongoDB interfaces. Providing helpful features to create social media aware apps and backends with Java (and xTend).
+XRaw provides a set of active annotations that simplifies the development of type-safe Java wrapper and converter for JSON data, RESTful API calls, google cloud store entities, Java Beans and more. Providing helpful features to create social media aware apps and Java backends and GWT frontends with Xtend.
 
-[Active annotations](http://www.eclipse.org/xtend/documentation/204_activeannotations.html) are an [xTend](http://www.eclipse.org/xtend/index.html) feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, or accesses a database.
+[Active annotations](http://www.eclipse.org/xtend/documentation/204_activeannotations.html) are an [Xtend](http://www.eclipse.org/xtend/index.html) feature that allows us to semantically enrich simple data objects declarations with functionality that transparantly (un-)marshalles Java to JSON data, encodes REST requests, etc.
 
 ## JSON example
-The following small xTend file demonstrates the use of XRaw annotations to create wrapper-types for some typical JSON data:
+The following small Xtend file demonstrates the use of XRaw annotations to create wrapper-types for some typical JSON data:
 ```scala
 @JSON class Library {
   List<Book> books
@@ -43,7 +43,7 @@ val library = new Library(new JSONObject('''{
 }'''))
 ```
 
-For example, we can use xTend to find all "old" books:
+For example, we can use Xtend to find all "old" books:
 ```scala
 val oldBooks = library.books.filter[it.publishDate.year < 1918]
 ```
@@ -71,7 +71,7 @@ userTimelineReq.trimUser(true).count(100)
 // xResult will execute the request and wrap the returned JSON data.
 val userTimelineResult = userTimelineReq.xResult
 
-// Use xTend and its iterable extensions to navigate the results.
+// Use Xtend and its iterable extensions to navigate the results.
 userTimelineResult.filter[it.retweetCount > 4].forEach[
 	println(it.text)
 ]	
@@ -80,37 +80,46 @@ userTimelineResult.filter[it.retweetCount > 4].forEach[
 twitter.statuses.userTimeline.trimUser(true).count(100).xResult
     .filter[it.retweetCount > 4].forEach[println(it.text)]
 ```
-This is written in xTend. You could also use Scala, Java or any other JVM/bytecode based language.
+This is written in Xtend. You could also use Scala, Java or any other JVM/bytecode based language.
+
+## GWT Support
+XRaw is compatible with GWT and its limitations. Just use the GWT libraries Xraw.gwt.xml adn XrawApi.gwt.xml. Since blocking request in thread less Javascript is what you want, XRaw REST request provide a promise-style API for asynchronous calls:
+
+```scala
+twitter.statuses.userTimeline.trimUser(true).count(100).xPromiseResult.onResolve[
+    it.forEach[log(user.screenName + ": " + text)]
+] 
+```
+
+## More Wrapper
+Usually we need to represent data in different forms and have to transform data between them. From entities to beans to JSON and back again. Besides JSON, Xraw provides wrapper for Java beans and google cloud store entities, as well as some convenience methods to translate between them. You specify your data types once and simply add different annotations to generate the corresponding wrapper:
+
+```scala
+@JSON 
+@Entity
+@Bean
+class Book {
+  String title
+  String isbn
+  List<String> authors
+  @WithConverter(UtcDateConverter) Date publish_date
+}
+```
 
 ## Get started
+The project does contain three modules: xraw, xraw.apis and xraw.examples. Simply compile and install the first two. Look at the [examples](https://github.com/markus1978/xraw/tree/master/de.scheidgen.xraw.examples/src/main/java/de/scheidgen/xraw/examples).
 ```
 git clone git@github.com:markus1978/xraw.git xraw
-cd xraw/de.scheidgen.xraw/
-mvn compile
+cd xraw
+mvn install
+cd ../xraw.apis
+mvn install
 ```
 
-Look at the [examples](https://github.com/markus1978/xraw/tree/master/de.scheidgen.xraw.examples/src/main/java/de/scheidgen/xraw/examples).
+
 
 ## Status
 XRaw is early in development. There is no release yet; XRaw is not available via maven central yet.
 
-## Features
-###JSON
-- wrapper for existing JSON data or to create new JSON
-- support for primitive values, arrays, objects
-- converter to convert complex type to and from string
-- different key names in JSON and Java to adopt to existing code
-
-###REST
-- wrapper for GET and POST requests
-- with URL and body parameters
-- with parameters encoded in URL path
-- with array and object JSON results
-- customizable HTTP implementation, e.g. to integrate with existing signing and OAuth solutions
-- customizable respone types, e.g. to use API specific data passed through HTTP header, HTTP status codes, etc.
-
-###MongoDB
-- simple databases wrapper for uni-types collections of JSON data
-
 ## Contribute
-I need you to try XRaw, check the existing snippets of API (we have some twitter, facebook, youtube, twitch, tumblr). Tell us what works, what doesn't. What annotations do you need.
+I need you to try XRaw, check the existing snippets of API (we have some twitter, facebook, youtube, twitch, tumblr). Tell me what works, what doesn't. What annotations do you need.
