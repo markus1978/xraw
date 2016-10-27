@@ -8,12 +8,12 @@ import java.util.List
 import java.util.Map
 
 @Resource class XRawStore {
-	Application application	
+	Application application
 }
 
 @JSON class Application {
 	List<Profile> profiles
-	List<Service> services	
+	List<Service> services
 }
 
 @JSON class AbstractConfiguration {
@@ -37,17 +37,17 @@ import java.util.Map
 @JSON class ServiceCredentials extends AbstractConfiguration {
 	@WithConverter(ClassConverter) Class<?> serviceClass
 	String accessToken
-	String secret	
+	String secret
 }
 
 class ClassConverter implements Converter<Class<?>> {
-	
+
 	override toValue(String str) {
 		return Thread.currentThread.contextClassLoader.loadClass(str)
 	}
-	
+
 	override toString(Class<?> value) {
 		return value.canonicalName
 	}
-	
+
 }
