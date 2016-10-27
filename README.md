@@ -119,7 +119,7 @@ mvn install
 
 
 ## Status
-XRaw is early in development. There is no release yet; XRaw is not available via maven central yet.
+XRaw is already used by some of my projects. The API is somewhat stable. XRaw is not available via maven central yet.
 
 ## Contribute
 I need you to try XRaw, check the existing snippets of API (we have some twitter, facebook, youtube, twitch, tumblr). Tell me what works, what doesn't. What annotations do you need.
